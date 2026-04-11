@@ -1925,8 +1925,15 @@ function renderNoteList() {
   if (!notes.length) { list.innerHTML = '<div style="font-size:12px;color:var(--text3);text-align:center;padding:10px 0;">No notes yet.</div>'; return; }
   list.innerHTML = notes.map(n => `
     <div class="note-item ${n.id===currentNoteId?'active':''}" onclick="openNote('${n.id}')">
-      <div class="note-item-title">${n.title||'Untitled'}</div>
-      <div class="note-item-date">${new Date(n.updated).toLocaleDateString('en-IN',{day:'numeric',month:'short'})}</div>
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:4px;">
+        <div style="min-width:0;">
+          <div class="note-item-title">${n.title||'Untitled'}</div>
+          <div class="note-item-date">${new Date(n.updated).toLocaleDateString('en-IN',{day:'numeric',month:'short'})}</div>
+        </div>
+        <button onclick="event.stopPropagation();deleteNoteById('${n.id}')" title="Delete note"
+          style="flex-shrink:0;background:none;border:none;cursor:pointer;color:var(--text3);font-size:13px;padding:2px 4px;border-radius:4px;line-height:1;transition:color .2s;"
+          onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--text3)'">🗑</button>
+      </div>
     </div>`).join('');
 }
 
@@ -1972,12 +1979,20 @@ function debounceSave() {
 
 function deleteNote() {
   if (!currentNoteId || !confirm('Delete this note?')) return;
-  notes = notes.filter(n => n.id !== currentNoteId);
-  currentNoteId = null;
+  deleteNoteById(currentNoteId);
+}
+
+function deleteNoteById(id) {
+  if (!confirm('Delete this note? This cannot be undone.')) return;
+  notes = notes.filter(n => n.id !== id);
   saveNotes();
-  document.getElementById('notesEmpty').style.display = 'flex';
-  document.getElementById('notesUI').style.display    = 'none';
+  if (id === currentNoteId) {
+    currentNoteId = null;
+    document.getElementById('notesEmpty').style.display = 'flex';
+    document.getElementById('notesUI').style.display    = 'none';
+  }
   renderNoteList();
+  showToast('Note deleted ✓');
 }
 
 function updateWC() {
