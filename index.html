@@ -1,0 +1,2711 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HireKit — AI Interview Kit Generator</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=Cabinet+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<!-- PDF parsing -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<!-- DOCX parsing -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+<style>
+/* ── THEMES ── */
+[data-theme="dark"]{
+  /* Mirage — dark navy base */
+  --bg:#0e1220;--surface:#141826;--surface2:#1a2035;--surface3:#212843;
+  --border:#252f4a;--border2:#2e3a58;
+  --text:#f0f2f8;--text2:#8a9bc4;--text3:#4a5a80;
+  /* Blaze Orange accent */
+  --accent:#ff6a00;--accent-dim:rgba(255,106,0,0.13);--accent-glow:rgba(255,106,0,0.28);
+  --accent2:#ff8c35;
+  --green:#00d98a;--green-dim:rgba(0,217,138,0.09);
+  --red:#ff3d5a;--red-dim:rgba(255,61,90,0.09);
+  --amber:#ffaa00;--amber-dim:rgba(255,170,0,0.09);
+  --shadow:0 8px 40px rgba(0,0,0,0.55);--shadow-sm:0 2px 12px rgba(0,0,0,0.35);
+  --nav-bg:rgba(14,18,32,0.94);--grid:rgba(255,106,0,0.025);
+}
+[data-theme="light"]{
+  /* Warm white / cream light theme */
+  --bg:#f5f4f0;--surface:#ffffff;--surface2:#f9f8f5;--surface3:#eeece6;
+  --border:#ddd9cf;--border2:#ccc8bc;
+  --text:#1a1510;--text2:#5a5040;--text3:#9a9080;
+  /* Blaze Orange accent — same brand, lighter expression */
+  --accent:#e85a00;--accent-dim:rgba(232,90,0,0.09);--accent-glow:rgba(232,90,0,0.22);
+  --accent2:#ff7a20;
+  --green:#1a7a40;--green-dim:rgba(26,122,64,0.09);
+  --red:#cc1a38;--red-dim:rgba(204,26,56,0.09);
+  --amber:#b87700;--amber-dim:rgba(184,119,0,0.09);
+  --shadow:0 8px 40px rgba(20,15,0,0.10);--shadow-sm:0 2px 12px rgba(20,15,0,0.07);
+  --nav-bg:rgba(245,244,240,0.94);--grid:rgba(232,90,0,0.04);
+}
+
+/* ── RESET ── */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Cabinet Grotesk',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;transition:background .3s,color .3s;font-size:15px;line-height:1.6;}
+
+/* ── BACKGROUND ── */
+.bg-grid{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:48px 48px;}
+.bg-orb{position:fixed;border-radius:50%;filter:blur(100px);pointer-events:none;z-index:0;}
+.bg-orb-1{width:600px;height:600px;background:var(--accent-dim);top:-150px;right:-150px;filter:blur(110px);}
+.bg-orb-2{width:450px;height:450px;background:var(--green-dim);bottom:50px;left:-120px;}
+
+/* ── NAV ── */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;backdrop-filter:blur(16px);background:var(--nav-bg);border-bottom:1px solid var(--border);padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:58px;gap:12px;}
+.nav-logo{font-weight:700;font-size:18px;display:flex;align-items:center;gap:8px;color:var(--text);cursor:pointer;text-decoration:none;flex-shrink:0;}
+.logo-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent);animation:pulse 2.4s ease-in-out infinite;flex-shrink:0;}
+@keyframes pulse{0%,100%{box-shadow:0 0 6px var(--accent);}50%{box-shadow:0 0 20px var(--accent);}}
+.nav-logo em{font-style:normal;color:var(--accent);}
+
+.nav-tabs{display:flex;align-items:center;gap:2px;flex-shrink:0;}
+.nav-tab{padding:6px 12px;border-radius:8px;font-size:13px;font-weight:500;color:var(--text2);border:none;background:transparent;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:5px;white-space:nowrap;}
+.nav-tab:hover{background:var(--surface3);color:var(--text);}
+.nav-tab.active{background:var(--accent-dim);color:var(--accent);border-bottom:2px solid var(--accent);}
+
+.nav-right{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.btn-refresh{width:32px;height:32px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);color:var(--text2);font-size:16px;cursor:pointer;transition:all .25s;display:flex;align-items:center;justify-content:center;}
+.btn-refresh:hover{border-color:var(--accent);color:var(--accent);transform:rotate(180deg);}
+
+.theme-toggle{display:flex;align-items:center;gap:7px;background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:4px 11px 4px 5px;cursor:pointer;transition:border-color .2s;user-select:none;}
+.theme-toggle:hover{border-color:var(--accent);}
+.t-track{width:30px;height:16px;border-radius:8px;position:relative;flex-shrink:0;transition:background .3s;}
+[data-theme="dark"] .t-track{background:var(--accent);}
+[data-theme="light"] .t-track{background:var(--border2);}
+.t-knob{width:11px;height:11px;border-radius:50%;position:absolute;top:2.5px;transition:transform .3s cubic-bezier(.4,0,.2,1);}
+[data-theme="dark"] .t-knob{background:#000;transform:translateX(16px);}
+[data-theme="light"] .t-knob{background:#fff;transform:translateX(2.5px);}
+.t-lbl{font-size:12px;font-weight:500;color:var(--text2);}
+
+.nav-user{display:flex;align-items:center;gap:7px;padding:5px 11px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);font-size:12px;font-weight:500;color:var(--text2);cursor:pointer;transition:all .2s;}
+.nav-user:hover{color:var(--red);border-color:var(--red);}
+.user-av{width:24px;height:24px;border-radius:50%;background:var(--accent-dim);border:1px solid var(--accent);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--accent);}
+
+/* ── PAGES ── */
+.page{display:none;}
+.page.active{display:block;}
+
+/* ── AUTH ── */
+.auth-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px 20px;position:relative;z-index:1;}
+.auth-card{width:100%;max-width:410px;background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:40px 36px;box-shadow:var(--shadow);animation:fadeUp .5s ease both;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+.auth-logo{font-weight:700;font-size:20px;display:flex;align-items:center;gap:8px;margin-bottom:28px;color:var(--text);}
+.auth-logo em{font-style:normal;color:var(--accent);}
+.auth-title{font-family:'Playfair Display',serif;font-size:24px;font-weight:800;margin-bottom:5px;}
+.auth-sub{color:var(--text2);font-size:13px;margin-bottom:26px;}
+.auth-err{background:var(--red-dim);border:1px solid var(--red);color:var(--red);border-radius:8px;padding:10px 13px;font-size:13px;margin-bottom:14px;display:none;}
+.auth-err.show{display:block;}
+.field{margin-bottom:14px;}
+.field label{display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;}
+.field input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Cabinet Grotesk',sans-serif;font-size:14px;padding:12px 13px;outline:none;transition:border-color .2s,box-shadow .2s;}
+.field input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim);}
+.field input::placeholder{color:var(--text3);}
+.btn-primary{width:100%;padding:13px;background:var(--accent);border:none;border-radius:9px;color:#000;font-family:'Cabinet Grotesk',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;margin-top:4px;}
+.btn-primary:hover{filter:brightness(1.1);transform:translateY(-1px);box-shadow:0 8px 24px var(--accent-glow);}
+.auth-switch{text-align:center;margin-top:20px;font-size:13px;color:var(--text2);}
+.auth-switch a{color:var(--accent);cursor:pointer;font-weight:600;}
+.invite-note{font-size:11px;color:var(--text3);margin-top:4px;}
+
+/* ── PAYWALL ── */
+.paywall-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px 20px;position:relative;z-index:1;}
+.paywall-card{width:100%;max-width:760px;background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:44px 40px;box-shadow:var(--shadow);text-align:center;animation:fadeUp .5s ease both;}
+.pw-icon{font-size:48px;margin-bottom:16px;}
+.pw-title{font-family:'Playfair Display',serif;font-size:26px;font-weight:800;margin-bottom:8px;}
+.pw-sub{color:var(--text2);font-size:14px;line-height:1.7;margin-bottom:32px;max-width:500px;margin-left:auto;margin-right:auto;}
+.plans-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px;}
+@media(max-width:560px){.plans-grid{grid-template-columns:1fr;}}
+.plan-box{background:var(--surface2);border:1px solid var(--border);border-radius:13px;padding:22px;text-align:left;display:flex;flex-direction:column;}
+.plan-box.hot{border-color:var(--accent);background:var(--accent-dim);}
+.plan-badge{display:inline-block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:2px 8px;border-radius:20px;margin-bottom:10px;}
+.plan-badge.i{background:var(--accent-dim);border:1px solid var(--accent);color:var(--accent);}
+.plan-badge.c{background:var(--green-dim);border:1px solid var(--green);color:var(--green);}
+.plan-name{font-family:'Playfair Display',serif;font-size:19px;font-weight:800;margin-bottom:2px;}
+.plan-price{font-family:'Playfair Display',serif;font-size:30px;font-weight:800;margin-bottom:4px;}
+.plan-price small{font-size:13px;font-weight:400;color:var(--text2);}
+.plan-desc{font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.5;}
+.plan-feats{list-style:none;display:flex;flex-direction:column;gap:7px;margin-bottom:18px;flex:1;}
+.plan-feats li{font-size:12px;color:var(--text2);display:flex;align-items:flex-start;gap:7px;}
+.plan-feats li::before{content:"✓";color:var(--green);font-weight:700;flex-shrink:0;}
+.btn-pay{width:100%;padding:12px;background:var(--accent);border:none;border-radius:8px;color:#000;font-family:'Cabinet Grotesk',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;}
+.btn-pay:hover{filter:brightness(1.1);transform:translateY(-1px);}
+.btn-contact-plan{width:100%;padding:12px;background:transparent;border:1.5px solid var(--green);border-radius:8px;color:var(--green);font-family:'Cabinet Grotesk',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;}
+.btn-contact-plan:hover{background:var(--green-dim);}
+.pw-note{font-size:11px;color:var(--text3);margin-top:12px;}
+
+/* ── APP LAYOUT ── */
+.content{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:80px 20px 80px;}
+
+/* ── PAGE HERO ── */
+.hero{margin-bottom:32px;}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(24px,4vw,38px);font-weight:800;line-height:1.18;margin-bottom:10px;}
+.hero h1 em{font-style:normal;color:var(--accent);}
+.hero p{color:var(--text2);font-size:14px;line-height:1.7;max-width:540px;}
+
+/* ── API KEY BANNER ── */
+.apikey-banner{background:var(--amber-dim);border:1px solid var(--amber);border-radius:10px;padding:16px 18px;margin-bottom:20px;display:flex;gap:12px;align-items:flex-start;}
+.apikey-banner.hidden{display:none;}
+.apikey-content{flex:1;}
+.apikey-content p{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:10px;}
+.apikey-content a{color:var(--accent);font-weight:600;text-decoration:none;}
+.apikey-content a:hover{text-decoration:underline;}
+.apikey-row{display:flex;gap:8px;}
+.apikey-row input{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:7px;color:var(--text);font-family:'Cabinet Grotesk',sans-serif;font-size:13px;padding:9px 12px;outline:none;transition:border-color .2s;}
+.apikey-row input:focus{border-color:var(--accent);}
+.apikey-row input::placeholder{color:var(--text3);}
+.apikey-row button{padding:9px 15px;background:var(--accent);border:none;border-radius:7px;color:#000;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:'Cabinet Grotesk',sans-serif;}
+.apikey-ok{background:var(--green-dim);border:1px solid var(--green);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--green);font-weight:600;margin-bottom:16px;display:none;align-items:center;gap:8px;}
+.apikey-ok.show{display:flex;}
+
+/* ── STEPS ── */
+.steps{display:flex;gap:7px;margin-bottom:28px;flex-wrap:wrap;}
+.step{display:flex;align-items:center;gap:7px;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:500;background:var(--surface);border:1px solid var(--border);color:var(--text3);transition:all .3s;}
+.step.active{background:var(--accent-dim);border-color:var(--accent);color:var(--accent);}
+.step.done{background:var(--green-dim);border-color:var(--green);color:var(--green);}
+.snum{width:16px;height:16px;border-radius:50%;background:var(--border2);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;}
+.step.active .snum{background:var(--accent);color:#000;}
+.step.done .snum{background:var(--green);color:#000;}
+
+/* ── CARDS ── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:24px;margin-bottom:16px;box-shadow:var(--shadow-sm);transition:border-color .25s;}
+.card:hover{border-color:var(--border2);}
+.card-head{font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1.1px;margin-bottom:16px;display:flex;align-items:center;gap:7px;}
+
+/* ── UPLOAD ── */
+.upload-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px;}
+@media(max-width:520px){.upload-grid{grid-template-columns:1fr;}}
+.upload-zone{border:1.5px dashed var(--border2);border-radius:9px;padding:20px 14px;text-align:center;cursor:pointer;position:relative;overflow:hidden;transition:all .25s;}
+.upload-zone:hover,.upload-zone.drag{border-color:var(--accent);background:var(--accent-dim);}
+.upload-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.uz-icon{width:38px;height:38px;border-radius:9px;background:var(--surface2);display:flex;align-items:center;justify-content:center;margin:0 auto 9px;font-size:17px;}
+.uz-label{font-size:13px;font-weight:600;margin-bottom:3px;}
+.uz-hint{font-size:11px;color:var(--text3);}
+.uz-opt{font-size:10px;color:var(--text3);font-style:italic;margin-top:2px;}
+.uz-fname{font-size:11px;color:var(--green);margin-top:6px;font-weight:600;display:none;}
+.upload-zone.has-file .uz-fname{display:block;}
+.upload-zone.has-file{border-color:var(--green);background:var(--green-dim);}
+
+/* ── INPUTS ── */
+.field-wrap{margin-bottom:13px;}
+.field-wrap label{display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;}
+textarea,input[type=text]{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Cabinet Grotesk',sans-serif;font-size:14px;padding:11px 13px;outline:none;resize:vertical;transition:border-color .2s,box-shadow .2s,background .3s;}
+textarea{min-height:80px;}
+textarea:focus,input[type=text]:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim);}
+textarea::placeholder,input::placeholder{color:var(--text3);}
+
+/* ── BUTTONS ── */
+.btn-gen{width:100%;padding:15px;background:var(--accent);border:none;border-radius:10px;color:#000;font-family:'Cabinet Grotesk',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;}
+.btn-gen:hover:not(:disabled){filter:brightness(1.1);transform:translateY(-2px);box-shadow:0 10px 28px var(--accent-glow);}
+.btn-gen:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+.btn-sm{padding:7px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:7px;color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:5px;font-family:'Cabinet Grotesk',sans-serif;}
+.btn-sm:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-dim);}
+.btn-sm.danger:hover{border-color:var(--red);color:var(--red);background:var(--red-dim);}
+
+/* ── ERROR BOX ── */
+.err-box{background:var(--red-dim);border:1px solid var(--red);border-radius:8px;padding:12px 15px;color:var(--red);font-size:13px;margin-top:12px;display:none;}
+.err-box.show{display:block;}
+
+/* ── LOADING ── */
+.loading{display:none;text-align:center;padding:56px 20px;}
+.loading.show{display:block;}
+.spinner{width:42px;height:42px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .75s linear infinite;margin:0 auto 18px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.loading-title{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;margin-bottom:5px;}
+.loading-sub{font-size:13px;color:var(--text2);}
+
+/* ── KIT OUTPUT ── */
+.out-section{display:none;}
+.out-section.show{display:block;}
+.out-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;gap:12px;flex-wrap:wrap;}
+.out-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:800;}
+.out-title span{color:var(--accent);}
+.out-actions{display:flex;gap:8px;flex-wrap:wrap;}
+.meta-bar{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:11px 16px;display:flex;gap:18px;flex-wrap:wrap;margin-bottom:20px;}
+.meta-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);}
+.mdot{width:5px;height:5px;border-radius:50%;background:var(--accent);}
+.q-list{display:flex;flex-direction:column;gap:11px;}
+.q-card{background:var(--surface);border:1px solid var(--border);border-radius:11px;overflow:hidden;animation:fadeUp .4s ease both;transition:background .3s;}
+.q-head{padding:15px 18px;display:flex;align-items:flex-start;gap:11px;cursor:pointer;transition:background .2s;}
+.q-head:hover{background:var(--surface2);}
+.q-num{font-size:10px;font-weight:700;color:var(--accent);background:var(--accent-dim);border:1px solid var(--accent);border-radius:5px;padding:3px 6px;min-width:32px;text-align:center;flex-shrink:0;margin-top:2px;}
+.q-meta{flex:1;}
+.q-tag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.9px;color:var(--text3);margin-bottom:4px;}
+.q-text{font-size:14px;font-weight:600;line-height:1.5;}
+.q-pips{display:flex;align-items:center;gap:2px;flex-shrink:0;margin-top:3px;}
+.pip{width:4px;height:15px;border-radius:2px;background:var(--border2);}
+.pip.a{background:var(--accent);}
+.pip.g{background:var(--green);}
+.pip.r{background:var(--red);}
+.q-chev{color:var(--text3);font-size:13px;transition:transform .3s;flex-shrink:0;margin-top:3px;}
+.q-card.open .q-chev{transform:rotate(180deg);}
+.q-body{display:none;padding:4px 18px 18px;border-top:1px solid var(--border);}
+.q-card.open .q-body{display:block;}
+.ans-block{margin-top:14px;}
+.ans-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.9px;margin-bottom:8px;display:flex;align-items:center;gap:5px;}
+.ans-title.g{color:var(--green);}
+.ans-title.r{color:var(--red);}
+.ans-list{display:flex;flex-direction:column;gap:6px;}
+.ans-item{display:flex;align-items:flex-start;gap:8px;padding:8px 11px;border-radius:7px;font-size:13px;line-height:1.5;}
+.ans-item.g{background:var(--green-dim);border:1px solid var(--green);}
+.ans-item.r{background:var(--red-dim);border:1px solid var(--red);}
+
+/* ── CANDIDATE REVIEW ── */
+.cr-layout{display:grid;grid-template-columns:250px 1fr;gap:18px;}
+@media(max-width:660px){.cr-layout{grid-template-columns:1fr;}}
+.cr-sidebar{background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:18px;height:fit-content;position:sticky;top:76px;box-shadow:var(--shadow-sm);}
+.cr-sb-head{font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;}
+.cr-drop{border:1.5px dashed var(--border2);border-radius:8px;padding:14px;text-align:center;cursor:pointer;position:relative;transition:all .25s;margin-bottom:12px;}
+.cr-drop:hover{border-color:var(--accent);background:var(--accent-dim);}
+.cr-drop input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.cr-drop p{font-size:12px;color:var(--text3);}
+.cand-list{display:flex;flex-direction:column;gap:7px;}
+.cand-item{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);cursor:pointer;transition:all .2s;}
+.cand-item:hover,.cand-item.active{border-color:var(--accent);background:var(--accent-dim);}
+.cand-av{width:30px;height:30px;border-radius:50%;background:var(--accent-dim);border:1px solid var(--accent);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--accent);flex-shrink:0;}
+.cand-info{flex:1;min-width:0;}
+.cand-name{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.cand-status{font-size:11px;font-weight:600;margin-top:1px;}
+.cand-status.match{color:var(--green);}
+.cand-status.maybe{color:var(--amber);}
+.cand-status.low{color:var(--red);}
+.cand-status.pending{color:var(--text3);}
+.cr-main{display:flex;flex-direction:column;gap:14px;}
+.cr-empty{background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:52px 28px;text-align:center;box-shadow:var(--shadow-sm);}
+.cr-empty-icon{font-size:44px;margin-bottom:14px;}
+.cr-empty h3{font-family:'Playfair Display',serif;font-size:19px;font-weight:700;margin-bottom:7px;}
+.cr-empty p{color:var(--text2);font-size:13px;line-height:1.6;}
+.cr-loading{text-align:center;padding:40px;background:var(--surface);border:1px solid var(--border);border-radius:13px;}
+
+/* candidate dashboard */
+.cand-dash{background:var(--surface);border:1px solid var(--border);border-radius:13px;overflow:hidden;box-shadow:var(--shadow-sm);}
+.cd-header{padding:20px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.cd-big-av{width:48px;height:48px;border-radius:50%;background:var(--accent-dim);border:2px solid var(--accent);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:var(--accent);flex-shrink:0;}
+.cd-info h2{font-family:'Playfair Display',serif;font-size:18px;font-weight:800;}
+.cd-info p{font-size:12px;color:var(--text2);margin-top:2px;}
+.cd-score{margin-left:auto;text-align:center;padding:10px 18px;border-radius:9px;border:1px solid var(--border);background:var(--surface2);flex-shrink:0;}
+.score-num{font-family:'Playfair Display',serif;font-size:30px;font-weight:800;}
+.score-num.high{color:var(--green);}
+.score-num.mid{color:var(--amber);}
+.score-num.lo{color:var(--red);}
+.score-lbl{font-size:11px;color:var(--text2);font-weight:600;}
+.cd-body{padding:20px 22px;display:grid;grid-template-columns:1fr 1fr;gap:13px;}
+@media(max-width:560px){.cd-body{grid-template-columns:1fr;}}
+.dash-sec{background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:14px;}
+.dash-sec.full{grid-column:1/-1;}
+.ds-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.9px;color:var(--text2);margin-bottom:10px;display:flex;align-items:center;gap:5px;}
+.ds-title.g{color:var(--green);}
+.ds-title.r{color:var(--red);}
+.ds-title.a{color:var(--amber);}
+.ds-title.b{color:var(--accent);}
+.skill-tags{display:flex;flex-wrap:wrap;gap:5px;}
+.tag{padding:3px 9px;border-radius:20px;font-size:12px;font-weight:600;}
+.tag.m{background:var(--green-dim);border:1px solid var(--green);color:var(--green);}
+.tag.x{background:var(--red-dim);border:1px solid var(--red);color:var(--red);}
+.tag.n{background:var(--surface3);border:1px solid var(--border);color:var(--text2);}
+.br-row{display:flex;align-items:center;gap:9px;margin-bottom:8px;}
+.br-row:last-child{margin-bottom:0;}
+.br-lbl{font-size:12px;color:var(--text2);flex:1;}
+.br-bar{height:5px;border-radius:3px;background:var(--border2);flex:2;overflow:hidden;}
+.br-fill{height:100%;border-radius:3px;transition:width .8s ease;}
+.br-fill.high{background:var(--green);}
+.br-fill.mid{background:var(--amber);}
+.br-fill.lo{background:var(--red);}
+.br-val{font-size:11px;font-weight:700;color:var(--text2);min-width:28px;text-align:right;}
+.flag-list{display:flex;flex-direction:column;gap:6px;}
+.flag-item{font-size:12px;color:var(--text2);line-height:1.5;display:flex;align-items:flex-start;gap:7px;}
+.verdict-pill{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:20px;font-size:12px;font-weight:700;margin-top:12px;}
+.verdict-pill.rec{background:var(--green-dim);border:1px solid var(--green);color:var(--green);}
+.verdict-pill.maybe{background:var(--amber-dim);border:1px solid var(--amber);color:var(--amber);}
+.verdict-pill.pass{background:var(--red-dim);border:1px solid var(--red);color:var(--red);}
+
+/* ── NOTES ── */
+.notes-layout{display:grid;grid-template-columns:210px 1fr;gap:16px;min-height:500px;}
+@media(max-width:600px){.notes-layout{grid-template-columns:1fr;}}
+.notes-sb{background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:16px;height:fit-content;position:sticky;top:76px;box-shadow:var(--shadow-sm);}
+.notes-sb-head{font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;}
+.btn-new-note{background:var(--accent);border:none;border-radius:6px;color:#000;font-size:11px;font-weight:700;padding:3px 9px;cursor:pointer;font-family:'Cabinet Grotesk',sans-serif;}
+.note-list{display:flex;flex-direction:column;gap:5px;}
+.note-item{padding:9px 11px;border-radius:7px;cursor:pointer;border:1px solid transparent;transition:all .2s;}
+.note-item:hover{background:var(--surface2);border-color:var(--border);}
+.note-item.active{background:var(--accent-dim);border-color:var(--accent);}
+.note-item-title{font-size:13px;font-weight:600;margin-bottom:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.note-item-date{font-size:10px;color:var(--text3);}
+.notes-editor-wrap{background:var(--surface);border:1px solid var(--border);border-radius:13px;overflow:hidden;box-shadow:var(--shadow-sm);display:flex;flex-direction:column;min-height:500px;}
+.notes-toolbar{padding:10px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:7px;flex-wrap:wrap;background:var(--surface2);}
+.note-title-in{flex:1;min-width:120px;background:transparent;border:none;color:var(--text);font-family:'Cabinet Grotesk',sans-serif;font-size:14px;font-weight:700;outline:none;padding:0;}
+.note-title-in::placeholder{color:var(--text3);}
+.tb-div{width:1px;height:20px;background:var(--border);margin:0 2px;}
+.tool-btn{width:30px;height:30px;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--text2);font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;}
+.tool-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-dim);}
+.note-save-btn{margin-left:auto;padding:6px 13px;background:var(--accent);border:none;border-radius:6px;color:#000;font-size:12px;font-weight:700;cursor:pointer;font-family:'Cabinet Grotesk',sans-serif;flex-shrink:0;}
+.saved-badge{font-size:11px;color:var(--green);font-weight:600;display:none;flex-shrink:0;}
+.saved-badge.show{display:block;}
+.notes-editor{flex:1;padding:20px 24px;outline:none;font-family:'Cabinet Grotesk',sans-serif;font-size:15px;line-height:1.85;color:var(--text);background:transparent;overflow-y:auto;}
+.notes-editor:empty::before{content:attr(data-placeholder);color:var(--text3);pointer-events:none;}
+.notes-editor mark{background:#ffe66d;color:#333;border-radius:2px;padding:0 2px;}
+[data-theme="dark"] .notes-editor mark{background:rgba(255,230,109,0.3);color:var(--text);}
+.notes-footer{padding:9px 16px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--surface2);}
+.notes-wc{font-size:11px;color:var(--text3);}
+.notes-del{background:none;border:none;color:var(--text3);font-size:12px;cursor:pointer;transition:color .2s;font-family:'Cabinet Grotesk',sans-serif;}
+.notes-del:hover{color:var(--red);}
+.notes-empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;color:var(--text3);text-align:center;padding:40px;}
+.notes-empty-state .nei{font-size:36px;margin-bottom:12px;}
+.notes-empty-state h3{font-size:15px;font-weight:600;color:var(--text2);margin-bottom:5px;}
+.notes-empty-state p{font-size:13px;}
+
+/* ── SIDEBAR ── */
+.sb-trigger{position:fixed;right:0;top:50%;transform:translateY(-50%);z-index:200;background:var(--accent);color:#000;font-family:'Cabinet Grotesk',sans-serif;font-size:10px;font-weight:700;letter-spacing:.5px;writing-mode:vertical-rl;padding:13px 7px;border-radius:9px 0 0 9px;cursor:pointer;border:none;box-shadow:-3px 0 16px var(--accent-glow);transition:all .25s;display:none;}
+.sb-trigger.show{display:block;}
+.sb-trigger:hover{padding-right:10px;}
+.sb-overlay{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity .3s;}
+.sb-overlay.open{opacity:1;pointer-events:all;}
+.help-sb{position:fixed;right:-370px;top:0;bottom:0;width:350px;z-index:400;background:var(--surface);border-left:1px solid var(--border);box-shadow:-8px 0 36px rgba(0,0,0,0.4);transition:right .35s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;}
+.help-sb.open{right:0;}
+.sb-header{padding:20px 22px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--surface2);flex-shrink:0;}
+.sb-header h2{font-family:'Playfair Display',serif;font-size:17px;font-weight:800;}
+.sb-close{width:30px;height:30px;border-radius:7px;border:1px solid var(--border);background:var(--surface);color:var(--text2);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.sb-close:hover{border-color:var(--red);color:var(--red);}
+.sb-tabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0;}
+.stab{flex:1;padding:10px;font-size:12px;font-weight:700;background:transparent;border:none;color:var(--text2);cursor:pointer;transition:all .2s;border-bottom:2px solid transparent;font-family:'Cabinet Grotesk',sans-serif;}
+.stab:hover{color:var(--text);}
+.stab.active{color:var(--accent);border-bottom-color:var(--accent);}
+.sb-panel{flex:1;overflow-y:auto;padding:20px;}
+.sb-panel.hidden{display:none;}
+
+/* sidebar plan cards */
+.splan{border-radius:11px;padding:18px;margin-bottom:12px;border:1px solid var(--border);background:var(--surface2);}
+.splan.hot{border-color:var(--accent);background:var(--accent-dim);}
+.splan-badge{display:inline-block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.9px;padding:2px 7px;border-radius:20px;margin-bottom:9px;}
+.splan-badge.i{background:var(--accent-dim);border:1px solid var(--accent);color:var(--accent);}
+.splan-badge.c{background:var(--green-dim);border:1px solid var(--green);color:var(--green);}
+.splan-name{font-family:'Playfair Display',serif;font-size:16px;font-weight:800;margin-bottom:2px;}
+.splan-price{font-size:20px;font-weight:800;font-family:'Playfair Display',serif;margin-bottom:5px;}
+.splan-price small{font-size:11px;font-weight:400;color:var(--text2);}
+.splan-feats{list-style:none;display:flex;flex-direction:column;gap:5px;margin-bottom:12px;}
+.splan-feats li{font-size:12px;color:var(--text2);display:flex;align-items:center;gap:6px;}
+.splan-feats li::before{content:"✓";color:var(--green);font-weight:700;}
+.sb-btn-pay{width:100%;padding:10px;background:var(--accent);border:none;border-radius:7px;color:#000;font-size:13px;font-weight:700;cursor:pointer;font-family:'Cabinet Grotesk',sans-serif;transition:all .2s;}
+.sb-btn-pay:hover{filter:brightness(1.1);}
+.sb-btn-contact{width:100%;padding:10px;background:transparent;border:1.5px solid var(--green);border-radius:7px;color:var(--green);font-size:13px;font-weight:700;cursor:pointer;font-family:'Cabinet Grotesk',sans-serif;transition:all .2s;}
+.sb-btn-contact:hover{background:var(--green-dim);}
+
+/* sidebar query form */
+.qform{display:flex;flex-direction:column;gap:12px;}
+.qform label{font-size:12px;font-weight:600;color:var(--text2);display:block;margin-bottom:4px;}
+.qform input,.qform textarea,.qform select{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:7px;color:var(--text);font-family:'Cabinet Grotesk',sans-serif;font-size:13px;padding:9px 11px;outline:none;transition:border-color .2s;}
+.qform select option{background:var(--surface);}
+.qform textarea{min-height:90px;resize:vertical;}
+.qform input:focus,.qform textarea:focus,.qform select:focus{border-color:var(--accent);}
+.qform input::placeholder,.qform textarea::placeholder{color:var(--text3);}
+.sb-btn-send{width:100%;padding:11px;background:var(--accent);border:none;border-radius:7px;color:#000;font-size:13px;font-weight:700;cursor:pointer;font-family:'Cabinet Grotesk',sans-serif;}
+.q-sent{display:none;text-align:center;padding:20px;background:var(--green-dim);border:1px solid var(--green);border-radius:9px;}
+.q-sent.show{display:block;}
+.q-sent p{color:var(--green);font-weight:600;font-size:13px;margin-top:6px;}
+
+/* sidebar contact */
+.contact-box{background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:14px 16px;margin-bottom:10px;}
+.contact-box p{font-size:13px;color:var(--text2);line-height:1.6;}
+.contact-box a{color:var(--accent);font-weight:600;text-decoration:none;}
+.contact-box a:hover{text-decoration:underline;}
+
+/* sidebar key update */
+.key-row{display:flex;gap:7px;margin-top:8px;}
+.key-row input{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px;padding:8px 10px;outline:none;transition:border-color .2s;font-family:'Cabinet Grotesk',sans-serif;}
+.key-row input:focus{border-color:var(--accent);}
+.key-row input::placeholder{color:var(--text3);}
+.key-row button{padding:8px 12px;background:var(--accent);border:none;border-radius:6px;color:#000;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:'Cabinet Grotesk',sans-serif;}
+
+/* sidebar footer */
+.sb-footer{padding:16px 20px;border-top:1px solid var(--border);text-align:center;font-size:11px;color:var(--text3);line-height:1.8;flex-shrink:0;background:var(--surface2);}
+.sb-footer strong{color:var(--text2);}
+.sb-footer a{color:var(--accent);text-decoration:none;font-weight:500;}
+
+/* ── GLOBAL FOOTER ── */
+.gfooter{border-top:1px solid var(--border);padding:16px 24px;text-align:center;font-size:12px;color:var(--text3);position:relative;z-index:1;display:none;}
+.gfooter.show{display:block;}
+.gfooter strong{color:var(--text2);}
+.gfooter a{color:var(--accent);text-decoration:none;font-weight:600;}
+
+/* ── PASTE MODAL ── */
+.paste-modal-bg{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,0.65);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:20px;}
+.paste-modal{background:var(--surface);border:1px solid var(--border);border-radius:15px;padding:28px;max-width:500px;width:100%;box-shadow:var(--shadow);animation:fadeUp .3s ease both;}
+.paste-modal h3{font-family:'Playfair Display',serif;font-size:18px;font-weight:800;margin-bottom:7px;}
+.paste-modal p{font-size:13px;color:var(--text2);margin-bottom:14px;line-height:1.6;}
+.paste-modal textarea{width:100%;min-height:150px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Cabinet Grotesk',sans-serif;font-size:13px;padding:11px;outline:none;resize:vertical;}
+.paste-modal textarea:focus{border-color:var(--accent);}
+.paste-modal textarea::placeholder{color:var(--text3);}
+.paste-modal-btns{display:flex;gap:9px;margin-top:13px;}
+.pm-save{flex:1;padding:11px;background:var(--accent);border:none;border-radius:8px;color:#000;font-size:13px;font-weight:700;cursor:pointer;font-family:'Cabinet Grotesk',sans-serif;}
+.pm-skip{padding:11px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:13px;cursor:pointer;font-family:'Cabinet Grotesk',sans-serif;}
+
+/* ── ADMIN ── */
+.admin-tab{padding:7px 14px;border-radius:8px;font-size:13px;font-weight:600;background:var(--surface2);border:1px solid var(--border);color:var(--text2);cursor:pointer;transition:all .2s;font-family:'Cabinet Grotesk',sans-serif;}
+.admin-tab:hover{border-color:var(--accent);color:var(--accent);}
+.admin-tab.active{background:var(--accent-dim);border-color:var(--accent);color:var(--accent);}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px 20px;box-shadow:var(--shadow-sm);}
+.stat-val{font-family:'Playfair Display',serif;font-size:30px;font-weight:800;margin-bottom:2px;}
+.stat-lbl{font-size:12px;color:var(--text2);font-weight:500;}
+.admin-table{width:100%;border-collapse:collapse;font-size:13px;}
+.admin-table th{background:var(--surface2);padding:10px 16px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text2);border-bottom:1px solid var(--border);}
+.admin-table td{padding:11px 16px;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:middle;}
+.admin-table tr:last-child td{border-bottom:none;}
+.admin-table tr:hover td{background:var(--surface2);}
+.status-pill{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;}
+.status-pill.paid{background:var(--green-dim);border:1px solid var(--green);color:var(--green);}
+.status-pill.free{background:var(--amber-dim);border:1px solid var(--amber);color:var(--amber);}
+.status-pill.owner{background:var(--accent-dim);border:1px solid var(--accent);color:var(--accent);}
+
+
+/* ── LEFT SIDEBAR ── */
+.app-shell{display:flex;min-height:calc(100vh - 58px);padding-top:58px;}
+.left-sb{
+  width:240px;flex-shrink:0;
+  background:var(--surface);
+  border-right:1px solid var(--border);
+  display:none;flex-direction:column;
+  position:fixed;top:58px;bottom:0;left:0;
+  overflow-y:auto;z-index:50;
+  transition:background .3s,border-color .3s;
+}
+.left-sb.visible{display:flex;}
+.app-main{flex:1;transition:margin-left .3s;}
+.app-main.with-sb{margin-left:240px;}
+
+.lsb-section{padding:14px 14px 6px;border-bottom:1px solid var(--border);}
+.lsb-section-title{
+  font-size:10px;font-weight:700;text-transform:uppercase;
+  letter-spacing:1px;color:var(--text3);margin-bottom:10px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.lsb-add-btn{
+  width:20px;height:20px;border-radius:5px;
+  background:var(--accent-dim);border:1px solid var(--accent);
+  color:var(--accent);font-size:14px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  border:none;font-weight:700;line-height:1;
+  transition:all .2s;
+}
+.lsb-add-btn:hover{background:var(--accent);color:#000;}
+
+.lsb-item{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 10px;border-radius:8px;
+  cursor:pointer;border:1px solid transparent;
+  transition:all .2s;margin-bottom:3px;
+  font-size:13px;color:var(--text2);
+  position:relative;
+}
+.lsb-item:hover{background:var(--surface2);color:var(--text);}
+.lsb-item.active{background:var(--accent-dim);border-color:var(--accent);color:var(--accent);}
+.lsb-item-icon{font-size:13px;flex-shrink:0;}
+.lsb-item-text{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12px;}
+.lsb-del{
+  opacity:0;font-size:12px;color:var(--text3);background:none;border:none;
+  cursor:pointer;padding:2px;line-height:1;transition:all .2s;flex-shrink:0;
+}
+.lsb-item:hover .lsb-del{opacity:1;}
+.lsb-del:hover{color:var(--red);}
+
+.lsb-empty{font-size:12px;color:var(--text3);padding:8px 10px;line-height:1.5;}
+
+/* toggle button */
+.sb-toggle-btn{
+  position:fixed;left:0;top:50%;transform:translateY(-50%);
+  z-index:60;background:var(--accent);color:#000;
+  border:none;border-radius:0 8px 8px 0;
+  padding:12px 6px;cursor:pointer;
+  font-size:12px;font-weight:700;
+  writing-mode:vertical-rl;letter-spacing:.5px;
+  box-shadow:2px 0 12px var(--accent-glow);
+  transition:all .25s;display:none;
+}
+.sb-toggle-btn.show{display:block;}
+.sb-toggle-btn:hover{padding-left:9px;}
+
+
+/* ── MOBILE BANNER ── */
+.mobile-block{
+  display:none;
+  position:fixed;inset:0;z-index:99999;
+  background:var(--bg);
+  flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:32px 24px;
+}
+@media(max-width:768px){
+  .mobile-block{display:flex;}
+  body > *:not(.mobile-block){pointer-events:none;}
+}
+.mb-logo{
+  font-family:'Playfair Display',serif;
+  font-size:28px;font-weight:800;
+  margin-bottom:6px;color:var(--text);
+}
+.mb-logo em{font-style:normal;color:var(--accent);}
+.mb-icon{font-size:64px;margin-bottom:20px;}
+.mb-title{
+  font-family:'Playfair Display',serif;
+  font-size:22px;font-weight:800;
+  color:var(--text);margin-bottom:10px;line-height:1.3;
+}
+.mb-sub{
+  font-size:14px;color:var(--text2);line-height:1.7;
+  max-width:320px;margin-bottom:28px;
+}
+.mb-steps{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:14px;padding:20px 24px;
+  max-width:320px;width:100%;margin-bottom:24px;
+  text-align:left;
+}
+.mb-step{
+  display:flex;align-items:flex-start;gap:12px;
+  margin-bottom:14px;font-size:13px;color:var(--text2);
+  line-height:1.5;
+}
+.mb-step:last-child{margin-bottom:0;}
+.mb-step-num{
+  width:24px;height:24px;border-radius:50%;
+  background:var(--accent);color:#000;
+  font-size:11px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;margin-top:1px;
+}
+.mb-url{
+  display:inline-block;
+  background:var(--accent-dim);border:1px solid var(--accent);
+  color:var(--accent);border-radius:8px;
+  padding:10px 20px;font-size:13px;font-weight:700;
+  letter-spacing:.3px;font-family:'Cabinet Grotesk',sans-serif;
+  margin-bottom:8px;
+}
+.mb-note{font-size:11px;color:var(--text3);}
+
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     MOBILE BLOCK BANNER
+══════════════════════════════════════ -->
+<div class="mobile-block">
+  <div class="mb-logo">Hire<em>Kit</em>™</div>
+  <div style="font-size:11px;color:var(--text3);margin-bottom:24px;">by Aaron Vaidya</div>
+  <div class="mb-icon">🖥️</div>
+  <div class="mb-title">HireKit works best<br>on a desktop or laptop</div>
+  <div class="mb-sub">
+    HireKit is a professional recruitment tool designed for screens 769px and wider.
+    Please open it on your PC, Mac, or laptop for the best experience.
+  </div>
+  <div class="mb-steps">
+    <div class="mb-step">
+      <div class="mb-step-num">1</div>
+      <div>Open a browser on your <strong>PC or laptop</strong></div>
+    </div>
+    <div class="mb-step">
+      <div class="mb-step-num">2</div>
+      <div>Type the address below in the browser bar</div>
+    </div>
+    <div class="mb-step">
+      <div class="mb-step-num">3</div>
+      <div>Log in and start building interview kits</div>
+    </div>
+  </div>
+  <div class="mb-url">aaronvaidya.com</div>
+  <div class="mb-note">© 2026 Aaron Vaidya · HireKit™</div>
+</div>
+
+<div class="bg-grid"></div>
+<div class="bg-orb bg-orb-1"></div>
+<div class="bg-orb bg-orb-2"></div>
+
+<!-- ═══════════ LOGIN ═══════════ -->
+<div id="pgLogin" class="page active">
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="auth-logo"><svg width="28" height="28" viewBox="0 0 100 130" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;">
+  <path d="M50 5 L90 50 L70 50 L50 90 L30 50 L10 50 Z" stroke="var(--accent)" stroke-width="3" fill="none"/>
+  <path d="M30 50 L50 5 L70 50 Z" fill="var(--accent)" opacity="0.9"/>
+  <path d="M30 50 L50 90 L70 50 Z" fill="var(--accent)" opacity="0.7"/>
+</svg><span>Hire<em style="font-style:normal;color:var(--accent);">Kit</em></span></div>
+      <div class="auth-title">Welcome back</div>
+      <div class="auth-sub">Sign in to your HireKit account.</div>
+      <div class="auth-err" id="loginErr"></div>
+      <div class="field"><label>Email</label><input type="text" id="loginEmail" placeholder="you@company.com" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <div class="field"><label>Password</label><input type="password" id="loginPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <button class="btn-primary" onclick="doLogin()">Sign In →</button>
+      <div class="auth-switch">No account? <a onclick="showPage('pgSignup')">Sign up with invite code</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ SIGNUP ═══════════ -->
+<div id="pgSignup" class="page">
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="auth-logo"><svg width="28" height="28" viewBox="0 0 100 130" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;">
+  <path d="M50 5 L90 50 L70 50 L50 90 L30 50 L10 50 Z" stroke="var(--accent)" stroke-width="3" fill="none"/>
+  <path d="M30 50 L50 5 L70 50 Z" fill="var(--accent)" opacity="0.9"/>
+  <path d="M30 50 L50 90 L70 50 Z" fill="var(--accent)" opacity="0.7"/>
+</svg><span>Hire<em style="font-style:normal;color:var(--accent);">Kit</em></span></div>
+      <div class="auth-title">Create Account</div>
+      <div class="auth-sub">Invite-only. Contact the admin for a code.</div>
+      <div class="auth-err" id="signupErr"></div>
+      <div class="field"><label>Full Name</label><input type="text" id="suName" placeholder="Your name"></div>
+      <div class="field"><label>Email</label><input type="text" id="suEmail" placeholder="you@company.com"></div>
+      <div class="field"><label>Password</label><input type="password" id="suPass" placeholder="Min 6 characters"></div>
+      <div class="field">
+        <label>Invite Code</label>
+        <input type="text" id="suCode" placeholder="Enter invite code">
+        <div class="invite-note">Contact <a href="mailto:contact@aaronvaidya.com" style="color:var(--accent);">contact@aaronvaidya.com</a> to get a code.</div>
+      </div>
+      <button class="btn-primary" onclick="doSignup()">Create Account →</button>
+      <div class="auth-switch">Have an account? <a onclick="showPage('pgLogin')">Sign in</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ PAYWALL ═══════════ -->
+<div id="pgPaywall" class="page">
+  <div class="paywall-wrap">
+    <div class="paywall-card">
+      <div class="pw-icon">🔒</div>
+      <div class="pw-title">Unlock HireKit</div>
+      <div class="pw-sub">Choose how you want to use HireKit. Pay ₹500 for a pack of 3 kits, or subscribe monthly for unlimited access.</div>
+      <div class="plans-grid">
+        <div class="plan-box">
+          <div class="plan-badge i">Pay Per Use</div>
+          <div class="plan-name">Kit Pack</div>
+          <div class="plan-price">₹500 <small>/ 3 kits</small></div>
+          <div class="plan-desc">Buy a pack of 3 interview kits. Perfect if you hire occasionally.</div>
+          <ul class="plan-feats">
+            <li>3 Interview Kit Generations</li>
+            <li>Candidate Profile Analysis</li>
+            <li>Interview Notes</li>
+            <li>PDF &amp; Print Export</li>
+          </ul>
+          <button class="btn-pay" onclick="fakeBuyPack()">Buy 3 Kits — ₹500</button>
+        </div>
+        <div class="plan-box hot">
+          <div class="plan-badge i">Best Value</div>
+          <div class="plan-name">Monthly Pro</div>
+          <div class="plan-price">₹1,500 <small>/ month</small></div>
+          <div class="plan-desc">Unlimited kits every month. Best for active recruiters.</div>
+          <ul class="plan-feats">
+            <li>Unlimited Kit Generation</li>
+            <li>Candidate Profile Analysis</li>
+            <li>Interview Notes</li>
+            <li>PDF &amp; Print Export</li>
+            <li>1 User Seat</li>
+          </ul>
+          <button class="btn-pay" onclick="fakeUpgrade()">Subscribe — ₹1,500/mo</button>
+        </div>
+        <div class="plan-box" style="grid-column:1/-1;">
+          <div class="plan-badge c">Company</div>
+          <div class="plan-name">Enterprise</div>
+          <div class="plan-price" style="font-size:20px;padding-top:5px;">Custom Pricing</div>
+          <div class="plan-desc">For staffing firms, HR agencies &amp; multi-recruiter teams with multiple users.</div>
+          <ul class="plan-feats" style="display:grid;grid-template-columns:1fr 1fr;gap:6px 20px;">
+            <li>Everything in Monthly Pro</li><li>Multiple User Seats</li>
+            <li>Bulk Resume Processing</li><li>Dedicated Account Manager</li><li>Custom Onboarding</li>
+          </ul>
+          <button class="btn-contact-plan" onclick="contactSales()">Contact for Quotation →</button>
+        </div>
+      </div>
+      <div class="pw-note">Kit Pack &amp; Monthly Pro · payments via Gumroad · no refunds on used kits · Monthly plan cancels anytime &nbsp;|&nbsp; Enterprise · reply within 24 hrs</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ NAV ═══════════ -->
+<nav class="nav" id="mainNav" style="display:none;">
+  <div class="nav-logo" onclick="goTab('kit')"><svg width="28" height="28" viewBox="0 0 100 130" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;">
+  <path d="M50 5 L90 50 L70 50 L50 90 L30 50 L10 50 Z" stroke="var(--accent)" stroke-width="3" fill="none"/>
+  <path d="M30 50 L50 5 L70 50 Z" fill="var(--accent)" opacity="0.9"/>
+  <path d="M30 50 L50 90 L70 50 Z" fill="var(--accent)" opacity="0.7"/>
+</svg><span style="font-weight:700;">Hire<em style="font-style:normal;color:var(--accent);">Kit</em></span></div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" id="tab-kit"    onclick="goTab('kit')">   ⚡ Kit Generator</button>
+    <button class="nav-tab"        id="tab-qa"     onclick="goTab('qa')">    ❓ Q&amp;A Screening</button>
+    <button class="nav-tab"        id="tab-review" onclick="goTab('review')">👥 Candidate Review</button>
+    <button class="nav-tab"        id="tab-notes"  onclick="goTab('notes')"> 📝 Notes</button>
+    <button class="nav-tab"        id="tab-admin"  onclick="goTab('admin')" style="display:none;"> 🛡 Admin</button>
+  </div>
+  <div class="nav-right">
+    <button class="btn-refresh" title="Refresh" onclick="location.reload()">↻</button>
+    <div class="theme-toggle" onclick="toggleTheme()">
+      <div class="t-track"><div class="t-knob"></div></div>
+      <span id="tIcon">🌙</span><span class="t-lbl" id="tLbl">Dark</span>
+    </div>
+    <div class="nav-user" onclick="doLogout()">
+      <div class="user-av" id="userAv">A</div>
+      <span id="userName">User</span>
+      <span style="color:var(--text3);font-size:10px;">· out</span>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════ APP ═══════════ -->
+<div id="pgApp" class="page">
+<!-- LEFT SIDEBAR -->
+<div class="left-sb" id="leftSb">
+  <!-- Saved JDs -->
+  <div class="lsb-section">
+    <div class="lsb-section-title">
+      📋 Saved JDs
+      <button class="lsb-add-btn" onclick="openSaveJdModal()" title="Save current JD">+</button>
+    </div>
+    <div id="lsbJdList"><div class="lsb-empty">No JDs saved yet.<br>Generate a kit to save one.</div></div>
+  </div>
+  <!-- Saved Kits -->
+  <div class="lsb-section">
+    <div class="lsb-section-title">
+      ⚡ Saved Kits
+      <span style="font-size:10px;color:var(--text3);">Pro only</span>
+    </div>
+    <div id="lsbKitList"><div class="lsb-empty">No kits saved yet.</div></div>
+  </div>
+  <!-- Saved Q&As -->
+  <div class="lsb-section" style="border-bottom:none;">
+    <div class="lsb-section-title">
+      ❓ Saved Q&As
+    </div>
+    <div id="lsbQaList"><div class="lsb-empty">No Q&As saved yet.</div></div>
+  </div>
+</div>
+
+<!-- SIDEBAR TOGGLE -->
+<button class="sb-toggle-btn" id="sbToggleBtn" onclick="toggleLeftSb()">◀ SAVED</button>
+
+<!-- MAIN AREA -->
+<div class="app-main" id="appMain">
+
+  <!-- ── KIT GENERATOR ── -->
+  <div id="content-kit" class="content">
+    <div class="hero">
+      <h1>Generate <em>Interview Kits</em><br>in seconds, not hours.</h1>
+      <p>Upload a JD, add keywords and context — get a complete Q&amp;A kit with green flags, red flags, and scoring guides.</p>
+    </div>
+
+    <!-- API KEY BANNER — hidden, key now stored server-side -->
+    <div class="apikey-ok" id="apikeyOk" style="display:none;"></div>
+    <div class="apikey-banner hidden" id="apikeyBanner" style="display:none;"></div>
+
+    <div class="steps">
+      <div class="step active" id="s1"><div class="snum">1</div>Upload JD</div>
+      <div class="step" id="s2"><div class="snum">2</div>Add Context</div>
+      <div class="step" id="s3"><div class="snum">3</div>Generate</div>
+      <div class="step" id="s4"><div class="snum">4</div>Review Kit</div>
+    </div>
+
+    <div id="kitInputArea">
+      <div class="card">
+        <div class="card-head">📁 Upload Documents</div>
+        <div class="upload-grid">
+          <div class="upload-zone" id="jdZone">
+            <input type="file" id="jdFile" accept=".pdf,.doc,.docx,.txt">
+            <div class="uz-icon">📄</div>
+            <div class="uz-label">Job Description</div>
+            <div class="uz-hint">PDF, DOCX or TXT</div>
+            <div class="uz-fname" id="jdFname"></div>
+          </div>
+          <div class="upload-zone" id="resumeZone">
+            <input type="file" id="resumeFile" accept=".pdf,.doc,.docx,.txt">
+            <div class="uz-icon">👤</div>
+            <div class="uz-label">Candidate Resume</div>
+            <div class="uz-hint">PDF, DOCX or TXT</div>
+            <div class="uz-opt">Optional</div>
+            <div class="uz-fname" id="resumeFname"></div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head">✏️ Add Context</div>
+        <div class="field-wrap">
+          <label>Keywords / Required Skills</label>
+          <input type="text" id="kitKeywords" placeholder="e.g. Python, SQL, 3+ years, Agile, client-facing…">
+        </div>
+        <div class="field-wrap" style="margin-bottom:0">
+          <label>Additional Specifications <span style="color:var(--text3);font-weight:400">(optional)</span></label>
+          <textarea id="kitNotes" placeholder="e.g. Senior role managing a team of 5. Focus on leadership. Client is a fintech company…"></textarea>
+        </div>
+      </div>
+      <div class="err-box" id="kitErr"></div>
+      <button class="btn-gen" id="kitBtn" onclick="generateKit()">⚡ Generate Interview Kit</button>
+    </div>
+
+    <div class="loading" id="kitLoading">
+      <div class="spinner"></div>
+      <div class="loading-title">Building your Interview Kit…</div>
+      <div class="loading-sub">Claude AI is analysing your JD, resume &amp; keywords</div>
+    </div>
+
+    <div class="out-section" id="kitOutput">
+      <div class="out-head">
+        <div class="out-title">Kit <span>Ready</span> ✓</div>
+        <div class="out-actions">
+          <button class="btn-sm" onclick="saveKitToSidebar()">💾 Save Kit</button>
+          <button class="btn-sm" onclick="window.print()">🖨️ Print / PDF</button>
+          <button class="btn-sm" onclick="copyKit()">📋 Copy All</button>
+          <button class="btn-sm danger" onclick="resetKit()">↩ New Kit</button>
+        </div>
+      </div>
+      <div class="meta-bar" id="kitMeta"></div>
+      <div class="q-list" id="qList"></div>
+    </div>
+  </div>
+
+
+  <!-- ── Q&A SCREENING ── -->
+  <div id="content-qa" class="content" style="display:none;">
+    <div class="hero">
+      <h1>Q&amp;A <em>Screening</em></h1>
+      <p>Generate targeted screening and interview questions only — no full kit needed. Save them to your sidebar for reuse.</p>
+    </div>
+
+    <!-- JD UPLOAD CARD -->
+    <div class="card">
+      <div class="card-head">📄 Job Description <span style="color:var(--text3);font-weight:400;font-size:10px;text-transform:none;letter-spacing:0;">(Upload file OR paste text)</span></div>
+      <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:start;flex-wrap:wrap;">
+
+        <!-- Upload zone -->
+        <div>
+          <label style="display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;">Upload JD File <span style="color:var(--text3);font-weight:400">(PDF, DOCX, TXT)</span></label>
+          <div class="upload-zone" id="qaJdZone" style="padding:16px 12px;">
+            <input type="file" id="qaJdFile" accept=".pdf,.doc,.docx,.txt" onchange="loadQaJd(this)">
+            <div style="font-size:20px;margin-bottom:6px;">📄</div>
+            <div style="font-size:12px;font-weight:600;">Upload JD</div>
+            <div style="font-size:10px;color:var(--text3);">PDF, DOCX or TXT</div>
+            <div class="uz-fname" id="qaJdFname"></div>
+          </div>
+        </div>
+
+        <!-- OR divider -->
+        <div style="display:flex;align-items:center;justify-content:center;padding-top:26px;color:var(--text3);font-size:12px;font-weight:600;">OR</div>
+
+        <!-- Paste JD -->
+        <div>
+          <label style="display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;">Paste JD Text</label>
+          <textarea id="qaJdText" style="min-height:110px;" placeholder="Paste the full Job Description here…"></textarea>
+        </div>
+      </div>
+
+      <div style="margin-top:10px;display:flex;align-items:center;gap:10px;">
+        <div id="qaJdStatus" style="font-size:12px;color:var(--text3);">No JD loaded — you can also just type a role below.</div>
+        <button onclick="clearQaJd()" style="font-size:11px;padding:3px 9px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text2);cursor:pointer;font-family:inherit;flex-shrink:0;">Clear</button>
+      </div>
+    </div>
+
+    <!-- ROLE / KEYWORDS CARD -->
+    <div class="card">
+      <div class="card-head">📋 Role &amp; Keywords</div>
+      <div class="field-wrap">
+        <label>Job Title or Topic <span style="color:var(--text3);font-weight:400">(auto-filled from JD if uploaded)</span></label>
+        <input type="text" id="qaRole" placeholder="e.g. Senior Data Analyst, Python Developer, HR Manager…">
+      </div>
+      <div class="field-wrap">
+        <label>Keywords / Required Skills <span style="color:var(--text3);font-weight:400">(optional)</span></label>
+        <input type="text" id="qaKeywords" placeholder="e.g. Python, SQL, 5+ years, leadership, Agile, client-facing…">
+      </div>
+      <div class="field-wrap">
+        <label>Focus Area <span style="color:var(--text3);font-weight:400">(optional)</span></label>
+        <input type="text" id="qaFocus" placeholder="e.g. Technical depth, Leadership, Culture fit, Communication…">
+      </div>
+      <div class="field-wrap" style="margin-bottom:0;">
+        <label>Number of Questions</label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <label style="display:flex;align-items:center;gap:5px;font-size:13px;font-weight:400;cursor:pointer;color:var(--text2);margin-bottom:0;"><input type="radio" name="qaCount" value="5"> 5</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:13px;font-weight:400;cursor:pointer;color:var(--text2);margin-bottom:0;"><input type="radio" name="qaCount" value="10" checked> 10</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:13px;font-weight:400;cursor:pointer;color:var(--text2);margin-bottom:0;"><input type="radio" name="qaCount" value="15"> 15</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:13px;font-weight:400;cursor:pointer;color:var(--text2);margin-bottom:0;"><input type="radio" name="qaCount" value="20"> 20</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">🎯 Question Types</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <label style="display:flex;align-items:center;gap:6px;padding:7px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:13px;color:var(--text2);margin-bottom:0;transition:all .2s;">
+          <input type="checkbox" id="qtTechnical" checked style="accent-color:var(--accent);"> Technical
+        </label>
+        <label style="display:flex;align-items:center;gap:6px;padding:7px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:13px;color:var(--text2);margin-bottom:0;transition:all .2s;">
+          <input type="checkbox" id="qtBehavioural" checked style="accent-color:var(--accent);"> Behavioural
+        </label>
+        <label style="display:flex;align-items:center;gap:6px;padding:7px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:13px;color:var(--text2);margin-bottom:0;transition:all .2s;">
+          <input type="checkbox" id="qtSituational" checked style="accent-color:var(--accent);"> Situational
+        </label>
+        <label style="display:flex;align-items:center;gap:6px;padding:7px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:13px;color:var(--text2);margin-bottom:0;transition:all .2s;">
+          <input type="checkbox" id="qtScreening" checked style="accent-color:var(--accent);"> HR Screening
+        </label>
+      </div>
+    </div>
+
+    <div class="err-box" id="qaErr"></div>
+    <button class="btn-gen" id="qaBtn" onclick="generateQA()">❓ Generate Q&amp;A</button>
+
+    <div class="loading" id="qaLoading" style="display:none;">
+      <div class="spinner"></div>
+      <div class="loading-title">Generating Questions…</div>
+      <div class="loading-sub">Building targeted screening questions</div>
+    </div>
+
+    <div class="out-section" id="qaOutput" style="display:none;">
+      <div class="out-head">
+        <div class="out-title">Q&amp;A <span>Ready</span> ✓</div>
+        <div class="out-actions">
+          <button class="btn-sm" onclick="saveQAToSidebar()">💾 Save to Sidebar</button>
+          <button class="btn-sm" onclick="window.print()">🖨️ Print</button>
+          <button class="btn-sm" onclick="copyQA()">📋 Copy</button>
+          <button class="btn-sm danger" onclick="resetQA()">↩ New</button>
+        </div>
+      </div>
+      <div class="meta-bar" id="qaMeta"></div>
+      <div id="qaList" style="display:flex;flex-direction:column;gap:10px;"></div>
+    </div>
+  </div>
+
+  <!-- ── CANDIDATE REVIEW ── -->
+  <div id="content-review" class="content" style="display:none;">
+    <div class="hero">
+      <h1>Candidate <em>Profile Review</em></h1>
+      <p>Upload a JD and resumes. Get a detailed AI match breakdown for each candidate.</p>
+    </div>
+
+    <!-- JD INPUT CARD -->
+    <div class="card" style="margin-bottom:20px;">
+      <div class="card-head">📋 Job Description for Matching</div>
+      <div class="upload-zone" id="crJdZone" style="max-width:400px;">
+        <input type="file" id="crJdFile" accept=".pdf,.doc,.docx,.txt" onchange="loadCrJd(this)">
+        <div style="font-size:24px;margin-bottom:8px;">📄</div>
+        <div style="font-size:13px;font-weight:600;margin-bottom:3px;">Upload JD File</div>
+        <div style="font-size:11px;color:var(--text3);">PDF, DOCX or TXT</div>
+        <div class="uz-fname" id="crJdFname"></div>
+      </div>
+      <!-- hidden textarea still needed for internal use -->
+      <textarea id="crJd" style="display:none;"></textarea>
+      <div style="margin-top:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        <div id="crJdStatus" style="font-size:12px;color:var(--text3);">No JD loaded yet.</div>
+        <button onclick="clearCrJd()" style="font-size:11px;padding:4px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text2);cursor:pointer;font-family:inherit;">Clear JD</button>
+      </div>
+    </div>
+
+    <div class="cr-layout">
+      <div class="cr-sidebar">
+        <div class="cr-sb-head">Candidates</div>
+        <div class="cr-drop">
+          <input type="file" id="crFiles" accept=".pdf,.doc,.docx,.txt" multiple onchange="addCandidates(this)">
+          <p>📂 Upload resumes<br><span style="font-size:10px;">PDF, DOCX, TXT · bulk OK</span></p>
+        </div>
+        <div style="margin-bottom:10px;">
+          <button onclick="clearAllCandidates()" style="width:100%;font-size:11px;padding:6px;background:var(--surface2);border:1px solid var(--border);border-radius:7px;color:var(--text3);cursor:pointer;font-family:inherit;transition:all .2s;" onmouseover="this.style.color='var(--red)';this.style.borderColor='var(--red)'" onmouseout="this.style.color='var(--text3)';this.style.borderColor='var(--border)'">🗑 Clear All Candidates</button>
+        </div>
+        <div class="cand-list" id="candList">
+          <div style="font-size:12px;color:var(--text3);text-align:center;padding:14px 0;">No candidates yet.<br>Upload resumes above.</div>
+        </div>
+      </div>
+      <div class="cr-main" id="crMain">
+        <div class="cr-empty">
+          <div class="cr-empty-icon">👥</div>
+          <h3>Select a Candidate</h3>
+          <p>Load a JD above, upload resumes on the left, then click a name to see the match dashboard.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── NOTES ── -->
+  <div id="content-notes" class="content" style="display:none;">
+    <div class="hero">
+      <h1>Interview <em>Notes</em></h1>
+      <p>Jot points during interviews. Format, highlight and save — stored in your browser.</p>
+    </div>
+    <div class="notes-layout">
+      <div class="notes-sb">
+        <div class="notes-sb-head">My Notes <button class="btn-new-note" onclick="newNote()">+ New</button></div>
+        <div class="note-list" id="noteList"></div>
+      </div>
+      <div class="notes-editor-wrap">
+        <div class="notes-empty-state" id="notesEmpty">
+          <div class="nei">📝</div>
+          <h3>No note selected</h3>
+          <p>Click "+ New" or pick one from the list.</p>
+        </div>
+        <div id="notesUI" style="display:none;flex-direction:column;flex:1;">
+          <div class="notes-toolbar">
+            <input class="note-title-in" id="noteTitleIn" placeholder="Note title…" oninput="debounceSave()">
+            <div class="tb-div"></div>
+            <button class="tool-btn" title="Bold"      onclick="fmtDoc('bold')"><b>B</b></button>
+            <button class="tool-btn" title="Italic"    onclick="fmtDoc('italic')"><i>I</i></button>
+            <button class="tool-btn" title="Underline" onclick="fmtDoc('underline')"><u>U</u></button>
+            <button class="tool-btn" title="Highlight" onclick="fmtHL()">🖊</button>
+            <button class="tool-btn" title="Bullets"   onclick="fmtDoc('insertUnorderedList')">≡</button>
+            <div class="tb-div"></div>
+            <div class="saved-badge" id="savedBadge">✓ Saved</div>
+            <button class="note-save-btn" onclick="saveNote()">Save</button>
+          </div>
+          <div class="notes-editor" id="notesEditor" contenteditable="true" data-placeholder="Start typing your interview notes here…" oninput="debounceSave()"></div>
+          <div class="notes-footer">
+            <span class="notes-wc" id="wcCount">0 words</span>
+            <button class="notes-del" onclick="deleteNote()">🗑 Delete note</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ── ADMIN ── -->
+  <div id="content-admin" class="content" style="display:none;">
+    <div class="hero">
+      <h1>Admin <em>Dashboard</em></h1>
+      <p>Monitor users, activity, kits generated, and support tickets.</p>
+    </div>
+
+    <!-- Stats row -->
+    <div id="adminStats" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:24px;"></div>
+
+    <!-- Tabs -->
+    <div style="display:flex;gap:6px;margin-bottom:18px;flex-wrap:wrap;" id="adminTabRow">
+      <button class="admin-tab active" onclick="switchAdminTab('users')"   id="at-users">👤 Users</button>
+      <button class="admin-tab"        onclick="switchAdminTab('activity')" id="at-activity">📊 Activity</button>
+      <button class="admin-tab"        onclick="switchAdminTab('tickets')"  id="at-tickets">🎫 Tickets</button>
+      <button class="admin-tab"        onclick="switchAdminTab('keys')"     id="at-keys">🔑 API Keys</button>
+    </div>
+
+    <!-- Users panel -->
+    <div id="ap-users">
+      <div class="card" style="padding:0;overflow:hidden;">
+        <div style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+          <div style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1px;">All Registered Users</div>
+          <button onclick="refreshAdmin()" style="padding:6px 13px;background:var(--accent);border:none;border-radius:6px;color:#000;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">↻ Refresh</button>
+        </div>
+        <div id="adminUsersTable" style="overflow-x:auto;"></div>
+      </div>
+    </div>
+
+    <!-- Activity panel -->
+    <div id="ap-activity" style="display:none;">
+      <div class="card" style="padding:0;overflow:hidden;">
+        <div style="padding:16px 20px;border-bottom:1px solid var(--border);">
+          <div style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1px;">Kit Generation Activity</div>
+        </div>
+        <div id="adminActivityTable" style="overflow-x:auto;"></div>
+      </div>
+    </div>
+
+    <!-- Tickets panel -->
+    <div id="ap-tickets" style="display:none;">
+      <div class="card" style="margin-bottom:14px;">
+        <div class="card-head">🎫 Raise / View Tickets</div>
+        <p style="font-size:13px;color:var(--text2);margin-bottom:14px;line-height:1.6;">Tickets are submitted via the sidebar Query form. They are sent to <strong>contact@aaronvaidya.com</strong>. Below is a log of all queries saved in this browser.</p>
+        <div id="adminTicketsTable"></div>
+        <div style="margin-top:14px;">
+          <button onclick="clearTickets()" style="padding:7px 14px;background:var(--red-dim);border:1px solid var(--red);border-radius:7px;color:var(--red);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;">🗑 Clear Ticket Log</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- API Keys panel -->
+    <div id="ap-keys" style="display:none;">
+      <div class="card">
+        <div class="card-head">🔑 API Key Management</div>
+        <p style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.7;">
+          <strong>For production (recommended):</strong> Store one master Anthropic API key in your backend (e.g. a Vercel serverless function). Users never see or manage a key — calls go through your server. This is the proper SaaS model.<br><br>
+          <strong>Current mode (browser-based):</strong> Each user pastes their own key. Stored locally in their browser. Sufficient for testing and personal use.
+        </p>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px;margin-bottom:14px;">
+          <div style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Your Stored Key</div>
+          <div id="adminKeyDisplay" style="font-size:13px;color:var(--text2);font-family:monospace;"></div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <input type="password" id="adminKeyInput" placeholder="sk-ant-api03-…" style="flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:7px;color:var(--text);font-family:inherit;font-size:13px;padding:10px 12px;outline:none;min-width:200px;">
+          <button onclick="adminSaveKey()" style="padding:10px 16px;background:var(--accent);border:none;border-radius:7px;color:#000;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">Update Key</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head">🚀 Deploy to Your Domain</div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:14px;">
+            <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:6px;">Step 1 — Upload to Vercel (Free)</div>
+            <p style="font-size:13px;color:var(--text2);line-height:1.6;">Go to <a href="https://vercel.com" target="_blank" style="color:var(--accent);">vercel.com</a> → Sign up free → Click "Add New Project" → Drag and drop this HTML file → Click Deploy. Done in 2 minutes.</p>
+          </div>
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:14px;">
+            <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:6px;">Step 2 — Connect Your Domain</div>
+            <p style="font-size:13px;color:var(--text2);line-height:1.6;">In Vercel → Project Settings → Domains → Add your domain (e.g. aaronvaidya.com). Vercel gives you DNS records to add at your domain registrar. Takes 5–10 minutes to go live.</p>
+          </div>
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:14px;">
+            <div style="font-size:12px;font-weight:700;color:var(--amber);margin-bottom:6px;">Step 3 — For Production API Calls (Important)</div>
+            <p style="font-size:13px;color:var(--text2);line-height:1.6;">Currently the app calls the Anthropic API directly from the browser. For a proper SaaS product, create a Vercel serverless function (<code style="background:var(--surface3);padding:1px 5px;border-radius:3px;font-size:12px;">/api/generate.js</code>) that holds your master API key. Users call your server, not Anthropic directly. This hides your key and lets you control costs. Email <a href="mailto:contact@aaronvaidya.com" style="color:var(--accent);">contact@aaronvaidya.com</a> if you need help setting this up.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /appMain -->
+</div><!-- /pgApp -->
+
+<!-- ═══════════ SIDEBAR ═══════════ -->
+<button class="sb-trigger" id="sbTrigger" onclick="openSB()">☰ HELP &amp; PLANS</button>
+<div class="sb-overlay" id="sbOverlay" onclick="closeSB()"></div>
+<div class="help-sb" id="helpSB">
+  <div class="sb-header">
+    <h2>Help &amp; Plans</h2>
+    <button class="sb-close" onclick="closeSB()">✕</button>
+  </div>
+  <div class="sb-tabs">
+    <button class="stab active" id="stab-upgrade" onclick="switchSTab('upgrade')">⬆ Upgrade</button>
+    <button class="stab"        id="stab-query"   onclick="switchSTab('query')">💬 Query</button>
+    <button class="stab"        id="stab-contact" onclick="switchSTab('contact')">📬 Contact</button>
+  </div>
+  <!-- upgrade panel -->
+  <div class="sb-panel" id="sp-upgrade">
+    <div class="splan">
+      <div class="splan-badge i">Pay Per Use</div>
+      <div class="splan-name">Kit Pack</div>
+      <div class="splan-price">₹500 <small>/ 3 kits</small></div>
+      <ul class="splan-feats"><li>3 Kit Generations</li><li>Candidate Analysis</li><li>Notes &amp; PDF Export</li></ul>
+      <button class="sb-btn-pay" onclick="fakeBuyPack()">Buy 3 Kits — ₹500</button>
+    </div>
+    <div class="splan hot">
+      <div class="splan-badge i">Best Value</div>
+      <div class="splan-name">Monthly Pro</div>
+      <div class="splan-price">₹1,500 <small>/ month</small></div>
+      <ul class="splan-feats"><li>Unlimited Kits</li><li>Candidate Analysis</li><li>Notes &amp; PDF Export</li><li>1 Seat</li></ul>
+      <button class="sb-btn-pay" onclick="fakeUpgrade()">Subscribe — ₹1,500/mo</button>
+    </div>
+    <div class="splan">
+      <div class="splan-badge c">Company</div>
+      <div class="splan-name">Enterprise</div>
+      <div class="splan-price" style="font-size:17px;">Custom Pricing</div>
+      <ul class="splan-feats"><li>Everything in Pro</li><li>Multiple Seats</li><li>Bulk Processing</li><li>Account Manager</li></ul>
+      <button class="sb-btn-contact" onclick="contactSales()">Contact for Quotation →</button>
+    </div>
+  </div>
+  <!-- query panel -->
+  <div class="sb-panel hidden" id="sp-query">
+    <div class="qform" id="queryForm">
+      <div><label>Your Name</label><input type="text" id="qName" placeholder="Full name"></div>
+      <div><label>Email</label><input type="text" id="qEmail" placeholder="your@email.com"></div>
+      <div><label>Query Type</label>
+        <select id="qType"><option value="">— Select —</option><option>Billing / Payment</option><option>Technical Issue</option><option>Feature Request</option><option>Enterprise Enquiry</option><option>Other</option></select>
+      </div>
+      <div><label>Message</label><textarea id="qMsg" placeholder="Describe your query…"></textarea></div>
+      <button class="sb-btn-send" onclick="sendQuery()">Send Query →</button>
+    </div>
+    <div class="q-sent" id="qSent"><div style="font-size:28px;">✅</div><p>Query sent! We'll reply within 24 hours.</p></div>
+  </div>
+  <!-- contact panel -->
+  <div class="sb-panel hidden" id="sp-contact">
+    <div class="contact-box">
+      <p>📧 <strong>Email</strong><br><a href="mailto:contact@aaronvaidya.com">contact@aaronvaidya.com</a></p>
+    </div>
+    <div class="contact-box">
+      <p>🏢 <strong>Enterprise Enquiries</strong><br>Email us with your company name, team size and use case. We'll respond within 24 hours.</p>
+    </div>
+    <div class="contact-box">
+      <p>🕐 <strong>Response Time</strong><br>Mon–Sat · 10 AM – 7 PM IST</p>
+    </div>
+    <div class="contact-box">
+      <p>🔑 <strong>Update API Key</strong></p>
+      <div class="key-row">
+        <input type="password" id="sbKeyInput" placeholder="sk-ant-api03-…">
+        <button onclick="updateKeyFromSidebar()">Save</button>
+      </div>
+    </div>
+  </div>
+  <div class="sb-footer">
+    <strong>HireKit™</strong><br>
+    Built &amp; designed by <a href="mailto:contact@aaronvaidya.com">Aaron Vaidya</a><br>
+    <span style="font-size:10px;">© 2025 Aaron Vaidya · All rights reserved · HireKit™ is a trademark of Aaron Vaidya</span>
+  </div>
+</div>
+
+<!-- ═══════════ GLOBAL FOOTER ═══════════ -->
+<div class="gfooter" id="gfooter">
+  <strong>HireKit™</strong> · Built &amp; designed by <a href="mailto:contact@aaronvaidya.com">Aaron Vaidya</a> · <span style="font-size:11px;">© 2025 Aaron Vaidya · All rights reserved</span>
+</div>
+
+<!-- ═══════════ PASTE MODAL ═══════════ -->
+<div class="paste-modal-bg" id="pasteModalBg" style="display:none;">
+  <div class="paste-modal">
+    <h3>📋 Paste Resume Text</h3>
+    <p id="pasteModalMsg">Could not auto-extract text from this file. Please open it, select all text, copy and paste below.</p>
+    <textarea id="pasteTextArea" placeholder="Paste the full resume text here…"></textarea>
+    <div class="paste-modal-btns">
+      <button class="pm-save" onclick="savePaste()">Save &amp; Continue</button>
+      <button class="pm-skip" onclick="skipPaste()">Skip</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════
+   CONSTANTS
+═══════════════════════════════════════ */
+const OWNER_EMAIL  = 'contact@aaronvaidya.com';
+const OWNER_PASS   = 'Aaron@IQ2025';
+const INVITE_CODE  = 'IQ-INVITE-2025';
+const KITS_PER_PACK = 3;  // users pay ₹500 per 3 kits, or ₹1500/month unlimited
+
+/* ═══════════════════════════════════════
+   STATE
+═══════════════════════════════════════ */
+let currentUser    = null;
+let candidates     = [];
+let pasteQueue     = [];   // indices of candidates needing paste
+let currentCandIdx = -1;
+let notes          = [];
+let currentNoteId  = null;
+let saveTimer      = null;
+
+/* ═══════════════════════════════════════
+   BOOT
+═══════════════════════════════════════ */
+window.addEventListener('DOMContentLoaded', () => {
+  loadTheme();
+  notes = JSON.parse(localStorage.getItem('iq_notes') || '[]');
+
+  const saved = localStorage.getItem('iq_user');
+  if (saved) {
+    try {
+      currentUser = JSON.parse(saved);
+      bootApp();
+    } catch(e) {
+      localStorage.removeItem('iq_user');
+    }
+  }
+});
+
+/* ═══════════════════════════════════════
+   THEME
+═══════════════════════════════════════ */
+function loadTheme() {
+  const t = localStorage.getItem('iq_theme') || 'dark';
+  applyTheme(t);
+}
+function toggleTheme() {
+  const cur  = document.documentElement.getAttribute('data-theme');
+  const next = cur === 'dark' ? 'light' : 'dark';
+  applyTheme(next);
+  localStorage.setItem('iq_theme', next);
+}
+function applyTheme(t) {
+  document.documentElement.setAttribute('data-theme', t);
+  const icon = document.getElementById('tIcon');
+  const lbl  = document.getElementById('tLbl');
+  if (icon) icon.textContent = t === 'dark' ? '🌙' : '☀️';
+  if (lbl)  lbl.textContent  = t === 'dark' ? 'Dark' : 'Light';
+}
+
+/* ═══════════════════════════════════════
+   PAGE ROUTING
+═══════════════════════════════════════ */
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function goTab(tab) {
+  ['kit','qa','review','notes','admin'].forEach(t => {
+    const tabEl = document.getElementById('tab-' + t);
+    const conEl = document.getElementById('content-' + t);
+    if (tabEl) tabEl.classList.remove('active');
+    if (conEl) conEl.style.display = 'none';
+  });
+  const activeTab = document.getElementById('tab-' + tab);
+  const activeContent = document.getElementById('content-' + tab);
+  if (activeTab) activeTab.classList.add('active');
+  if (activeContent) activeContent.style.display = 'block';
+  if (tab === 'admin') refreshAdmin();
+}
+
+/* ═══════════════════════════════════════
+   API KEY -- single source of truth
+═══════════════════════════════════════ */
+function getKey() {
+  return localStorage.getItem('iq_apikey') || '';
+}
+
+function saveApiKey() {
+  const val = document.getElementById('apikeyInput').value.trim();
+  if (!val || !val.startsWith('sk-')) {
+    alert('Please enter a valid Anthropic API key (starts with sk-).');
+    return;
+  }
+  localStorage.setItem('iq_apikey', val);
+  document.getElementById('apikeyBanner').classList.add('hidden');
+  const ok = document.getElementById('apikeyOk');
+  ok.classList.add('show');
+  setTimeout(() => ok.classList.remove('show'), 3000);
+}
+
+function updateKeyFromSidebar() {
+  const val = document.getElementById('sbKeyInput').value.trim();
+  if (!val || !val.startsWith('sk-')) {
+    alert('Invalid key -- must start with sk-');
+    return;
+  }
+  localStorage.setItem('iq_apikey', val);
+  document.getElementById('sbKeyInput').value = '';
+  // Also update banner
+  const banner = document.getElementById('apikeyBanner');
+  if (banner) banner.classList.add('hidden');
+  alert('✅ API key updated successfully!');
+}
+
+function checkAndShowKeyBanner() {
+  const key    = getKey();
+  const banner = document.getElementById('apikeyBanner');
+  if (!banner) return;
+  if (key) {
+    banner.classList.add('hidden');
+    document.getElementById('apikeyInput').value = key;
+  } else {
+    banner.classList.remove('hidden');
+  }
+}
+
+/* ═══════════════════════════════════════
+   AUTH
+═══════════════════════════════════════ */
+function doLogin() {
+  const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+  const pass  = document.getElementById('loginPass').value.trim();
+  const errEl = document.getElementById('loginErr');
+  errEl.classList.remove('show');
+
+  if (!email || !pass) { errEl.textContent = 'Please enter email and password.'; errEl.classList.add('show'); return; }
+
+  // Owner
+  // Owner login -- exact match required
+  if (email === OWNER_EMAIL.toLowerCase() && pass === OWNER_PASS) {
+    setUser({ name: 'Aaron', email: OWNER_EMAIL, owner: true, paid: true });
+    return;
+  }
+
+  // Registered users
+  const users = JSON.parse(localStorage.getItem('iq_users') || '[]');
+  const found = users.find(u => u.email.toLowerCase() === email && u.pass === pass);
+  if (!found) {
+    errEl.textContent = 'Incorrect email or password. Check for extra spaces or capital letters.';
+    errEl.classList.add('show'); return;
+  }
+  setUser(found);
+}
+
+function doSignup() {
+  const name  = document.getElementById('suName').value.trim();
+  const email = document.getElementById('suEmail').value.trim().toLowerCase();
+  const pass  = document.getElementById('suPass').value.trim();
+  const code  = document.getElementById('suCode').value.trim();
+  const errEl = document.getElementById('signupErr');
+  errEl.classList.remove('show');
+
+  if (!name || !email || !pass)         { errEl.textContent = 'Please fill in all fields.';               errEl.classList.add('show'); return; }
+  if (code !== INVITE_CODE)             { errEl.textContent = 'Invalid invite code.';                     errEl.classList.add('show'); return; }
+  if (pass.length < 6)                  { errEl.textContent = 'Password must be at least 6 characters.'; errEl.classList.add('show'); return; }
+
+  const users = JSON.parse(localStorage.getItem('iq_users') || '[]');
+  if (users.find(u => u.email === email)) { errEl.textContent = 'Email already registered.'; errEl.classList.add('show'); return; }
+
+  const user = { name, email, pass, owner: false, paid: false };
+  users.push(user);
+  localStorage.setItem('iq_users', JSON.stringify(users));
+  setUser(user);
+}
+
+function setUser(user) {
+  currentUser = user;
+  localStorage.setItem('iq_user', JSON.stringify(user));
+  bootApp();
+}
+
+function bootApp() {
+  document.getElementById('mainNav').style.display = 'flex';
+  document.getElementById('userAv').textContent    = currentUser.name[0].toUpperCase();
+  document.getElementById('userName').textContent  = currentUser.name.split(' ')[0];
+  document.getElementById('sbTrigger').classList.add('show');
+  document.getElementById('gfooter').classList.add('show');
+  // Show admin tab for owner only
+  const adminTabEl = document.getElementById('tab-admin');
+  if (adminTabEl) adminTabEl.style.display = currentUser.owner ? 'flex' : 'none';
+  showPage('pgApp');
+  goTab('kit');
+  checkAndShowKeyBanner();
+  renderNoteList();
+  renderLeftSidebar();
+  // Show sidebar toggle button
+  const sbToggle = document.getElementById('sbToggleBtn');
+  if (sbToggle) sbToggle.classList.add('show');
+}
+
+function doLogout() {
+  if (!confirm('Sign out?')) return;
+  currentUser = null;
+  localStorage.removeItem('iq_user');
+  document.getElementById('mainNav').style.display = 'none';
+  document.getElementById('sbTrigger').classList.remove('show');
+  document.getElementById('gfooter').classList.remove('show');
+  showPage('pgLogin');
+}
+
+/* ═══════════════════════════════════════
+   PAYWALL
+═══════════════════════════════════════ */
+function getKitCount() { return parseInt(localStorage.getItem('iq_kits_' + (currentUser?.email||'')) || '0'); }
+function incKitCount() {
+  localStorage.setItem('iq_kits_' + currentUser.email, getKitCount() + 1);
+  // Deduct credit if using pay-per-pack
+  if (!currentUser.paid && !currentUser.owner && (currentUser.credits || 0) > 0) {
+    currentUser.credits -= 1;
+    localStorage.setItem('iq_user', JSON.stringify(currentUser));
+    // Persist to users store
+    const users = JSON.parse(localStorage.getItem('iq_users') || '[]');
+    const idx   = users.findIndex(u => u.email === currentUser.email);
+    if (idx > -1) { users[idx].credits = currentUser.credits; localStorage.setItem('iq_users', JSON.stringify(users)); }
+  }
+}
+
+function needsPaywall() {
+  if (!currentUser) return true;
+  if (currentUser.owner) return false;          // owner always free
+  if (currentUser.paid) return false;           // monthly subscriber
+  if ((currentUser.credits || 0) > 0) return false; // has paid-for credits
+  return true;                                  // no subscription and no credits -- must pay
+}
+
+function fakeBuyPack() {
+  // In production: redirect to Gumroad ₹500 product link
+  alert('In production this opens your Gumroad ₹500 payment link.\n\nFor demo: adding 3 kit credits now!');
+  currentUser.credits = (currentUser.credits || 0) + KITS_PER_PACK;
+  localStorage.setItem('iq_user', JSON.stringify(currentUser));
+  const users = JSON.parse(localStorage.getItem('iq_users') || '[]');
+  const idx   = users.findIndex(u => u.email === currentUser.email);
+  if (idx > -1) { users[idx].credits = currentUser.credits; localStorage.setItem('iq_users', JSON.stringify(users)); }
+  showPage('pgApp');
+  goTab('kit');
+}
+
+function fakeUpgrade() {
+  alert('In production this opens Gumroad.\n\nFor demo: upgrading now!');
+  currentUser.paid = true;
+  localStorage.setItem('iq_user', JSON.stringify(currentUser));
+  const users = JSON.parse(localStorage.getItem('iq_users') || '[]');
+  const idx   = users.findIndex(u => u.email === currentUser.email);
+  if (idx > -1) { users[idx].paid = true; localStorage.setItem('iq_users', JSON.stringify(users)); }
+  showPage('pgApp');
+}
+
+function contactSales() {
+  const sub  = encodeURIComponent('HireKit Enterprise Quotation Request');
+  const body = encodeURIComponent('Hi,\n\nI am interested in the HireKit Enterprise plan.\n\nCompany Name: \nNumber of Users: \nUse Case: \n\nPlease send a quotation.\n\nThank you.');
+  window.location.href = `mailto:contact@aaronvaidya.com?subject=${sub}&body=${body}`;
+}
+
+/* ═══════════════════════════════════════
+   FILE READING
+═══════════════════════════════════════ */
+/* ═══════════════════════════════════════
+   FILE READING -- PDF, DOCX, TXT all supported
+═══════════════════════════════════════ */
+async function readFileAsText(file) {
+  const ext = file.name.split('.').pop().toLowerCase();
+
+  // ── TXT ──────────────────────────────
+  if (ext === 'txt') {
+    return new Promise(resolve => {
+      const r = new FileReader();
+      r.onload  = e => resolve(e.target.result || '');
+      r.onerror = () => resolve('');
+      r.readAsText(file);
+    });
+  }
+
+  // ── PDF ──────────────────────────────
+  if (ext === 'pdf') {
+    try {
+      // Set worker path for pdf.js
+      if (typeof pdfjsLib !== 'undefined') {
+        pdfjsLib.GlobalWorkerOptions.workerSrc =
+          'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+      } else {
+        console.warn('pdfjsLib not loaded');
+        return '__NEEDS_PASTE__';
+      }
+      const arrayBuffer = await file.arrayBuffer();
+      const pdf         = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      const pages       = [];
+      for (let i = 1; i <= pdf.numPages; i++) {
+        const page    = await pdf.getPage(i);
+        const content = await page.getTextContent();
+        const str     = content.items.map(item => item.str).join(' ');
+        pages.push(str);
+      }
+      const result = pages.join('\n\n').trim();
+      return result || '__NEEDS_PASTE__';
+    } catch(e) {
+      console.error('PDF parse error:', e);
+      return '__NEEDS_PASTE__';
+    }
+  }
+
+  // ── DOCX ─────────────────────────────
+  if (ext === 'docx' || ext === 'doc') {
+    try {
+      if (typeof mammoth === 'undefined') {
+        console.warn('mammoth not loaded');
+        return '__NEEDS_PASTE__';
+      }
+      const arrayBuffer = await file.arrayBuffer();
+      const result      = await mammoth.extractRawText({ arrayBuffer });
+      const text        = result.value.trim();
+      return text || '__NEEDS_PASTE__';
+    } catch(e) {
+      console.error('DOCX parse error:', e);
+      return '__NEEDS_PASTE__';
+    }
+  }
+
+  // ── Unknown -- try reading as plain text ──
+  return new Promise(resolve => {
+    const r = new FileReader();
+    r.onload  = e => resolve(e.target.result || '');
+    r.onerror = () => resolve('');
+    r.readAsText(file);
+  });
+}
+
+/* ─── Kit file upload handlers ─── */
+function setupKitUploads() {
+  setupZone('jdFile', 'jdZone', 'jdFname');
+  setupZone('resumeFile', 'resumeZone', 'resumeFname');
+}
+function setupZone(inputId, zoneId, fnameId) {
+  const input = document.getElementById(inputId);
+  const zone  = document.getElementById(zoneId);
+  const fname = document.getElementById(fnameId);
+  if (!input) return;
+  input.addEventListener('change', () => {
+    if (input.files[0]) { zone.classList.add('has-file'); fname.textContent = '✓ ' + input.files[0].name; }
+  });
+  zone.addEventListener('dragover',  e => { e.preventDefault(); zone.classList.add('drag'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('drag'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault(); zone.classList.remove('drag');
+    if (e.dataTransfer.files.length) { input.files = e.dataTransfer.files; input.dispatchEvent(new Event('change')); }
+  });
+}
+setupKitUploads();
+
+/* ═══════════════════════════════════════
+   KIT GENERATOR
+═══════════════════════════════════════ */
+function setStep(n) {
+  [1,2,3,4].forEach(i => {
+    const el = document.getElementById('s'+i); if (!el) return;
+    el.classList.remove('active','done');
+    if (i < n)  el.classList.add('done');
+    if (i === n) el.classList.add('active');
+  });
+}
+
+async function generateKit() {
+  if (needsPaywall()) { showPage('pgPaywall'); return; }
+
+  const jdFileEl  = document.getElementById('jdFile');
+  const resFileEl = document.getElementById('resumeFile');
+  const keywords  = document.getElementById('kitKeywords').value.trim();
+  const extraNote = document.getElementById('kitNotes').value.trim();
+  const errEl     = document.getElementById('kitErr');
+  errEl.classList.remove('show');
+
+  if (!jdFileEl.files.length) {
+    errEl.textContent = '⚠️  Please upload a Job Description file to continue.';
+    errEl.classList.add('show'); return;
+  }
+
+  let jdContent = await readFileAsText(jdFileEl.files[0]);
+  if (jdContent === '__NEEDS_PASTE__' || !jdContent.trim()) {
+    // PDF parse failed - fall back to pasted text
+    jdContent = jdText;
+    if (!jdContent.trim()) {
+      errEl.textContent = '⚠️  Could not read the JD file. Please paste the JD text in the box below instead.';
+      errEl.classList.add('show'); return;
+    }
+  }
+
+  let resumeContent = '';
+  if (resFileEl.files[0]) {
+    resumeContent = await readFileAsText(resFileEl.files[0]);
+    if (resumeContent === '__NEEDS_PASTE__') {
+      resumeContent = ''; // Resume optional -- continue without it
+    }
+  }
+
+  document.getElementById('kitInputArea').style.display = 'none';
+  document.getElementById('kitLoading').classList.add('show');
+  document.getElementById('kitBtn').disabled = true;
+  setStep(3);
+
+  try {
+    const data = await callAI({
+      system: `You are HireKit, an expert recruitment AI. Generate a structured interview kit.
+RESPOND ONLY with a valid JSON object. No markdown, no code fences, no extra text.
+{
+  "role": "job title",
+  "questions": [
+    { "id": 1, "type": "Technical|Behavioural|Situational|HR / Screening", "question": "...", "importance": 1-5, "greenFlags": ["..."], "redFlags": ["..."] }
+  ]
+}
+Rules: Exactly 10 questions (3 Technical, 3 Behavioural, 2 Situational, 2 HR/Screening). importance 5=must-ask. greenFlags: 2-4 points of strong answers. redFlags: 2-3 warning signs.`,
+      messages: [{ role: 'user', content: `JOB DESCRIPTION:\n${jdContent}\n\n${resumeContent ? 'CANDIDATE RESUME:\n'+resumeContent+'\n\n' : ''}${keywords ? 'KEYWORDS:\n'+keywords+'\n\n' : ''}${extraNote ? 'EXTRA NOTES:\n'+extraNote+'\n\n' : ''}Generate the JSON kit now.` }],
+      max_tokens: 4000
+    });
+    const raw  = data.content?.[0]?.text || '';
+    const kit  = JSON.parse(raw.replace(/```json|```/g, '').trim());
+
+    incKitCount();
+    document.getElementById('kitLoading').classList.remove('show');
+    renderKit(kit);
+    setStep(4);
+
+  } catch(err) {
+    document.getElementById('kitLoading').classList.remove('show');
+    document.getElementById('kitInputArea').style.display = 'block';
+    document.getElementById('kitBtn').disabled = false;
+    const errEl = document.getElementById('kitErr');
+    errEl.textContent = '❌ ' + (err.message || 'Something went wrong. Please try again.');
+    errEl.classList.add('show');
+    setStep(1);
+  }
+}
+
+function renderKit(kit) {
+  document.getElementById('kitMeta').innerHTML = `
+    <div class="meta-item"><div class="mdot"></div>Role: <strong>${kit.role||'N/A'}</strong></div>
+    <div class="meta-item"><div class="mdot" style="background:var(--green)"></div>${kit.questions?.length||0} Questions</div>
+    <div class="meta-item"><div class="mdot" style="background:var(--amber)"></div>${currentUser?.owner ? 'Owner' : currentUser?.paid ? 'Monthly Pro · Unlimited' : (currentUser?.credits||0)+' kit credits remaining'}</div>`;
+
+  const list = document.getElementById('qList');
+  list.innerHTML = '';
+  (kit.questions||[]).forEach((q, i) => {
+    const imp  = Math.min(5, Math.max(1, q.importance||3));
+    const pips = [1,2,3,4,5].map(p => `<div class="pip ${p<=imp?(imp>=4?'g':imp<=2?'r':'a'):''}"></div>`).join('');
+    const gs   = (q.greenFlags||[]).map(g => `<div class="ans-item g"><span>✅</span><span>${g}</span></div>`).join('');
+    const rs   = (q.redFlags||[]).map(r => `<div class="ans-item r"><span>🚩</span><span>${r}</span></div>`).join('');
+    const card = document.createElement('div');
+    card.className = 'q-card';
+    card.style.animationDelay = (i * .055) + 's';
+    card.innerHTML = `
+      <div class="q-head" onclick="this.parentElement.classList.toggle('open')">
+        <div class="q-num">Q${i+1}</div>
+        <div class="q-meta"><div class="q-tag">${q.type||'General'}</div><div class="q-text">${q.question}</div></div>
+        <div class="q-pips">${pips}</div>
+        <div class="q-chev">▼</div>
+      </div>
+      <div class="q-body">
+        ${gs?`<div class="ans-block"><div class="ans-title g">✅ Strong Answer Indicators</div><div class="ans-list">${gs}</div></div>`:''}
+        ${rs?`<div class="ans-block"><div class="ans-title r">🚩 Red Flag Answers</div><div class="ans-list">${rs}</div></div>`:''}
+      </div>`;
+    list.appendChild(card);
+  });
+  document.getElementById('kitOutput').classList.add('show');
+}
+
+function resetKit() {
+  document.getElementById('kitOutput').classList.remove('show');
+  document.getElementById('kitInputArea').style.display = 'block';
+  document.getElementById('kitBtn').disabled = false;
+  document.getElementById('kitErr').classList.remove('show');
+  ['jdFile','resumeFile'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+  ['jdFname','resumeFname'].forEach(id => { const el=document.getElementById(id); if(el) el.textContent=''; });
+  ['jdZone','resumeZone'].forEach(id => document.getElementById(id)?.classList.remove('has-file'));
+  document.getElementById('kitKeywords').value = '';
+  document.getElementById('kitNotes').value    = '';
+  setStep(1);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function copyKit() {
+  const cards = document.querySelectorAll('.q-card');
+  let txt = 'HIREKIT -- INTERVIEW KIT\n' + '='.repeat(34) + '\n\n';
+  cards.forEach((c,i) => {
+    const q  = c.querySelector('.q-text')?.textContent  || '';
+    const t  = c.querySelector('.q-tag')?.textContent   || '';
+    const gs = [...c.querySelectorAll('.ans-item.g span:last-child')].map(e => '  ✅ '+e.textContent).join('\n');
+    const rs = [...c.querySelectorAll('.ans-item.r span:last-child')].map(e => '  🚩 '+e.textContent).join('\n');
+    txt += `Q${i+1} [${t}]\n${q}\n\nStrong Answers:\n${gs||'  --'}\n\nRed Flags:\n${rs||'  --'}\n\n${'─'.repeat(34)}\n\n`;
+  });
+  navigator.clipboard.writeText(txt).catch(()=>{});
+}
+
+/* ═══════════════════════════════════════
+   CANDIDATE REVIEW
+═══════════════════════════════════════ */
+async function addCandidates(input) {
+  const files = [...input.files];
+  input.value = '';
+  if (!files.length) return;
+
+  // Show parsing status in sidebar
+  const list = document.getElementById('candList');
+  if (list) list.innerHTML = '<div style="font-size:12px;color:var(--accent);text-align:center;padding:14px 0;">⏳ Reading files…</div>';
+
+  for (const file of files) {
+    const text = await readFileAsText(file);
+    const name = file.name.replace(/\.[^.]+$/, '');
+    candidates.push({ name, text, status: 'pending', score: null, analysis: null });
+  }
+
+  renderCandList();
+
+  // Queue up paste prompts only for files that truly failed
+  pasteQueue = candidates
+    .map((c,i) => c.text === '__NEEDS_PASTE__' ? i : -1)
+    .filter(i => i >= 0);
+  if (pasteQueue.length) showPasteModal();
+}
+
+function renderCandList() {
+  const list = document.getElementById('candList');
+  if (!candidates.length) {
+    list.innerHTML = '<div style="font-size:12px;color:var(--text3);text-align:center;padding:14px 0;">No candidates yet.</div>';
+    return;
+  }
+  list.innerHTML = candidates.map((c,i) => `
+    <div class="cand-item ${i===currentCandIdx?'active':''}" onclick="selectCandidate(${i})">
+      <div class="cand-av">${c.name[0].toUpperCase()}</div>
+      <div class="cand-info">
+        <div class="cand-name">${c.name}</div>
+        <div class="cand-status ${c.status}">${
+          c.status==='match'   ? '● Strong Match'   :
+          c.status==='maybe'   ? '● Possible Match' :
+          c.status==='low'     ? '● Low Match'      : 'Pending'
+        }</div>
+      </div>
+    </div>`).join('');
+}
+
+/* ─── paste modal ─── */
+function showPasteModal() {
+  if (!pasteQueue.length) return;
+  const idx  = pasteQueue[0];
+  const cand = candidates[idx];
+  document.getElementById('pasteModalMsg').textContent =
+    `Could not auto-extract text from "${cand.name}". Please open the file, select all (Ctrl+A or Cmd+A), copy, and paste below.`;
+  document.getElementById('pasteTextArea').value = '';
+  document.getElementById('pasteModalBg').style.display = 'flex';
+}
+
+function savePaste() {
+  const idx  = pasteQueue.shift();
+  const text = document.getElementById('pasteTextArea').value.trim();
+  candidates[idx].text = text || '(No text provided)';
+  document.getElementById('pasteModalBg').style.display = 'none';
+  renderCandList();
+  if (pasteQueue.length) showPasteModal();
+}
+
+function skipPaste() {
+  const idx = pasteQueue.shift();
+  candidates[idx].text = '(Resume text not provided -- analysing by name only)';
+  document.getElementById('pasteModalBg').style.display = 'none';
+  renderCandList();
+  if (pasteQueue.length) showPasteModal();
+}
+
+/* ─── select + analyse ─── */
+async function selectCandidate(idx) {
+  currentCandIdx = idx;
+  renderCandList();
+  const c = candidates[idx];
+
+  // Return cached
+  if (c.analysis) { renderCandDash(c); return; }
+
+  // Guards
+  const jd = document.getElementById('crJd').value.trim();
+  if (!jd) {
+    document.getElementById('crMain').innerHTML = `<div class="cr-empty"><div class="cr-empty-icon">📋</div><h3>JD Missing</h3><p>Please paste the Job Description in the field above this panel.</p></div>`;
+    return;
+  }
+
+  // Show spinner
+  document.getElementById('crMain').innerHTML = `<div class="cr-loading"><div class="spinner" style="margin:0 auto 14px;"></div><p style="color:var(--text2);font-size:13px;">Analysing <strong>${c.name}</strong>…</p></div>`;
+
+  try {
+    const data = await callAI({
+      system: `You are an expert recruiter AI. Evaluate a candidate resume against a job description.
+Respond ONLY with valid JSON -- no markdown, no code fences, nothing else.
+{
+  "overallScore": 0-100,
+  "verdict": "Recommended|Maybe|Not Recommended",
+  "skillsMatch": { "score": 0-100, "matched": ["skill1"], "missing": ["skill2"] },
+  "experienceMatch": { "score": 0-100, "summary": "text" },
+  "educationMatch": { "score": 0-100, "summary": "text" },
+  "greenFlags": ["strength1","strength2"],
+  "redFlags": ["flag1","flag2"],
+  "summary": "2-3 sentence recruiter summary"
+}`,
+      messages: [{ role: 'user', content: `JOB DESCRIPTION:\n${jd}\n\nCANDIDATE RESUME:\n${c.text}\n\nAnalyse and return JSON only.` }],
+      max_tokens: 2000
+    });
+    const raw  = data.content?.[0]?.text || '';
+    const analysis = JSON.parse(raw.replace(/```json|```/g, '').trim());
+
+    candidates[idx].analysis = analysis;
+    candidates[idx].score    = analysis.overallScore;
+    candidates[idx].status   = analysis.overallScore >= 70 ? 'match' : analysis.overallScore >= 45 ? 'maybe' : 'low';
+    renderCandList();
+    renderCandDash(candidates[idx]);
+
+  } catch(err) {
+    document.getElementById('crMain').innerHTML = `
+      <div class="cr-empty">
+        <div class="cr-empty-icon">❌</div>
+        <h3>Analysis Failed</h3>
+        <p style="color:var(--red);font-size:13px;margin-bottom:8px;font-weight:600;">${err.message}</p>
+        <p style="font-size:12px;color:var(--text3);">Check your API key is valid and try clicking the candidate again.</p>
+      </div>`;
+  }
+}
+
+function barClass(v) { return v>=70?'high':v>=45?'mid':'lo'; }
+
+function renderCandDash(c) {
+  const a   = c.analysis;
+  const sc  = a.overallScore;
+  const scC = sc>=70?'high':sc>=45?'mid':'lo';
+  const vC  = a.verdict==='Recommended'?'rec':a.verdict==='Maybe'?'maybe':'pass';
+
+  const matchTags   = (a.skillsMatch?.matched||[]).map(s=>`<span class="tag m">${s}</span>`).join('') || '<span class="tag n">None detected</span>';
+  const missTags    = (a.skillsMatch?.missing||[]).map(s=>`<span class="tag x">${s}</span>`).join('') || '<span class="tag n">None identified</span>';
+  const greenItems  = (a.greenFlags||[]).map(g=>`<div class="flag-item">✅ ${g}</div>`).join('') || '<div class="flag-item" style="color:var(--text3)">None noted</div>';
+  const redItems    = (a.redFlags||[]).map(r=>`<div class="flag-item">🚩 ${r}</div>`).join('') || '<div class="flag-item" style="color:var(--text3)">None identified</div>';
+
+  function bar(score) { return `<div class="br-bar"><div class="br-fill ${barClass(score)}" style="width:${score||0}%"></div></div><div class="br-val">${score||0}%</div>`; }
+
+  document.getElementById('crMain').innerHTML = `
+    <div class="cand-dash">
+      <div class="cd-header">
+        <div class="cd-big-av">${c.name[0].toUpperCase()}</div>
+        <div class="cd-info">
+          <h2>${c.name}</h2>
+          <p>${a.summary||''}</p>
+          <div class="verdict-pill ${vC}" style="margin-top:8px;">${a.verdict}</div>
+        </div>
+        <div class="cd-score">
+          <div class="score-num ${scC}">${sc}%</div>
+          <div class="score-lbl">Match Score</div>
+        </div>
+      </div>
+      <div class="cd-body">
+        <div class="dash-sec full">
+          <div class="ds-title b">📊 Score Breakdown</div>
+          <div class="br-row"><div class="br-lbl">Overall</div>${bar(sc)}</div>
+          <div class="br-row"><div class="br-lbl">Skills</div>${bar(a.skillsMatch?.score)}</div>
+          <div class="br-row"><div class="br-lbl">Experience</div>${bar(a.experienceMatch?.score)}</div>
+          <div class="br-row"><div class="br-lbl">Education</div>${bar(a.educationMatch?.score)}</div>
+        </div>
+        <div class="dash-sec"><div class="ds-title g">✅ Matched Skills</div><div class="skill-tags">${matchTags}</div></div>
+        <div class="dash-sec"><div class="ds-title r">❌ Missing Skills</div><div class="skill-tags">${missTags}</div></div>
+        <div class="dash-sec"><div class="ds-title g">💪 Strengths</div><div class="flag-list">${greenItems}</div></div>
+        <div class="dash-sec"><div class="ds-title r">🚩 Red Flags</div><div class="flag-list">${redItems}</div></div>
+        <div class="dash-sec"><div class="ds-title a">💼 Experience</div><p style="font-size:13px;color:var(--text2);line-height:1.6;">${a.experienceMatch?.summary||'--'}</p></div>
+        <div class="dash-sec"><div class="ds-title b">🎓 Education</div><p style="font-size:13px;color:var(--text2);line-height:1.6;">${a.educationMatch?.summary||'--'}</p></div>
+      </div>
+    </div>`;
+}
+
+/* ═══════════════════════════════════════
+   NOTES
+═══════════════════════════════════════ */
+function renderNoteList() {
+  const list = document.getElementById('noteList');
+  if (!list) return;
+  if (!notes.length) { list.innerHTML = '<div style="font-size:12px;color:var(--text3);text-align:center;padding:10px 0;">No notes yet.</div>'; return; }
+  list.innerHTML = notes.map(n => `
+    <div class="note-item ${n.id===currentNoteId?'active':''}" onclick="openNote('${n.id}')">
+      <div class="note-item-title">${n.title||'Untitled'}</div>
+      <div class="note-item-date">${new Date(n.updated).toLocaleDateString('en-IN',{day:'numeric',month:'short'})}</div>
+    </div>`).join('');
+}
+
+function newNote() {
+  const n = { id: Date.now().toString(), title:'', content:'', updated: Date.now() };
+  notes.unshift(n);
+  saveNotes();
+  openNote(n.id);
+}
+
+function openNote(id) {
+  currentNoteId = id;
+  const n = notes.find(n => n.id === id);
+  if (!n) return;
+  document.getElementById('notesEmpty').style.display     = 'none';
+  const ui = document.getElementById('notesUI');
+  ui.style.display = 'flex';
+  document.getElementById('noteTitleIn').value  = n.title;
+  document.getElementById('notesEditor').innerHTML = n.content;
+  updateWC();
+  renderNoteList();
+}
+
+function saveNote() {
+  if (!currentNoteId) return;
+  const n = notes.find(n => n.id === currentNoteId);
+  if (!n) return;
+  n.title   = document.getElementById('noteTitleIn').value || 'Untitled';
+  n.content = document.getElementById('notesEditor').innerHTML;
+  n.updated = Date.now();
+  saveNotes();
+  renderNoteList();
+  const badge = document.getElementById('savedBadge');
+  badge.classList.add('show');
+  setTimeout(() => badge.classList.remove('show'), 2000);
+}
+
+function debounceSave() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(saveNote, 1200);
+  updateWC();
+}
+
+function deleteNote() {
+  if (!currentNoteId || !confirm('Delete this note?')) return;
+  notes = notes.filter(n => n.id !== currentNoteId);
+  currentNoteId = null;
+  saveNotes();
+  document.getElementById('notesEmpty').style.display = 'flex';
+  document.getElementById('notesUI').style.display    = 'none';
+  renderNoteList();
+}
+
+function updateWC() {
+  const txt = document.getElementById('notesEditor')?.innerText || '';
+  const wc  = txt.trim() ? txt.trim().split(/\s+/).length : 0;
+  const el  = document.getElementById('wcCount');
+  if (el) el.textContent = wc + (wc===1?' word':' words');
+}
+
+function saveNotes() { localStorage.setItem('iq_notes', JSON.stringify(notes)); }
+function fmtDoc(cmd) { document.execCommand(cmd, false, null); document.getElementById('notesEditor')?.focus(); }
+function fmtHL()     { document.execCommand('hiliteColor', false, '#ffe66d'); document.getElementById('notesEditor')?.focus(); debounceSave(); }
+
+/* ═══════════════════════════════════════
+   SIDEBAR
+═══════════════════════════════════════ */
+function openSB()  { document.getElementById('helpSB').classList.add('open'); document.getElementById('sbOverlay').classList.add('open'); }
+function closeSB() { document.getElementById('helpSB').classList.remove('open'); document.getElementById('sbOverlay').classList.remove('open'); }
+
+function switchSTab(tab) {
+  ['upgrade','query','contact'].forEach(t => {
+    document.getElementById('stab-'+t).classList.remove('active');
+    document.getElementById('sp-'+t).classList.toggle('hidden', t !== tab);
+  });
+  document.getElementById('stab-'+tab).classList.add('active');
+}
+
+/* sendQuery defined below with ticket logging */
+
+
+/* ═══════════════════════════════════════
+   CANDIDATE REVIEW -- JD FILE UPLOAD
+═══════════════════════════════════════ */
+async function loadCrJd(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const zone  = document.getElementById('crJdZone');
+  const fname = document.getElementById('crJdFname');
+  const status= document.getElementById('crJdStatus');
+  const text  = await readFileAsText(file);
+  if (text === '__NEEDS_PASTE__') {
+    status.textContent = '⚠️ Could not extract text from this file. Please paste the JD text manually.';
+    status.style.color = 'var(--amber)';
+    zone.classList.remove('has-file');
+    return;
+  }
+  document.getElementById('crJd').value = text;
+  zone.classList.add('has-file');
+  fname.textContent  = '✓ ' + file.name;
+  status.textContent = '✅ JD loaded from file: ' + file.name;
+  status.style.color = 'var(--green)';
+}
+
+function clearCrJd() {
+  document.getElementById('crJd').value     = '';
+  document.getElementById('crJdFile').value = '';
+  document.getElementById('crJdFname').textContent = '';
+  document.getElementById('crJdZone').classList.remove('has-file');
+  const s = document.getElementById('crJdStatus');
+  s.textContent = 'No JD loaded yet.';
+  s.style.color = 'var(--text3)';
+}
+
+function clearAllCandidates() {
+  if (!confirm('Clear all candidates?')) return;
+  candidates     = [];
+  currentCandIdx = -1;
+  renderCandList();
+  document.getElementById('crMain').innerHTML = `
+    <div class="cr-empty">
+      <div class="cr-empty-icon">👥</div>
+      <h3>Select a Candidate</h3>
+      <p>Upload resumes on the left, then click a name to see the match dashboard.</p>
+    </div>`;
+}
+
+/* ═══════════════════════════════════════
+   ADMIN
+═══════════════════════════════════════ */
+function switchAdminTab(tab) {
+  ['users','activity','tickets','keys'].forEach(t => {
+    document.getElementById('at-' + t)?.classList.remove('active');
+    const el = document.getElementById('ap-' + t);
+    if (el) el.style.display = 'none';
+  });
+  document.getElementById('at-' + tab)?.classList.add('active');
+  const panel = document.getElementById('ap-' + tab);
+  if (panel) panel.style.display = 'block';
+  if (tab === 'users')    renderAdminUsers();
+  if (tab === 'activity') renderAdminActivity();
+  if (tab === 'tickets')  renderAdminTickets();
+  if (tab === 'keys')     renderAdminKeys();
+}
+
+function refreshAdmin() {
+  renderAdminStats();
+  renderAdminUsers();
+}
+
+function renderAdminStats() {
+  const users    = JSON.parse(localStorage.getItem('iq_users') || '[]');
+  const allUsers = [...users, { name:'Aaron', email:'contact@aaronvaidya.com', owner:true, paid:true }];
+  const paidCount= allUsers.filter(u => u.paid || u.owner).length;
+  const freeCount= allUsers.filter(u => !u.paid && !u.owner).length;
+
+  // Count total kits across all users
+  let totalKits = 0;
+  allUsers.forEach(u => {
+    totalKits += parseInt(localStorage.getItem('iq_kits_' + u.email) || '0');
+  });
+
+  // Count tickets
+  const tickets = JSON.parse(localStorage.getItem('iq_tickets') || '[]');
+
+  const statsEl = document.getElementById('adminStats');
+  if (!statsEl) return;
+  statsEl.innerHTML = [
+    { val: allUsers.length, lbl: 'Total Accounts',   color: 'var(--accent)' },
+    { val: paidCount,       lbl: 'Paid / Pro Users',  color: 'var(--green)' },
+    { val: freeCount,       lbl: 'Pay-Per-Use / Unsubscribed', color: 'var(--amber)' },
+    { val: totalKits,       lbl: 'Kits Generated',    color: 'var(--text)' },
+    { val: tickets.length,  lbl: 'Support Tickets',   color: 'var(--red)' },
+  ].map(s => `
+    <div class="stat-card">
+      <div class="stat-val" style="color:${s.color};">${s.val}</div>
+      <div class="stat-lbl">${s.lbl}</div>
+    </div>`).join('');
+}
+
+function renderAdminUsers() {
+  renderAdminStats();
+  const users    = JSON.parse(localStorage.getItem('iq_users') || '[]');
+  const allUsers = [
+    { name:'Aaron Vaidya', email:'contact@aaronvaidya.com', owner:true, paid:true },
+    ...users
+  ];
+  const el = document.getElementById('adminUsersTable');
+  if (!el) return;
+  if (!allUsers.length) { el.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text3);font-size:13px;">No users yet.</div>'; return; }
+  el.innerHTML = `
+    <table class="admin-table">
+      <thead><tr>
+        <th>Name</th><th>Email</th><th>Plan</th><th>Credits</th><th>Kits Generated</th><th>Actions</th>
+      </tr></thead>
+      <tbody>${allUsers.map((u,i) => {
+        const kits = localStorage.getItem('iq_kits_' + u.email) || '0';
+        const plan = u.owner ? 'owner' : u.paid ? 'paid' : 'free';
+        const planLabel = u.owner ? 'Owner' : u.paid ? 'Pro' : 'Free';
+        return `<tr>
+          <td style="font-weight:600;color:var(--text);">${u.name}</td>
+          <td>${u.email}</td>
+          <td><span class="status-pill ${plan}">${planLabel}</span></td>
+          <td style="font-weight:600;color:var(--accent);">${u.owner?'∞':u.paid?'∞':(u.credits||0)}</td>
+          <td>${kits}</td>
+          <td>${u.owner ? '<span style="color:var(--text3);font-size:12px;">--</span>' : `
+            <button onclick="togglePaid(${i-1})" style="padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--text2);font-size:11px;cursor:pointer;font-family:inherit;">${u.paid?'Revoke Pro':'Grant Pro'}</button>
+            <button onclick="deleteUser(${i-1})" style="padding:4px 10px;border-radius:6px;border:1px solid var(--red);background:var(--red-dim);color:var(--red);font-size:11px;cursor:pointer;font-family:inherit;margin-left:5px;">Delete</button>
+          `}</td>
+        </tr>`;
+      }).join('')}</tbody>
+    </table>`;
+}
+
+function togglePaid(idx) {
+  const users = JSON.parse(localStorage.getItem('iq_users') || '[]');
+  if (!users[idx]) return;
+  users[idx].paid = !users[idx].paid;
+  localStorage.setItem('iq_users', JSON.stringify(users));
+  // Update current session if same user
+  if (currentUser && currentUser.email === users[idx].email) {
+    currentUser.paid = users[idx].paid;
+    localStorage.setItem('iq_user', JSON.stringify(currentUser));
+  }
+  renderAdminUsers();
+}
+
+function deleteUser(idx) {
+  const users = JSON.parse(localStorage.getItem('iq_users') || '[]');
+  if (!users[idx]) return;
+  if (!confirm('Delete user ' + users[idx].name + '?')) return;
+  users.splice(idx, 1);
+  localStorage.setItem('iq_users', JSON.stringify(users));
+  renderAdminUsers();
+}
+
+function renderAdminActivity() {
+  const users    = JSON.parse(localStorage.getItem('iq_users') || '[]');
+  const allUsers = [{ name:'Aaron Vaidya', email:'contact@aaronvaidya.com' }, ...users];
+  const el = document.getElementById('adminActivityTable');
+  if (!el) return;
+  el.innerHTML = `
+    <table class="admin-table">
+      <thead><tr><th>User</th><th>Email</th><th>Kits Generated</th><th>Credits / Plan</th></tr></thead>
+      <tbody>${allUsers.map(u => {
+        const kits  = parseInt(localStorage.getItem('iq_kits_' + u.email) || '0');
+        const isPro = u.owner || u.paid;
+        const rem   = u.owner ? '∞ (Owner)' : isPro ? '∞ (Monthly Pro)' : (u.credits||0) + ' credits';
+        return `<tr>
+          <td style="font-weight:600;color:var(--text);">${u.name}</td>
+          <td>${u.email}</td>
+          <td style="font-weight:700;color:var(--accent);">${kits}</td>
+          <td style="color:${isPro?'var(--green)':'var(--amber)'};">${rem}</td>
+        </tr>`;
+      }).join('')}</tbody>
+    </table>`;
+}
+
+function renderAdminTickets() {
+  const tickets = JSON.parse(localStorage.getItem('iq_tickets') || '[]');
+  const el      = document.getElementById('adminTicketsTable');
+  if (!el) return;
+  if (!tickets.length) {
+    el.innerHTML = '<div style="font-size:13px;color:var(--text3);padding:14px 0;">No tickets logged yet. Tickets are logged when a user submits a query via the sidebar.</div>';
+    return;
+  }
+  el.innerHTML = `
+    <table class="admin-table">
+      <thead><tr><th>Date</th><th>Name</th><th>Email</th><th>Type</th><th>Message</th><th>Status</th></tr></thead>
+      <tbody>${tickets.map((t,i) => `<tr>
+        <td style="white-space:nowrap;">${new Date(t.ts).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})}</td>
+        <td style="font-weight:600;color:var(--text);">${t.name}</td>
+        <td>${t.email}</td>
+        <td><span style="background:var(--accent-dim);border:1px solid var(--accent);color:var(--accent);padding:2px 7px;border-radius:20px;font-size:10px;font-weight:700;">${t.type||'General'}</span></td>
+        <td style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${t.msg}">${t.msg}</td>
+        <td><button onclick="toggleTicket(${i})" style="padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;border:1px solid ${t.resolved?'var(--green)':'var(--border)'};background:${t.resolved?'var(--green-dim)':'var(--surface2)'};color:${t.resolved?'var(--green)':'var(--text2)'};">${t.resolved?'✓ Resolved':'Mark Resolved'}</button></td>
+      </tr>`).join('')}</tbody>
+    </table>`;
+}
+
+function toggleTicket(idx) {
+  const tickets = JSON.parse(localStorage.getItem('iq_tickets') || '[]');
+  if (tickets[idx]) { tickets[idx].resolved = !tickets[idx].resolved; localStorage.setItem('iq_tickets', JSON.stringify(tickets)); }
+  renderAdminTickets();
+}
+
+function clearTickets() {
+  if (!confirm('Clear all ticket logs?')) return;
+  localStorage.removeItem('iq_tickets');
+  renderAdminTickets();
+}
+
+function renderAdminKeys() {
+  const key = getKey();
+  const el  = document.getElementById('adminKeyDisplay');
+  if (el) el.textContent = key ? key.substring(0,12) + '••••••••••••••••••••••••' + key.slice(-4) : 'No key saved yet.';
+}
+
+function adminSaveKey() {
+  const val = document.getElementById('adminKeyInput').value.trim();
+  if (!val || !val.startsWith('sk-')) { alert('Invalid key. Must start with sk-'); return; }
+  localStorage.setItem('iq_apikey', val);
+  document.getElementById('adminKeyInput').value = '';
+  const banner = document.getElementById('apikeyBanner');
+  if (banner) banner.classList.add('hidden');
+  renderAdminKeys();
+  alert('✅ API key updated!');
+}
+
+/* ─── Patch sendQuery to also log tickets ─── */
+function sendQuery() {
+  const name = document.getElementById('qName').value.trim();
+  const email= document.getElementById('qEmail').value.trim();
+  const type = document.getElementById('qType').value;
+  const msg  = document.getElementById('qMsg').value.trim();
+  if (!name||!email||!msg) { alert('Please fill in name, email and message.'); return; }
+  // Log ticket
+  const tickets = JSON.parse(localStorage.getItem('iq_tickets') || '[]');
+  tickets.push({ ts: Date.now(), name, email, type, msg, resolved: false });
+  localStorage.setItem('iq_tickets', JSON.stringify(tickets));
+  // Send email
+  const sub  = encodeURIComponent('HireKit Query: '+(type||'General'));
+  const body = encodeURIComponent('Name: '+name+'\nEmail: '+email+'\nType: '+type+'\n\n'+msg);
+  window.location.href = 'mailto:contact@aaronvaidya.com?subject='+sub+'&body='+body;
+  document.getElementById('queryForm').style.display = 'none';
+  document.getElementById('qSent').classList.add('show');
+  setTimeout(() => {
+    document.getElementById('qSent').classList.remove('show');
+    document.getElementById('queryForm').style.display = 'flex';
+    ['qName','qEmail','qMsg'].forEach(id => document.getElementById(id).value='');
+    document.getElementById('qType').value='';
+  }, 4000);
+}
+
+
+/* ═══════════════════════════════════════
+   LEFT SIDEBAR
+═══════════════════════════════════════ */
+let savedJDs  = JSON.parse(localStorage.getItem('iq_saved_jds')  || '[]');
+let savedKits = JSON.parse(localStorage.getItem('iq_saved_kits') || '[]');
+let savedQAs  = JSON.parse(localStorage.getItem('iq_saved_qas')  || '[]');
+
+function toggleLeftSb() {
+  const sb   = document.getElementById('leftSb');
+  const main = document.getElementById('appMain');
+  const btn  = document.getElementById('sbToggleBtn');
+  const open = sb.classList.toggle('visible');
+  main.classList.toggle('with-sb', open);
+  btn.textContent = open ? '◀ SAVED' : '▶ SAVED';
+}
+
+function showLeftSb() {
+  const sb   = document.getElementById('leftSb');
+  const main = document.getElementById('appMain');
+  const btn  = document.getElementById('sbToggleBtn');
+  if (!sb) return;
+  sb.classList.add('visible');
+  main?.classList.add('with-sb');
+  if (btn) btn.textContent = '◀ SAVED';
+}
+
+function renderLeftSidebar() {
+  renderLsbSection('lsbJdList', savedJDs,  '📋', loadSavedJD);
+  renderLsbSection('lsbKitList', savedKits, '⚡', loadSavedKit);
+  renderLsbSection('lsbQaList', savedQAs,  '❓', loadSavedQA);
+}
+
+function renderLsbSection(elId, items, icon, loadFn) {
+  const el = document.getElementById(elId);
+  if (!el) return;
+  if (!items.length) {
+    el.innerHTML = '<div class="lsb-empty">Nothing saved yet.</div>';
+    return;
+  }
+  el.innerHTML = items.map((item, i) => `
+    <div class="lsb-item" onclick="${loadFn.name}(${i})">
+      <span class="lsb-item-icon">${icon}</span>
+      <span class="lsb-item-text">${item.name}</span>
+      <button class="lsb-del" onclick="event.stopPropagation();deleteLsbItem('${elId}',${i})" title="Delete">✕</button>
+    </div>`).join('');
+}
+
+function deleteLsbItem(elId, idx) {
+  if (!confirm('Delete this saved item?')) return;
+  if (elId === 'lsbJdList')  { savedJDs.splice(idx,1);  localStorage.setItem('iq_saved_jds',  JSON.stringify(savedJDs)); }
+  if (elId === 'lsbKitList') { savedKits.splice(idx,1); localStorage.setItem('iq_saved_kits', JSON.stringify(savedKits)); }
+  if (elId === 'lsbQaList')  { savedQAs.splice(idx,1);  localStorage.setItem('iq_saved_qas',  JSON.stringify(savedQAs)); }
+  renderLeftSidebar();
+}
+
+/* ─ Save JD modal ─ */
+function openSaveJdModal() {
+  const jdText = document.getElementById('jdText')?.value.trim() ||
+                 document.getElementById('crJd')?.value.trim() || '';
+  const name = prompt('Name for this JD:', 'JD -- ' + new Date().toLocaleDateString('en-IN'));
+  if (!name) return;
+  savedJDs.unshift({ name, text: jdText, saved: Date.now() });
+  localStorage.setItem('iq_saved_jds', JSON.stringify(savedJDs));
+  renderLeftSidebar();
+  showToast('JD saved to sidebar ✓');
+}
+
+function loadSavedJD(idx) {
+  const jd = savedJDs[idx];
+  if (!jd) return;
+  const el = document.getElementById('jdText');
+  if (el) { el.value = jd.text; goTab('kit'); showToast('JD loaded into Kit Generator ✓'); }
+}
+
+/* ─ Save Kit ─ */
+function saveKitToSidebar() {
+  if (!currentUser?.paid && !currentUser?.owner) {
+    alert('Saving kits to sidebar is a Pro feature. Upgrade to Monthly Pro to use this.');
+    return;
+  }
+  const roleName = document.getElementById('kitMeta')?.textContent?.match(/Role:\s*([^\n]+)/)?.[1]?.trim() || 'Kit';
+  const name = prompt('Name for this kit:', roleName + ' -- ' + new Date().toLocaleDateString('en-IN'));
+  if (!name) return;
+  const questions = [...document.querySelectorAll('#qList .q-card')].map(c => ({
+    type: c.querySelector('.q-tag')?.textContent,
+    question: c.querySelector('.q-text')?.textContent,
+    greenFlags: [...c.querySelectorAll('.ans-item.g span:last-child')].map(e => e.textContent),
+    redFlags:   [...c.querySelectorAll('.ans-item.r span:last-child')].map(e => e.textContent),
+  }));
+  savedKits.unshift({ name, questions, saved: Date.now() });
+  localStorage.setItem('iq_saved_kits', JSON.stringify(savedKits));
+  renderLeftSidebar();
+  showToast('Kit saved to sidebar ✓');
+}
+
+function loadSavedKit(idx) {
+  const kit = savedKits[idx];
+  if (!kit) return;
+  // Render the saved kit in output section
+  goTab('kit');
+  document.getElementById('kitInputArea').style.display = 'none';
+  document.getElementById('kitMeta').innerHTML = `<div class="meta-item"><div class="mdot"></div>Loaded: <strong>${kit.name}</strong></div>`;
+  const list = document.getElementById('qList');
+  list.innerHTML = '';
+  (kit.questions || []).forEach((q, i) => {
+    const gs = (q.greenFlags||[]).map(g=>`<div class="ans-item g"><span>✅</span><span>${g}</span></div>`).join('');
+    const rs = (q.redFlags||[]).map(r=>`<div class="ans-item r"><span>🚩</span><span>${r}</span></div>`).join('');
+    const card = document.createElement('div');
+    card.className = 'q-card';
+    card.innerHTML = `<div class="q-head" onclick="this.parentElement.classList.toggle('open')">
+      <div class="q-num">Q${i+1}</div>
+      <div class="q-meta"><div class="q-tag">${q.type||'General'}</div><div class="q-text">${q.question}</div></div>
+      <div class="q-chev">▼</div></div>
+      <div class="q-body">
+        ${gs?`<div class="ans-block"><div class="ans-title g">✅ Strong Answers</div><div class="ans-list">${gs}</div></div>`:''}
+        ${rs?`<div class="ans-block"><div class="ans-title r">🚩 Red Flags</div><div class="ans-list">${rs}</div></div>`:''}
+      </div>`;
+    list.appendChild(card);
+  });
+  document.getElementById('kitOutput').classList.add('show');
+  showToast('Kit loaded ✓');
+}
+
+/* ─ Save Q&A ─ */
+function saveQAToSidebar() {
+  const role = document.getElementById('qaRole')?.value.trim() || 'Q&A';
+  const name = prompt('Name for this Q&A set:', role + ' -- ' + new Date().toLocaleDateString('en-IN'));
+  if (!name) return;
+  const items = [...document.querySelectorAll('#qaList .q-card')].map(c => ({
+    question: c.querySelector('.q-text')?.textContent,
+    answer:   c.querySelector('.qa-answer')?.textContent,
+  }));
+  savedQAs.unshift({ name, items, saved: Date.now() });
+  localStorage.setItem('iq_saved_qas', JSON.stringify(savedQAs));
+  renderLeftSidebar();
+  showToast('Q&A saved to sidebar ✓');
+}
+
+function loadSavedQA(idx) {
+  const qa = savedQAs[idx];
+  if (!qa) return;
+  goTab('qa');
+  document.getElementById('qaMeta').innerHTML = `<div class="meta-item"><div class="mdot"></div>Loaded: <strong>${qa.name}</strong></div>`;
+  const list = document.getElementById('qaList');
+  list.innerHTML = '';
+  (qa.items || []).forEach((item, i) => {
+    const card = document.createElement('div');
+    card.className = 'q-card';
+    card.innerHTML = `<div class="q-head" onclick="this.parentElement.classList.toggle('open')">
+      <div class="q-num">Q${i+1}</div>
+      <div class="q-meta"><div class="q-text">${item.question}</div></div>
+      <div class="q-chev">▼</div></div>
+      <div class="q-body"><div class="ans-block">
+        <div class="ans-title b" style="color:var(--accent);">💡 Ideal Answer</div>
+        <div class="qa-answer" style="font-size:13px;color:var(--text2);line-height:1.65;padding:10px 14px;background:var(--surface2);border-radius:8px;border:1px solid var(--border);">${item.answer}</div>
+      </div></div>`;
+    list.appendChild(card);
+  });
+  document.getElementById('qaOutput').style.display = 'block';
+  showToast('Q&A loaded ✓');
+}
+
+/* ─ Toast notification ─ */
+function showToast(msg) {
+  let toast = document.getElementById('toastMsg');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'toastMsg';
+    toast.style.cssText = `position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--accent);color:#000;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:700;z-index:9999;box-shadow:0 4px 20px var(--accent-glow);transition:opacity .3s;`;
+    document.body.appendChild(toast);
+  }
+  toast.textContent = msg;
+  toast.style.opacity = '1';
+  clearTimeout(toast._timer);
+  toast._timer = setTimeout(() => { toast.style.opacity = '0'; }, 2500);
+}
+
+/* ═══════════════════════════════════════
+   Q&A SCREENING GENERATOR
+═══════════════════════════════════════ */
+async function generateQA() {
+  const role     = document.getElementById('qaRole').value.trim();
+  const focus    = document.getElementById('qaFocus').value.trim();
+  const keywords = document.getElementById('qaKeywords')?.value.trim() || '';
+  const jdText   = document.getElementById('qaJdText')?.value.trim() || '';
+  const count    = document.querySelector('input[name="qaCount"]:checked')?.value || '10';
+  const errEl    = document.getElementById('qaErr');
+  errEl.classList.remove('show');
+
+  if (!role && !jdText) {
+    errEl.textContent = '⚠️ Please enter a job title or upload/paste a Job Description.';
+    errEl.classList.add('show'); return;
+  }
+
+  const types = [];
+  if (document.getElementById('qtTechnical')?.checked)   types.push('Technical');
+  if (document.getElementById('qtBehavioural')?.checked) types.push('Behavioural');
+  if (document.getElementById('qtSituational')?.checked) types.push('Situational');
+  if (document.getElementById('qtScreening')?.checked)   types.push('HR Screening');
+  if (!types.length) { errEl.textContent = '⚠️ Please select at least one question type.'; errEl.classList.add('show'); return; }
+
+  document.getElementById('qaBtn').disabled = true;
+  document.getElementById('qaLoading').style.display = 'block';
+  document.getElementById('qaOutput').style.display = 'none';
+
+  // Build the user prompt — richer when JD is available
+  let userPrompt = '';
+  if (jdText) {
+    userPrompt += `JOB DESCRIPTION:\n${jdText}\n\n`;
+  }
+  if (role)     userPrompt += `ROLE: ${role}\n`;
+  if (keywords) userPrompt += `REQUIRED KEYWORDS / SKILLS: ${keywords}\n`;
+  if (focus)    userPrompt += `FOCUS AREA: ${focus}\n`;
+  userPrompt += `\nGenerate exactly ${count} interview questions.`;
+  userPrompt += `\nQuestion types: ${types.join(', ')}.`;
+  userPrompt += `\nReturn JSON only.`;
+
+  try {
+    const data = await callAI({
+      system: `You are an expert interview coach and recruiter. Generate targeted screening and interview Q&As.
+RESPOND ONLY with valid JSON. No markdown, no code fences.
+{
+  "role": "job title extracted from input",
+  "questions": [
+    { "id": 1, "type": "Technical|Behavioural|Situational|HR Screening", "question": "...", "idealAnswer": "2-3 sentences on what a great answer looks like" }
+  ]
+}
+If a Job Description is provided, base all questions specifically on that JD's requirements, skills and responsibilities.`,
+      messages: [{ role: 'user', content: userPrompt }],
+      max_tokens: 3000
+    });
+    const raw  = data.content?.[0]?.text || '';
+    const qa   = JSON.parse(raw.replace(/```json|```/g, '').trim());
+
+    document.getElementById('qaLoading').style.display = 'none';
+    document.getElementById('qaBtn').disabled = false;
+    renderQA(qa);
+
+  } catch(err) {
+    document.getElementById('qaLoading').style.display = 'none';
+    document.getElementById('qaBtn').disabled = false;
+    errEl.textContent = '❌ ' + (err.message || 'Something went wrong. Try again.');
+    errEl.classList.add('show');
+  }
+}
+
+function renderQA(qa) {
+  document.getElementById('qaMeta').innerHTML = `
+    <div class="meta-item"><div class="mdot"></div>Role: <strong>${qa.role||'N/A'}</strong></div>
+    <div class="meta-item"><div class="mdot" style="background:var(--green)"></div>${qa.questions?.length||0} Questions</div>`;
+
+  const list = document.getElementById('qaList');
+  list.innerHTML = '';
+  (qa.questions||[]).forEach((q, i) => {
+    const card = document.createElement('div');
+    card.className = 'q-card';
+    card.style.animationDelay = (i * .04) + 's';
+    card.innerHTML = `
+      <div class="q-head" onclick="this.parentElement.classList.toggle('open')">
+        <div class="q-num">Q${i+1}</div>
+        <div class="q-meta">
+          <div class="q-tag">${q.type||'General'}</div>
+          <div class="q-text">${q.question}</div>
+        </div>
+        <div class="q-chev">▼</div>
+      </div>
+      <div class="q-body">
+        <div class="ans-block">
+          <div class="ans-title" style="color:var(--accent);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.9px;margin-bottom:8px;display:flex;align-items:center;gap:5px;">💡 Ideal Answer</div>
+          <div class="qa-answer" style="font-size:13px;color:var(--text2);line-height:1.65;padding:11px 14px;background:var(--surface2);border-radius:8px;border:1px solid var(--border);">${q.idealAnswer||'--'}</div>
+        </div>
+      </div>`;
+    list.appendChild(card);
+  });
+  document.getElementById('qaOutput').style.display = 'block';
+}
+
+function resetQA() {
+  document.getElementById('qaOutput').style.display = 'none';
+  document.getElementById('qaRole').value    = '';
+  document.getElementById('qaFocus').value   = '';
+  const kw = document.getElementById('qaKeywords');
+  if (kw) kw.value = '';
+  document.getElementById('qaErr').classList.remove('show');
+  document.getElementById('qaBtn').disabled = false;
+  clearQaJd();
+}
+
+function copyQA() {
+  const cards = document.querySelectorAll('#qaList .q-card');
+  let txt = 'HIREKIT -- Q&A SCREENING\n' + '='.repeat(34) + '\n\n';
+  cards.forEach((c,i) => {
+    const q = c.querySelector('.q-text')?.textContent || '';
+    const a = c.querySelector('.qa-answer')?.textContent || '';
+    txt += `Q${i+1}: ${q}
+
+Ideal Answer:
+${a}
+
+${'─'.repeat(34)}
+
+`;
+  });
+  navigator.clipboard.writeText(txt).catch(()=>{});
+  showToast('Copied to clipboard ✓');
+}
+
+
+/* ─── Q&A JD file loader ─── */
+async function loadQaJd(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const zone   = document.getElementById('qaJdZone');
+  const fname  = document.getElementById('qaJdFname');
+  const status = document.getElementById('qaJdStatus');
+  const text   = await readFileAsText(file);
+  if (text === '__NEEDS_PASTE__' || !text.trim()) {
+    status.textContent = 'Could not read file -- please paste the JD text in the box instead.';
+    status.style.color = 'var(--amber)';
+    zone.classList.remove('has-file');
+    return;
+  }
+  // Put text into the paste box and mark the zone
+  document.getElementById('qaJdText').value = text;
+  zone.classList.add('has-file');
+  fname.textContent = '✓ ' + file.name;
+  status.textContent = 'JD loaded from: ' + file.name;
+  status.style.color = 'var(--green)';
+
+  // Auto-extract role from JD using first line heuristic
+  const firstLine = text.split('\n').find(l => l.trim().length > 3 && l.trim().length < 80);
+  const roleEl = document.getElementById('qaRole');
+  if (roleEl && !roleEl.value && firstLine) {
+    roleEl.value = firstLine.trim();
+  }
+}
+
+function clearQaJd() {
+  const fileEl = document.getElementById('qaJdFile');
+  const zone   = document.getElementById('qaJdZone');
+  const fname  = document.getElementById('qaJdFname');
+  const status = document.getElementById('qaJdStatus');
+  const textEl = document.getElementById('qaJdText');
+  if (fileEl)  fileEl.value = '';
+  if (zone)    zone.classList.remove('has-file');
+  if (fname)   fname.textContent = '';
+  if (textEl)  textEl.value = '';
+  if (status)  { status.textContent = 'No JD loaded -- you can also just type a role below.'; status.style.color = 'var(--text3)'; }
+}
+
+
+/* ═══════════════════════════════════════
+   SMART API CALLER
+   - On Vercel: routes through /api/chat (master key, secure)
+   - Locally: calls Anthropic directly with stored key
+═══════════════════════════════════════ */
+async function callAI({ system, messages, max_tokens = 2000 }) {
+  const isVercel = window.location.protocol === 'https:' &&
+                   !window.location.hostname.includes('localhost') &&
+                   !window.location.hostname.includes('127.0.0.1') &&
+                   window.location.protocol !== 'file:';
+
+  if (isVercel) {
+    // ── Production: route through Vercel serverless function ──
+    const resp = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ system, messages, max_tokens })
+    });
+    if (!resp.ok) {
+      const e = await resp.json().catch(() => ({}));
+      throw new Error(e?.error || `Server error ${resp.status}`);
+    }
+    return await resp.json();
+
+  } else {
+    // ── Local / development: call Anthropic directly ──
+    const key = getKey();
+    if (!key) {
+      // Show the API key input modal
+      showApiKeyModal();
+      throw new Error('API key required. Please enter your Anthropic API key.');
+    }
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': key,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        system,
+        messages,
+        max_tokens
+      })
+    });
+    if (!resp.ok) {
+      const e = await resp.json().catch(() => ({}));
+      throw new Error(e?.error?.message || `API error ${resp.status}`);
+    }
+    return await resp.json();
+  }
+}
+
+/* ─── API Key Modal (shown when running locally without a key) ─── */
+function showApiKeyModal() {
+  if (document.getElementById('apiKeyModal')) return;
+  const modal = document.createElement('div');
+  modal.id = 'apiKeyModal';
+  modal.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.7);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:20px;';
+  modal.innerHTML = `
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px;max-width:460px;width:100%;box-shadow:var(--shadow);animation:fadeUp .3s ease both;">
+      <div style="font-size:28px;margin-bottom:12px;">🔑</div>
+      <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:800;margin-bottom:8px;">Anthropic API Key Required</div>
+      <p style="font-size:13px;color:var(--text2);margin-bottom:20px;line-height:1.6;">
+        You are running HireKit locally. Please enter your Anthropic API key to enable AI features.
+        It will be saved in your browser.<br><br>
+        <a href="https://console.anthropic.com/account/keys" target="_blank" style="color:var(--accent);font-weight:600;">Get your API key →</a>
+      </p>
+      <input type="password" id="modalKeyInput" placeholder="sk-ant-api03-..."
+        style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:inherit;font-size:14px;padding:12px 14px;outline:none;margin-bottom:12px;"
+        onkeydown="if(event.key==='Enter')saveModalKey()">
+      <button onclick="saveModalKey()"
+        style="width:100%;padding:13px;background:var(--accent);border:none;border-radius:8px;color:#000;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">
+        Save Key &amp; Continue
+      </button>
+      <p style="font-size:11px;color:var(--text3);margin-top:12px;text-align:center;">
+        Key stored in your browser only. Never sent to our servers.
+      </p>
+    </div>`;
+  document.body.appendChild(modal);
+  setTimeout(() => document.getElementById('modalKeyInput')?.focus(), 100);
+}
+
+function saveModalKey() {
+  const val = document.getElementById('modalKeyInput')?.value.trim();
+  if (!val || !val.startsWith('sk-')) { alert('Please enter a valid key starting with sk-'); return; }
+  localStorage.setItem('iq_apikey', val);
+  document.getElementById('apiKeyModal')?.remove();
+  showToast('API key saved! Please try again.');
+}
+
+</script>
+</body>
+</html>
