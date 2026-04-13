@@ -1371,6 +1371,15 @@ function doLogin() {
   if (!email || !pass) { errEl.textContent = 'Please enter email and password.'; errEl.classList.add('show'); return; }
 
   // Owner
+  // ── Hardcoded test guest accounts (always available) ──
+  const GUESTS = [
+    { name:'Test Guest 1', email:'guest1@hirekit.online', pass:'Guest@123', owner:false, paid:false, credits:3 },
+    { name:'Test Guest 2', email:'guest2@hirekit.online', pass:'Guest@123', owner:false, paid:true,  credits:0 },
+    { name:'Test Guest 3', email:'guest3@hirekit.online', pass:'Guest@123', owner:false, paid:false, credits:0 },
+  ];
+  const guest = GUESTS.find(g => g.email === email && g.pass === pass);
+  if (guest) { setUser({...guest}); return; }
+
   // Owner login -- exact match required
   if (email === OWNER_EMAIL.toLowerCase() && pass === OWNER_PASS) {
     setUser({ name: 'Aaron', email: OWNER_EMAIL, owner: true, paid: true });
@@ -2653,7 +2662,11 @@ async function callAI({ system, messages, max_tokens = 2000 }) {
     });
     if (!resp.ok) {
       const e = await resp.json().catch(() => ({}));
-      throw new Error(e?.error || `Server error ${resp.status}`);
+      throw new Error(
+        resp.status === 413
+          ? '❌ File too large for processing. Please use a smaller file or paste the text directly into the text box.'
+          : e?.error || `Server error ${resp.status}`
+      );
     }
     return await resp.json();
 
