@@ -1352,7 +1352,8 @@ function checkAndShowKeyBanner() {
   if (!banner) return;
   if (key) {
     banner.classList.add('hidden');
-    document.getElementById('apikeyInput').value = key;
+    const inp = document.getElementById('apikeyInput');
+    if (inp) inp.value = key;
   } else {
     banner.classList.remove('hidden');
   }
@@ -1620,7 +1621,7 @@ async function generateKit() {
   let jdContent = await readFileAsText(jdFileEl.files[0]);
   if (jdContent === '__NEEDS_PASTE__' || !jdContent.trim()) {
     // PDF parse failed - fall back to pasted text
-    jdContent = jdText;
+    jdContent = '';
     if (!jdContent.trim()) {
       errEl.textContent = '⚠️  Could not read the JD file. Please paste the JD text in the box below instead.';
       errEl.classList.add('show'); return;
@@ -2429,7 +2430,7 @@ function loadSavedQA(idx) {
       </div></div>`;
     list.appendChild(card);
   });
-  document.getElementById('qaOutput').style.display = 'block';
+  document.getElementById('qaOutput').classList.add('show');
   showToast('Q&A loaded ✓');
 }
 
@@ -2505,12 +2506,12 @@ If a Job Description is provided, base all questions specifically on that JD's r
     const raw  = data.content?.[0]?.text || '';
     const qa   = JSON.parse(raw.replace(/```json|```/g, '').trim());
 
-    document.getElementById('qaLoading').style.display = 'none';
+    document.getElementById('qaLoading').classList.remove('show');
     document.getElementById('qaBtn').disabled = false;
     renderQA(qa);
 
   } catch(err) {
-    document.getElementById('qaLoading').style.display = 'none';
+    document.getElementById('qaLoading').classList.remove('show');
     document.getElementById('qaBtn').disabled = false;
     errEl.textContent = '❌ ' + (err.message || 'Something went wrong. Try again.');
     errEl.classList.add('show');
@@ -2545,11 +2546,11 @@ function renderQA(qa) {
       </div>`;
     list.appendChild(card);
   });
-  document.getElementById('qaOutput').style.display = 'block';
+  document.getElementById('qaOutput').classList.add('show');
 }
 
 function resetQA() {
-  document.getElementById('qaOutput').style.display = 'none';
+  document.getElementById('qaOutput').classList.remove('show');
   document.getElementById('qaRole').value    = '';
   document.getElementById('qaFocus').value   = '';
   const kw = document.getElementById('qaKeywords');
