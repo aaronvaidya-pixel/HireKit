@@ -30,44 +30,61 @@ export default async function handler(req, res) {
 
     const fullPrompt = safeSystem ? safeSystem + '\n\n' + userContent : userContent;
 
-    // Use gemini-2.0-flash — latest stable free model
-    const gResp = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${geminiKey}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: fullPrompt }] }],
-          generationConfig: {
-            maxOutputTokens: max_tokens || 2000,
-            temperature: 0.7
-          }
-        })
+    // Try models in order until one works
+    const models = [
+      'gemini-1.5-flash-latest',
+      'gemini-1.5-flash',
+      'gemini-1.0-pro',
+    ];
+
+    let lastError = null;
+    for (const model of models) {
+      const gResp = await fetch(
+        `https://generativelanguage.googleapis.com/v1/models/${model}:generateContent?key=${geminiKey}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: fullPrompt }] }],
+            generationConfig: {
+              maxOutputTokens: max_tokens || 2000,
+              temperature: 0.7
+            }
+          })
+        }
+      );
+
+      const gData = await gResp.json();
+
+      if (gResp.ok) {
+        const text = gData?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+        if (text) {
+          return res.status(200).json({
+            content: [{ type: 'text', text }],
+            model,
+            usage: {}
+          });
+        }
       }
-    );
 
-    const gData = await gResp.json();
+      // Rate limited — try next model
+      if (gResp.status === 429) {
+        lastError = gData?.error?.message || 'Rate limit exceeded';
+        continue;
+      }
 
-    if (!gResp.ok) {
-      console.error('Gemini error:', JSON.stringify(gData));
-      return res.status(gResp.status).json({
-        error: gData?.error?.message || 'AI service error. Please try again.'
-      });
+      // Other error
+      console.error(`Gemini ${model} error:`, JSON.stringify(gData));
+      lastError = gData?.error?.message || 'AI error';
     }
 
-    const text = gData?.candidates?.[0]?.content?.parts?.[0]?.text || '';
-    if (!text) {
-      return res.status(500).json({ error: 'Empty response from AI. Please try again.' });
-    }
-
-    return res.status(200).json({
-      content: [{ type: 'text', text }],
-      model: 'gemini-2.0-flash',
-      usage: {}
+    // All models failed
+    return res.status(429).json({
+      error: 'AI service is temporarily at capacity. Please wait a moment and try again.'
     });
 
   } catch (err) {
     console.error('Handler error:', err.message);
-    return res.status(500).json({ error: 'Server error: ' + (err.message || 'Unknown error') });
+    return res.status(500).json({ error: 'Server error: ' + (err.message || 'Unknown') });
   }
 }
