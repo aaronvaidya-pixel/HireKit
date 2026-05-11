@@ -1,0 +1,1801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HireKit&#8482; &#8212; AI Interview Screening</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600&display=swap" rel="stylesheet">
+<style>
+/* ─────────────────────────────────────────
+   DESIGN TOKENS
+───────────────────────────────────────── */
+:root {
+  --c-navy:      #0b1d35;
+  --c-navy2:     #122545;
+  --c-navy3:     #1c3358;
+  --c-navy4:     #244070;
+  --c-yellow:    #f5c518;
+  --c-yellow2:   #ffd740;
+  --c-ybg:       rgba(245,197,24,.09);
+  --c-ybd:       rgba(245,197,24,.22);
+  --c-white:     #f3f8ff;
+  --c-white2:    #c4d6ec;
+  --c-muted:     #6888a4;
+  --c-green:     #1ab954;
+  --c-gbg:       rgba(26,185,84,.10);
+  --c-gbd:       rgba(26,185,84,.24);
+  --c-red:       #e83550;
+  --c-rbg:       rgba(232,53,80,.10);
+  --c-rbd:       rgba(232,53,80,.24);
+  --c-border:    rgba(243,248,255,.07);
+  --c-border2:   rgba(243,248,255,.14);
+  --nav-h:       64px;
+  --r:           13px;
+  --shadow:      0 8px 40px rgba(0,0,0,.44);
+  --fh:          'Syne', sans-serif;
+  --fb:          'DM Sans', sans-serif;
+}
+body.light {
+  --c-navy:    #edf2f9;
+  --c-navy2:   #ffffff;
+  --c-navy3:   #dce6f2;
+  --c-navy4:   #ccd9ea;
+  --c-white:   #0b1d35;
+  --c-white2:  #1c3358;
+  --c-muted:   #506880;
+  --c-border:  rgba(11,29,53,.08);
+  --c-border2: rgba(11,29,53,.16);
+  --shadow:    0 8px 40px rgba(0,0,0,.10);
+}
+
+/* ─────────────────────────────────────────
+   RESET & BASE
+───────────────────────────────────────── */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: var(--fb);
+  background: var(--c-navy);
+  color: var(--c-white);
+  min-height: 100vh;
+  line-height: 1.6;
+  transition: background .25s, color .25s;
+}
+button { cursor:pointer; font-family:var(--fb); }
+input, textarea { font-family:var(--fb); }
+
+/* ─────────────────────────────────────────
+   UTILITIES
+───────────────────────────────────────── */
+.hidden { display:none !important; }
+.mt8  { margin-top:8px; }
+.mt12 { margin-top:12px; }
+.mt16 { margin-top:16px; }
+
+/* ─────────────────────────────────────────
+   BUTTONS
+───────────────────────────────────────── */
+.btn {
+  display:inline-flex; align-items:center; gap:7px;
+  border:none; border-radius:10px;
+  font-size:.87rem; font-weight:600; letter-spacing:.01em;
+  padding:11px 22px; transition:all .18s; cursor:pointer; white-space:nowrap;
+}
+.btn-y {
+  background:var(--c-yellow); color:#0b1d35;
+  border:2px solid var(--c-yellow);
+}
+.btn-y:hover {
+  background:var(--c-yellow2); border-color:var(--c-yellow2);
+  transform:translateY(-1px); box-shadow:0 4px 18px rgba(245,197,24,.3);
+}
+.btn-ghost {
+  background:transparent; color:var(--c-white); border:1.5px solid var(--c-border2);
+}
+.btn-ghost:hover { border-color:var(--c-yellow); color:var(--c-yellow); }
+.btn-sm   { padding:8px 16px; font-size:.8rem; }
+.btn-lg   { padding:14px 30px; font-size:.95rem; border-radius:12px; }
+.btn-full { width:100%; justify-content:center; }
+.btn-icon {
+  width:38px; height:38px; padding:0; border-radius:50%;
+  background:var(--c-navy3); border:1.5px solid var(--c-border2);
+  color:var(--c-white); font-size:1rem;
+  display:inline-flex; align-items:center; justify-content:center;
+}
+.btn-icon:hover { border-color:var(--c-yellow); color:var(--c-yellow); }
+
+/* ─────────────────────────────────────────
+   NAVIGATION
+───────────────────────────────────────── */
+#nav {
+  height:var(--nav-h);
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 52px;
+  border-bottom:1px solid var(--c-border);
+  position:sticky; top:0; z-index:300;
+  background:var(--c-navy); transition:background .25s;
+}
+.logo {
+  font-family:var(--fh); font-weight:800; font-size:1.38rem;
+  letter-spacing:-.03em; cursor:pointer;
+  display:flex; align-items:baseline;
+}
+.logo-hire { color:var(--c-white); }
+.logo-kit  { color:var(--c-yellow); }
+.logo-tm   { font-size:.45rem; color:var(--c-muted); vertical-align:super; margin-left:1px; }
+.nav-r { display:flex; align-items:center; gap:10px; }
+.user-chip {
+  display:flex; align-items:center; gap:8px;
+  padding:6px 14px;
+  background:var(--c-navy3); border:1px solid var(--c-border2);
+  border-radius:100px; font-size:.79rem;
+}
+.u-dot    { width:7px; height:7px; border-radius:50%; background:var(--c-green); }
+.plan-tag {
+  font-size:.64rem; font-weight:700;
+  background:var(--c-ybg); color:var(--c-yellow);
+  padding:2px 8px; border-radius:100px;
+  border:1px solid var(--c-ybd); letter-spacing:.04em;
+}
+
+/* ─────────────────────────────────────────
+   PAGE SYSTEM
+───────────────────────────────────────── */
+.page { display:none; }
+.page.active { display:block; }
+#page-qa.active { display:flex; }
+
+/* ─────────────────────────────────────────
+   HOME — HERO
+───────────────────────────────────────── */
+.hero {
+  padding:76px 52px 52px; text-align:center;
+  position:relative; overflow:hidden;
+}
+.hero::before {
+  content:''; position:absolute; inset:0;
+  background:radial-gradient(ellipse 78% 62% at 50% -5%,rgba(245,197,24,.09) 0%,transparent 68%);
+  pointer-events:none;
+}
+.hero-badge {
+  display:inline-flex; align-items:center; gap:8px;
+  background:var(--c-ybg); border:1px solid var(--c-ybd);
+  color:var(--c-yellow); padding:5px 16px; border-radius:100px;
+  font-size:.74rem; font-weight:600;
+  margin-bottom:22px; letter-spacing:.05em; text-transform:uppercase;
+}
+.hero-badge::before {
+  content:''; width:6px; height:6px; border-radius:50%;
+  background:var(--c-yellow); animation:blink 2s infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.35} }
+.hero-h1 {
+  font-family:var(--fh);
+  font-size:clamp(2rem,5.4vw,3.8rem);
+  font-weight:800; line-height:1.07; letter-spacing:-.03em; margin-bottom:18px;
+}
+.hero-h1 em { color:var(--c-yellow); font-style:normal; }
+.hero-p { color:var(--c-muted); font-size:1.01rem; max-width:490px; margin:0 auto 32px; line-height:1.76; }
+.hero-ctas { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-bottom:14px; }
+.hero-note { font-size:.74rem; color:var(--c-muted); }
+
+/* ─────────────────────────────────────────
+   BROWSE SECTION (Section B — placeholders)
+───────────────────────────────────────── */
+.browse { padding:0 52px 48px; }
+.search-wrap {
+  display:flex; align-items:center; gap:10px;
+  background:var(--c-navy2); border:1.5px solid var(--c-border2);
+  border-radius:13px; padding:12px 18px;
+  max-width:570px; margin:0 auto 24px;
+  transition:border-color .18s, box-shadow .18s;
+}
+.search-wrap:focus-within { border-color:var(--c-yellow); box-shadow:0 0 0 3px rgba(245,197,24,.08); }
+.search-wrap input {
+  flex:1; background:none; border:none; outline:none;
+  color:var(--c-white); font-size:.94rem;
+}
+.search-wrap input::placeholder { color:var(--c-muted); }
+.s-ico { color:var(--c-muted); font-size:1rem; flex-shrink:0; }
+
+.cat-row { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-bottom:28px; }
+.cpill {
+  padding:6px 16px; border-radius:100px;
+  border:1.5px solid var(--c-border2); background:var(--c-navy2);
+  color:var(--c-muted); font-size:.77rem; font-weight:500; cursor:pointer; transition:all .18s;
+}
+.cpill:hover, .cpill.on {
+  background:var(--c-yellow); color:#0b1d35; border-color:var(--c-yellow); font-weight:700;
+}
+
+.grid-hd { max-width:1200px; margin:0 auto 12px; }
+.grid-ct { font-size:.77rem; font-weight:600; color:var(--c-muted); letter-spacing:.06em; text-transform:uppercase; }
+
+.pgrid {
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(190px,1fr));
+  gap:11px; max-width:1200px; margin:0 auto;
+}
+.pcard {
+  background:var(--c-navy2); border:1.5px solid var(--c-border);
+  border-radius:var(--r); padding:19px 16px;
+  cursor:pointer; transition:all .18s;
+  position:relative; overflow:hidden;
+}
+.pcard::after {
+  content:''; position:absolute; top:0; left:0; right:0; height:3px;
+  background:var(--c-yellow); opacity:0; transition:opacity .18s;
+}
+.pcard:hover { border-color:rgba(245,197,24,.22); transform:translateY(-2px); box-shadow:0 10px 28px rgba(0,0,0,.3); }
+.pcard:hover::after { opacity:1; }
+.pcard-q {
+  position:absolute; top:12px; right:12px;
+  font-size:.64rem; color:var(--c-yellow);
+  background:var(--c-ybg); padding:2px 7px; border-radius:100px; font-weight:700;
+}
+.pcard-ico  { font-size:1.55rem; margin-bottom:9px; display:block; line-height:1; }
+.pcard-name { font-family:var(--fh); font-weight:700; font-size:.86rem; line-height:1.3; margin-bottom:4px; }
+.pcard-cat  { font-size:.69rem; color:var(--c-muted); }
+.pcard-lock { position:absolute; bottom:10px; right:12px; font-size:.8rem; opacity:.4; }
+
+.jd-cta {
+  max-width:1200px; margin:18px auto 0;
+  background:linear-gradient(135deg,rgba(245,197,24,.06),rgba(26,185,84,.04));
+  border:1.5px dashed rgba(245,197,24,.22);
+  border-radius:15px; padding:24px 28px;
+  display:flex; align-items:center; gap:18px;
+  cursor:pointer; transition:all .18s;
+}
+.jd-cta:hover { border-color:rgba(245,197,24,.44); }
+.jd-cta-ico  { font-size:1.85rem; flex-shrink:0; }
+.jd-cta-body h3 { font-family:var(--fh); font-weight:700; font-size:.92rem; margin-bottom:3px; }
+.jd-cta-body p  { font-size:.77rem; color:var(--c-muted); }
+.jd-cta-arr { margin-left:auto; color:var(--c-yellow); font-size:1.2rem; flex-shrink:0; }
+
+/* ─────────────────────────────────────────
+   AUTH PAGE
+───────────────────────────────────────── */
+#page-auth {
+  min-height:calc(100vh - var(--nav-h));
+  display:flex; align-items:center; justify-content:center;
+  padding:40px 20px;
+  background:
+    radial-gradient(ellipse 55% 70% at 75% 50%,rgba(245,197,24,.06),transparent 55%),
+    radial-gradient(ellipse 45% 55% at 20% 80%,rgba(26,185,84,.04),transparent 50%);
+}
+.auth-box {
+  background:var(--c-navy2); border:1.5px solid var(--c-border2);
+  border-radius:20px; padding:46px;
+  width:100%; max-width:428px;
+  box-shadow:var(--shadow); position:relative;
+}
+.auth-theme { position:absolute; top:16px; right:16px; }
+.auth-h2 { font-family:var(--fh); font-weight:800; font-size:1.72rem; margin-bottom:5px; letter-spacing:-.03em; }
+.auth-sub { color:var(--c-muted); font-size:.85rem; margin-bottom:28px; }
+.field { margin-bottom:16px; }
+.field label {
+  display:block; font-size:.71rem; font-weight:700; color:var(--c-muted);
+  letter-spacing:.07em; text-transform:uppercase; margin-bottom:6px;
+}
+.field input {
+  width:100%; background:var(--c-navy3); border:1.5px solid var(--c-border);
+  border-radius:10px; padding:12px 15px; color:var(--c-white);
+  font-size:.92rem; outline:none; transition:border-color .18s, box-shadow .18s;
+}
+.field input:focus { border-color:var(--c-yellow); box-shadow:0 0 0 3px rgba(245,197,24,.08); }
+.err-msg { color:var(--c-red); font-size:.77rem; margin-top:8px; display:none; }
+.free-note {
+  background:var(--c-gbg); border:1px solid var(--c-gbd);
+  border-radius:10px; padding:12px 15px; margin-top:18px;
+  font-size:.78rem; color:var(--c-muted);
+  display:flex; gap:10px; align-items:flex-start;
+}
+.free-tick { color:var(--c-green); font-size:.94rem; flex-shrink:0; margin-top:1px; }
+.auth-sw { text-align:center; margin-top:18px; font-size:.8rem; color:var(--c-muted); }
+.auth-sw span { color:var(--c-yellow); cursor:pointer; font-weight:600; }
+.auth-sw span:hover { text-decoration:underline; }
+
+/* ─────────────────────────────────────────
+   Q&A PAGE
+───────────────────────────────────────── */
+.qa-side {
+  width:258px; flex-shrink:0;
+  border-right:1px solid var(--c-border);
+  padding:20px 0; overflow-y:auto;
+  max-height:calc(100vh - var(--nav-h));
+  position:sticky; top:var(--nav-h);
+  background:var(--c-navy); transition:background .25s;
+}
+.side-lbl { font-size:.64rem; font-weight:700; color:var(--c-muted); letter-spacing:.1em; text-transform:uppercase; padding:0 18px 8px; }
+.side-item {
+  padding:9px 18px; font-size:.82rem; color:var(--c-muted);
+  cursor:pointer; border-left:2px solid transparent; transition:all .15s;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.side-item:hover { background:var(--c-navy2); color:var(--c-white); }
+.side-item.on { color:var(--c-yellow); border-left-color:var(--c-yellow); background:rgba(245,197,24,.06); font-weight:600; }
+.side-div { height:1px; background:var(--c-border); margin:10px 18px; }
+.side-jd-btn { margin:10px 18px 0; width:calc(100% - 36px); justify-content:flex-start; }
+
+.qa-main { flex:1; padding:34px 46px; overflow-y:auto; max-width:875px; }
+.qa-pname { font-family:var(--fh); font-weight:800; font-size:1.6rem; margin-bottom:5px; letter-spacing:-.025em; }
+.qa-pmeta { color:var(--c-muted); font-size:.82rem; margin-bottom:22px; }
+
+.cat-tabs { display:flex; gap:7px; flex-wrap:wrap; margin-bottom:26px; }
+.ctab {
+  padding:7px 15px; border-radius:8px;
+  border:1.5px solid var(--c-border2); background:var(--c-navy2);
+  color:var(--c-muted); font-size:.78rem; font-weight:500; cursor:pointer; transition:all .18s;
+}
+.ctab:hover { border-color:var(--c-yellow); color:var(--c-yellow); }
+.ctab.on { background:var(--c-yellow); color:#0b1d35; border-color:var(--c-yellow); font-weight:700; }
+
+/* Q&A Cards */
+.qcard {
+  background:var(--c-navy2); border:1.5px solid var(--c-border);
+  border-radius:var(--r); margin-bottom:10px; overflow:hidden; transition:border-color .18s;
+}
+.qcard:hover { border-color:var(--c-border2); }
+.qcard-hd {
+  padding:16px 20px; display:flex; align-items:center; gap:12px; cursor:pointer;
+}
+.qcard-num { font-size:.67rem; font-weight:700; color:var(--c-muted); min-width:22px; }
+.qcard-q   { flex:1; font-size:.9rem; font-weight:500; line-height:1.5; }
+.qcard-tag { font-size:.67rem; color:var(--c-yellow); background:var(--c-ybg); padding:3px 9px; border-radius:100px; white-space:nowrap; flex-shrink:0; font-weight:600; }
+.qcard-chev { color:var(--c-muted); font-size:.76rem; transition:transform .2s; flex-shrink:0; }
+.qcard.open .qcard-chev { transform:rotate(180deg); }
+.qcard-bd { display:none; padding:0 20px 20px; border-top:1px solid var(--c-border); }
+.qcard.open .qcard-bd { display:block; }
+.ans-lbl { font-size:.64rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--c-muted); margin:14px 0 7px; }
+.ans-box  { border-radius:9px; padding:13px 15px; font-size:.83rem; line-height:1.68; margin-bottom:7px; }
+.ans-n { background:var(--c-navy3); border:1px solid var(--c-border); }
+.ans-g { background:var(--c-gbg); border:1px solid var(--c-gbd); color:#9aecc0; }
+.ans-r { background:var(--c-rbg); border:1px solid var(--c-rbd); color:#f7a8b5; }
+body.light .ans-g { color:#0d5c2a; }
+body.light .ans-r { color:#7c1224; }
+.ans-flag { display:inline-flex; align-items:center; gap:4px; font-size:.67rem; font-weight:700; padding:2px 8px; border-radius:4px; margin-bottom:6px; }
+.fg { background:rgba(26,185,84,.15); color:var(--c-green); }
+.fr { background:rgba(232,53,80,.15); color:var(--c-red); }
+
+/* Paywall Banner */
+.paywall {
+  background:linear-gradient(135deg,rgba(245,197,24,.08),rgba(26,185,84,.04));
+  border:1px solid rgba(245,197,24,.2); border-radius:15px;
+  padding:22px 26px; margin-top:30px;
+  display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;
+}
+.paywall h3 { font-family:var(--fh); font-weight:700; font-size:.94rem; margin-bottom:4px; }
+.paywall p  { font-size:.77rem; color:var(--c-muted); }
+.pw-price { font-family:var(--fh); font-weight:800; font-size:1.42rem; color:var(--c-yellow); white-space:nowrap; }
+.pw-price small { font-size:.73rem; font-weight:400; color:var(--c-muted); }
+
+/* ─────────────────────────────────────────
+   JD UPLOAD PAGE
+───────────────────────────────────────── */
+#page-jd { min-height:calc(100vh - var(--nav-h)); padding:40px 52px; }
+.jd-wrap { max-width:650px; margin:0 auto; }
+.jd-wrap h2 { font-family:var(--fh); font-weight:800; font-size:1.48rem; margin-bottom:5px; letter-spacing:-.025em; }
+.jd-sub { color:var(--c-muted); font-size:.85rem; margin-bottom:26px; }
+.drop-zone {
+  border:2px dashed var(--c-border2); border-radius:15px;
+  padding:42px; text-align:center; cursor:pointer; transition:all .18s; margin-bottom:14px;
+}
+.drop-zone:hover { border-color:var(--c-yellow); background:rgba(245,197,24,.03); }
+.drop-ico { font-size:2.3rem; margin-bottom:10px; }
+.drop-zone h3 { font-size:.96rem; font-weight:600; margin-bottom:4px; }
+.drop-zone p  { font-size:.77rem; color:var(--c-muted); }
+.or-div { text-align:center; color:var(--c-muted); font-size:.77rem; margin:12px 0; }
+.jd-ta {
+  width:100%; background:var(--c-navy2); border:1.5px solid var(--c-border);
+  border-radius:12px; padding:14px 16px; color:var(--c-white);
+  font-size:.87rem; min-height:152px; resize:vertical;
+  outline:none; transition:border-color .18s;
+}
+.jd-ta:focus { border-color:var(--c-yellow); }
+.kw-in {
+  width:100%; background:var(--c-navy2); border:1.5px solid var(--c-border);
+  border-radius:10px; padding:11px 15px; color:var(--c-white);
+  font-size:.87rem; outline:none; transition:border-color .18s; margin-top:11px;
+}
+.kw-in:focus { border-color:var(--c-yellow); }
+.file-ok { background:var(--c-gbg); border:1px solid var(--c-gbd); border-radius:9px; padding:10px 14px; font-size:.79rem; color:var(--c-green); margin-bottom:12px; display:none; }
+.jd-acts { display:flex; gap:10px; margin-top:18px; }
+.jd-result { background:var(--c-navy2); border:1px solid var(--c-border2); border-radius:var(--r); padding:20px; white-space:pre-wrap; font-size:.84rem; line-height:1.7; margin-top:22px; }
+
+/* ─────────────────────────────────────────
+   PRICING MODAL
+───────────────────────────────────────── */
+.overlay { position:fixed; inset:0; background:rgba(0,0,0,.66); backdrop-filter:blur(5px); z-index:500; display:none; align-items:center; justify-content:center; padding:20px; }
+.overlay.open { display:flex; }
+.modal { background:var(--c-navy2); border:1.5px solid var(--c-border2); border-radius:20px; padding:42px; max-width:505px; width:100%; box-shadow:var(--shadow); position:relative; }
+.modal h2 { font-family:var(--fh); font-weight:800; font-size:1.52rem; margin-bottom:5px; letter-spacing:-.025em; }
+.modal-sub { color:var(--c-muted); font-size:.82rem; margin-bottom:26px; }
+.modal-x { position:absolute; top:16px; right:16px; }
+.plan-box { background:var(--c-navy3); border:1.5px solid var(--c-border); border-radius:12px; padding:20px; margin-bottom:11px; transition:border-color .18s; }
+.plan-box:hover { border-color:var(--c-yellow); }
+.plan-box h3 { font-family:var(--fh); font-weight:700; font-size:.96rem; margin-bottom:4px; }
+.plan-price { font-family:var(--fh); font-size:1.52rem; font-weight:800; color:var(--c-yellow); }
+.plan-price small { font-size:.77rem; font-weight:400; color:var(--c-muted); }
+.plan-f { display:flex; align-items:center; gap:7px; font-size:.78rem; color:var(--c-white2); margin-top:6px; }
+.plan-f::before { content:'\2713'; color:var(--c-green); }
+
+/* ─────────────────────────────────────────
+   TOAST
+───────────────────────────────────────── */
+#toast {
+  position:fixed; bottom:26px; left:50%;
+  transform:translateX(-50%) translateY(80px);
+  background:var(--c-navy2); border:1px solid var(--c-border2);
+  border-radius:12px; padding:11px 22px;
+  font-size:.85rem; font-weight:500;
+  box-shadow:var(--shadow); z-index:999;
+  transition:transform .28s, opacity .28s; opacity:0; white-space:nowrap;
+}
+#toast.show { transform:translateX(-50%) translateY(0); opacity:1; }
+
+/* ─────────────────────────────────────────
+   FOOTER
+───────────────────────────────────────── */
+footer {
+  border-top:1px solid var(--c-border); padding:20px 52px;
+  text-align:center; color:var(--c-muted); font-size:.75rem;
+}
+footer a { color:var(--c-muted); }
+footer a:hover { color:var(--c-yellow); }
+
+/* ─────────────────────────────────────────
+   RESPONSIVE
+───────────────────────────────────────── */
+@media (max-width:768px) {
+  #nav { padding:0 20px; }
+  .hero, .browse { padding-left:20px; padding-right:20px; }
+  #page-jd { padding:24px 20px; }
+  .qa-side { display:none; }
+  .qa-main { padding:20px; }
+  footer { padding:16px 20px; }
+  .auth-box { padding:32px 22px; }
+  .hero-h1 { font-size:1.88rem; }
+}
+</style>
+</head>
+<body id="body">
+
+<!-- ══════ NAV ══════ -->
+<nav id="nav">
+  <div class="logo" onclick="goHome()">
+    <span class="logo-hire">Hire</span><span class="logo-kit">Kit</span><span class="logo-tm">TM</span>
+  </div>
+  <div class="nav-r" id="nav-g">
+    <button class="btn-icon" onclick="toggleTheme()" title="Toggle theme" id="tbtn1">&#9790;</button>
+    <button class="btn btn-ghost btn-sm" onclick="openAuth('login')">Log In</button>
+    <button class="btn btn-y btn-sm" onclick="openAuth('signup')">Get Started Free</button>
+  </div>
+  <div class="nav-r hidden" id="nav-u">
+    <button class="btn-icon" onclick="toggleTheme()" title="Toggle theme" id="tbtn2">&#9790;</button>
+    <div class="user-chip">
+      <div class="u-dot"></div>
+      <span id="nav-name">Aaron</span>
+      <span class="plan-tag" id="nav-plan">FREE</span>
+    </div>
+    <button class="btn btn-ghost btn-sm" onclick="logout()">Sign Out</button>
+  </div>
+</nav>
+
+<!-- ══════ HOME ══════ -->
+<div class="page active" id="page-home">
+  <div class="hero">
+    <div class="hero-badge">AI-Powered Interview Intelligence</div>
+    <h1 class="hero-h1">Screen smarter.<br><em>Hire faster.</em></h1>
+    <p class="hero-p">Instant Q&amp;A kits for 28 job profiles. Strong answers highlighted in green, red flags in red &#8212; built for recruiters who move fast.</p>
+    <div class="hero-ctas">
+      <button class="btn btn-y btn-lg" onclick="openAuth('signup')">Start Free &#8212; 3 Profiles</button>
+      <button class="btn btn-ghost btn-lg" onclick="clickJD()">Upload a JD &#8594;</button>
+    </div>
+    <p class="hero-note">Free plan: 3 profiles &middot; No credit card required</p>
+  </div>
+
+  <div class="browse">
+    <div class="search-wrap">
+      <span class="s-ico">&#128269;</span>
+      <input type="text" id="q-input" placeholder="Search profile e.g. Data Analyst, HR Executive&#8230;" oninput="renderGrid()">
+    </div>
+    <div class="cat-row" id="cat-row">
+      <div class="cpill on" data-c="All" onclick="setCat(this)">All Profiles</div>
+      <div class="cpill" data-c="Technology" onclick="setCat(this)">Technology</div>
+      <div class="cpill" data-c="Sales" onclick="setCat(this)">Sales &amp; Marketing</div>
+      <div class="cpill" data-c="Finance" onclick="setCat(this)">Finance</div>
+      <div class="cpill" data-c="HR" onclick="setCat(this)">Operations &amp; HR</div>
+      <div class="cpill" data-c="Healthcare" onclick="setCat(this)">Healthcare</div>
+      <div class="cpill" data-c="Other" onclick="setCat(this)">Other</div>
+    </div>
+    <div class="grid-hd"><span class="grid-ct" id="grid-ct">28 profiles</span></div>
+    <div class="pgrid" id="pgrid"></div>
+    <div class="jd-cta" onclick="clickJD()">
+      <div class="jd-cta-ico">&#128196;</div>
+      <div class="jd-cta-body">
+        <h3>Can&#8217;t find the profile you need?</h3>
+        <p>Upload a JD + optional keywords &#8212; generate a custom Q&amp;A kit instantly. PDF, DOCX, TXT.</p>
+      </div>
+      <div class="jd-cta-arr">&#8594;</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ AUTH ══════ -->
+<div class="page" id="page-auth">
+  <div class="auth-box">
+    <button class="btn-icon auth-theme" onclick="toggleTheme()" title="Toggle theme" id="tbtn3">&#9790;</button>
+    <div id="form-su">
+      <h2 class="auth-h2">Create account</h2>
+      <p class="auth-sub">Start screening smarter &#8212; 3 free profiles, no card needed</p>
+      <div class="field"><label>Full Name</label><input type="text" id="su-n" placeholder="Aaron Vaidya" autocomplete="name"></div>
+      <div class="field"><label>Email Address</label><input type="email" id="su-e" placeholder="you@company.com" autocomplete="email"></div>
+      <div class="field"><label>Create Password</label><input type="password" id="su-p" placeholder="Min. 8 characters" autocomplete="new-password"></div>
+      <div class="err-msg" id="su-err"></div>
+      <button class="btn btn-y btn-full btn-lg mt16" onclick="doSignup()">Create Free Account &#8594;</button>
+      <div class="free-note">
+        <span class="free-tick">&#10003;</span>
+        <div>Free plan: <strong>3 profile Q&amp;A kits</strong>. Upgrade to Pro at &#8377;1,700/month. Agencies &#8212; <a href="mailto:contact@aaronvaidya.com" style="color:var(--c-yellow)">contact for quote</a>.</div>
+      </div>
+      <div class="auth-sw">Already have an account? <span onclick="showLogin()">Sign in &#8594;</span></div>
+    </div>
+    <div id="form-li" class="hidden">
+      <h2 class="auth-h2">Welcome back</h2>
+      <p class="auth-sub">Sign in to your HireKit account</p>
+      <div class="field"><label>Email Address</label><input type="email" id="li-e" placeholder="you@company.com" autocomplete="email"></div>
+      <div class="field"><label>Password</label><input type="password" id="li-p" placeholder="Your password" autocomplete="current-password"></div>
+      <div class="err-msg" id="li-err"></div>
+      <button class="btn btn-y btn-full btn-lg mt16" onclick="doLogin()">Sign In &#8594;</button>
+      <div class="auth-sw">No account yet? <span onclick="showSignup()">Sign up free &#8594;</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ Q&A ══════ -->
+<div class="page" id="page-qa">
+  <div class="qa-side">
+    <div class="side-lbl">Job Profiles</div>
+    <div id="side-list"></div>
+    <div class="side-div"></div>
+    <div class="side-lbl">Custom</div>
+    <button class="btn btn-ghost btn-sm side-jd-btn" onclick="clickJD()">&#128196; Upload JD</button>
+  </div>
+  <div class="qa-main">
+    <div class="qa-pname" id="qa-pname">Select a profile</div>
+    <div class="qa-pmeta" id="qa-pmeta"></div>
+    <div class="cat-tabs" id="cat-tabs"></div>
+    <div id="cards"></div>
+    <div class="paywall hidden" id="paywall">
+      <div>
+        <h3>&#128274; You&#8217;ve used <span id="used-ct">1</span> of 3 free profiles</h3>
+        <p>Upgrade to Pro for unlimited profiles, custom JD uploads &amp; priority support.</p>
+      </div>
+      <div style="text-align:right">
+        <div class="pw-price">&#8377;1,700 <small>/month</small></div>
+        <button class="btn btn-y mt8" onclick="openPricing()">Upgrade to Pro &#8594;</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ JD UPLOAD ══════ -->
+<div class="page" id="page-jd">
+  <div class="jd-wrap">
+    <button class="btn btn-ghost btn-sm" onclick="goHome()" style="margin-bottom:20px">&#8592; Back</button>
+    <h2>Upload Job Description</h2>
+    <p class="jd-sub">Upload or paste a JD and optionally add keywords &#8212; we&#8217;ll generate a full Q&amp;A kit with strong and red flag answers.</p>
+    <div class="drop-zone" id="dzone" onclick="document.getElementById('jd-fi').click()">
+      <input type="file" id="jd-fi" accept=".pdf,.docx,.txt" style="display:none" onchange="onFile(event)">
+      <div class="drop-ico">&#128206;</div>
+      <h3>Drop your JD file here</h3>
+      <p>PDF, DOCX or TXT &#8212; up to 5MB</p>
+    </div>
+    <div class="file-ok" id="file-ok"></div>
+    <div class="or-div">&#8212; or paste JD text below &#8212;</div>
+    <textarea class="jd-ta" id="jd-ta" placeholder="Paste the full job description here&#8230;"></textarea>
+    <input class="kw-in" id="kw-in" placeholder="Optional: keywords e.g. Python, 3+ years, Agile, client-facing&#8230;">
+    <div class="jd-acts">
+      <button class="btn btn-y btn-lg" onclick="genJD()">&#9889; Generate Q&amp;A Kit</button>
+      <button class="btn btn-ghost" onclick="clearJD()">Clear</button>
+    </div>
+    <div id="jd-load" class="hidden" style="margin-top:22px;text-align:center;color:var(--c-muted)">
+      <div style="font-size:1.6rem;margin-bottom:8px">&#9203;</div>
+      Generating your Q&amp;A kit&#8230;
+    </div>
+    <div id="jd-out" class="hidden"></div>
+  </div>
+</div>
+
+<!-- ══════ MODAL ══════ -->
+<div class="overlay" id="ov">
+  <div class="modal">
+    <button class="btn-icon modal-x" onclick="closePricing()">&#10005;</button>
+    <h2>Upgrade HireKit</h2>
+    <p class="modal-sub">Choose the plan that works for you</p>
+    <div class="plan-box">
+      <h3>Pro Individual</h3>
+      <div class="plan-price">&#8377;1,700 <small>/month</small></div>
+      <div class="plan-f">Unlimited profile Q&amp;A kits</div>
+      <div class="plan-f">Custom JD upload (unlimited)</div>
+      <div class="plan-f">Download Q&amp;A as PDF</div>
+      <div class="plan-f">Priority support</div>
+      <button class="btn btn-y btn-full mt12" onclick="doUpgrade()">Get Pro &#8594;</button>
+    </div>
+    <div class="plan-box">
+      <h3>Agency / Team</h3>
+      <div class="plan-price" style="font-size:1.1rem;color:var(--c-white)">Custom Pricing</div>
+      <div class="plan-f">Multiple seats</div>
+      <div class="plan-f">Dedicated account manager</div>
+      <div class="plan-f">Invoice billing</div>
+      <button class="btn btn-ghost btn-full mt12" onclick="window.location='mailto:contact@aaronvaidya.com?subject=HireKit Agency Enquiry'">Contact for Quote &#8594;</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+<footer>
+  &#169; 2026 HireKit&#8482; &middot; Built by <a href="mailto:contact@aaronvaidya.com">Aaron Vaidya</a>
+  &middot; Agency enquiries: <a href="mailto:contact@aaronvaidya.com">contact@aaronvaidya.com</a>
+</footer>
+
+<!-- ══════════════════════════════════════════
+  JAVASCRIPT
+  STRICT RULES:
+  1. ZERO backtick template literals
+  2. ZERO emojis in JS strings/variables
+  3. All string concatenation uses single-quoted strings
+  4. All functions use 'function' keyword (no arrow functions with bodies)
+  5. HTML entities only for special characters in strings
+══════════════════════════════════════════ -->
+<script>
+
+/* ═══════════════════════════
+   28 PROFILE DATA
+   icon: HTML entity string safe for innerHTML
+═══════════════════════════ */
+var PD = [
+/* ── Technology (10) ── */
+{id:'swe', ico:'&#128187;', name:'Software Engineer', cat:'Technology', qs:[
+  {n:1,t:'Skills',q:'Explain the difference between REST and GraphQL APIs.',
+   ex:'Candidate explains resource-based REST (multiple endpoints) vs GraphQL single endpoint with flexible queries. Should mention over-fetching and under-fetching.',
+   st:'"REST uses fixed endpoints per resource. GraphQL uses one endpoint with a schema — clients request exactly the fields they need. I reduced payload size by 60% switching a dashboard from REST to GraphQL with Apollo."',
+   rf:'"GraphQL is just newer REST" — or confusion between the two. No practical production experience with either.'},
+  {n:2,t:'Behavioural',q:'How do you approach debugging a critical production issue under pressure?',
+   ex:'STAR format expected. Systematic: logs first, rollback plan, stakeholder comms. No blame.',
+   st:'"During a payment gateway failure I traced a race condition using structured logs, applied a queue-based fix in 45 minutes, then shipped a permanent fix next sprint. Kept the team informed throughout."',
+   rf:'Blaming teammates. No structured debugging approach. Never experienced real production pressure.'},
+  {n:3,t:'Tools',q:'Describe your branching strategy and code review process.',
+   ex:'Git at minimum. GitFlow or trunk-based. PR process, CI checks, reviewer requirements.',
+   st:'"We use GitFlow. Feature branches off develop, 2-reviewer PRs, GitHub Actions CI before any merge. Hotfixes branch directly from main with immediate cherry-pick into develop."',
+   rf:'"I just push to main." No code review process. No CI/CD awareness.'},
+  {n:4,t:'Skills',q:'How do you ensure code quality in your projects?',
+   ex:'Unit testing, code reviews, linting, CI/CD, documentation practices.',
+   st:'"I write unit and integration tests targeting 80%+ coverage, enforce ESLint/Prettier in CI, conduct mandatory peer reviews, and maintain ADRs for significant architectural changes."',
+   rf:'No mention of testing. "I just test manually." No awareness of CI or code standards.'},
+  {n:5,t:'Experience',q:'Describe a complex technical problem you solved independently.',
+   ex:'Should show problem-solving process, technical depth, and measurable outcome.',
+   st:'"Our DB queries were degrading under load. I profiled them, identified N+1 issues, implemented eager loading and Redis caching, reducing P95 response time from 2.8s to 180ms."',
+   rf:'Vague answer with no metrics. Describes a trivial bug as complex.'}
+]},
+{id:'fullstack', ico:'&#127760;', name:'Full Stack Developer', cat:'Technology', qs:[
+  {n:1,t:'Skills',q:'Walk me through your typical full stack architecture choices.',
+   ex:'Frontend framework, backend language, database choices, API design, deployment.',
+   st:'"React + TypeScript frontend, Node/Express REST API, PostgreSQL with Redis cache, deployed on AWS ECS. I chose this for type safety, scalability, and team familiarity."',
+   rf:'Can only describe one layer. No deployment experience. No architectural rationale.'},
+  {n:2,t:'Skills',q:'How do you handle state management in large React applications?',
+   ex:'Context API, Redux, Zustand, React Query — must know when to use each.',
+   st:'"For server state I use React Query for caching. For complex UI state I use Zustand. Context only for truly global low-frequency updates like theme or auth."',
+   rf:'"I put everything in Redux." No understanding of server vs client state.'},
+  {n:3,t:'Experience',q:'Describe your experience with database design and optimization.',
+   ex:'Normalization, indexing, query optimization, SQL vs NoSQL choices.',
+   st:'"I designed schemas for 3 production apps. I use indexing on query-heavy columns, run EXPLAIN ANALYZE to spot slow queries, and chose MongoDB for a high-write IoT project for its flexible schema."',
+   rf:'Never designed a schema. Cannot explain indexes.'},
+  {n:4,t:'Skills',q:'How do you approach performance optimization in web applications?',
+   ex:'Code splitting, lazy loading, caching, CDN, database query optimization, profiling.',
+   st:'"I start with profiling — Lighthouse for frontend, APM for backend. I implemented code splitting reducing initial bundle by 40%, added Redis caching cutting DB load by 60%."',
+   rf:'Premature optimization without profiling. No awareness of where bottlenecks actually occur.'},
+  {n:5,t:'Behavioural',q:'Tell me about a time you had to learn a new technology quickly.',
+   ex:'Adaptability, learning approach, practical application, timeline management.',
+   st:'"I had 2 weeks to implement a GraphQL API having only used REST. I built a sandbox first, read the spec docs, studied GitHub patterns, and delivered the feature on time with tests."',
+   rf:'Resistant to new tech. Vague learning process. No concrete outcome or timeline.'}
+]},
+{id:'da', ico:'&#128202;', name:'Data Analyst', cat:'Technology', qs:[
+  {n:1,t:'Skills',q:'What is your process for cleaning and validating a new dataset?',
+   ex:'Missing values, outlier detection, type checking, validation rules, documentation.',
+   st:'"I first profile the data — row counts, null %, data types, value distributions. I handle nulls contextually, document all transformations in a data dictionary, and validate against business rules."',
+   rf:'No systematic approach. "I just look at it in Excel."'},
+  {n:2,t:'Skills',q:'Explain the difference between a left join and an inner join.',
+   ex:'Inner join returns matching rows only. Left join returns all rows from left table with NULLs for non-matches.',
+   st:'"Inner join returns only rows where both tables have a match. Left join returns all rows from the left table with NULLs for non-matching right table records. I use left join when I need to preserve all primary dataset records."',
+   rf:'Confuses the two. Cannot write a join query.'},
+  {n:3,t:'Behavioural',q:'How do you communicate complex findings to non-technical stakeholders?',
+   ex:'Storytelling, visualization, simplification, business context, actionable recommendations.',
+   st:'"I lead with the business insight, not the method. A bar chart beats a p-value table. I frame findings as what this means for the business and always include a recommended action."',
+   rf:'"I show them all the charts and tables." Leads with technical jargon.'},
+  {n:4,t:'Tools',q:'What tools have you used for data visualization and why?',
+   ex:'Tableau, Power BI, Python matplotlib/plotly, Looker. Context-appropriate choices.',
+   st:'"I use Tableau for executive dashboards, Python/Plotly for custom analysis, and Power BI where the client is in the Microsoft ecosystem. Tool choice follows use case."',
+   rf:'"I only know Excel charts." No rationale for tool choices.'},
+  {n:5,t:'Experience',q:'Describe a time your analysis led to a concrete business decision.',
+   ex:'End-to-end: problem, analysis, insight, recommendation, business impact.',
+   st:'"My cohort analysis revealed a 34% drop-off at checkout step 3. I presented it with a recommended A/B test. After implementing the change, conversion improved by 18%, approximately $200K in additional annual revenue."',
+   rf:'Cannot point to any specific business impact. Analysis never used by stakeholders.'}
+]},
+{id:'ml', ico:'&#129302;', name:'Data Scientist / ML Engineer', cat:'Technology', qs:[
+  {n:1,t:'Skills',q:'Explain overfitting and the key techniques you use to prevent it.',
+   ex:'Model memorizing training data. Regularization, cross-validation, dropout, early stopping, more data.',
+   st:'"Overfitting is when a model memorizes training data noise. I prevent it using L1/L2 regularization, dropout in neural nets, k-fold cross-validation, early stopping, and increasing training data."',
+   rf:'"The model trained at 100% accuracy so it is great." Cannot explain bias-variance tradeoff.'},
+  {n:2,t:'Skills',q:'Walk me through building a churn prediction model end to end.',
+   ex:'Business definition, data collection, feature engineering, model selection, evaluation, deployment.',
+   st:'"I start by defining churn with the business. Collect behavioral and transactional features. Handle class imbalance with SMOTE. Test XGBoost and logistic regression baselines, optimize for recall, then build a retargeting pipeline around scores."',
+   rf:'Jumps straight to model selection. No mention of business definition or deployment.'},
+  {n:3,t:'Skills',q:'What metrics do you use to evaluate a classification model and when?',
+   ex:'Accuracy, precision, recall, F1, AUC-ROC — must know when to use which based on business context.',
+   st:'"Accuracy alone is misleading with class imbalance. For fraud I prioritize recall. AUC-ROC for overall model quality. I always look at the confusion matrix before picking a threshold."',
+   rf:'"I use accuracy." No understanding of precision/recall tradeoff.'},
+  {n:4,t:'Experience',q:'Describe your experience deploying ML models to production.',
+   ex:'Model serialization, API wrapping, monitoring, retraining pipelines, drift detection.',
+   st:'"I have deployed models as REST APIs using FastAPI, containerized with Docker, served on AWS SageMaker. I set up drift monitoring with Evidently AI and automated weekly retraining with Airflow."',
+   rf:'Has only done Jupyter notebook analysis. No model serving or monitoring experience.'},
+  {n:5,t:'Skills',q:'How do you handle missing data in a dataset?',
+   ex:'Understand missingness type (MCAR/MAR/MNAR), appropriate imputation strategies.',
+   st:'"I diagnose why data is missing. MCAR: may drop rows. MAR: impute using median or KNN. MNAR needs domain discussion as it introduces bias. I never impute before data leakage analysis."',
+   rf:'"I just fill nulls with 0." Unaware that strategy depends on missingness type.'}
+]},
+{id:'devops', ico:'&#9881;', name:'DevOps Engineer', cat:'Technology', qs:[
+  {n:1,t:'Skills',q:'Describe your experience designing CI/CD pipelines from scratch.',
+   ex:'Pipeline stages: build, test, security scan, deploy. Tools: Jenkins, GitHub Actions, GitLab CI.',
+   st:'"I designed a GitLab CI pipeline: build, unit tests, SonarQube SAST, Docker build, staging deploy, smoke tests, production deploy with manual approval. Reduced deployment time from 4 hours to 22 minutes."',
+   rf:'Has only used pre-built pipelines. Cannot explain stages or failure handling.'},
+  {n:2,t:'Tools',q:'How do you approach infrastructure as code?',
+   ex:'Terraform, Ansible, CloudFormation. Version control, state management, modularization.',
+   st:'"All our infra is in Terraform with remote state in S3 and DynamoDB locking. Modules for reusable components. Every change goes through a PR with terraform plan reviewed before apply. No manual click-ops in production."',
+   rf:'"I manually create resources in the console." No version control for infrastructure.'},
+  {n:3,t:'Skills',q:'How do you monitor and alert on production systems?',
+   ex:'Metrics, logs, traces. Tools: Prometheus, Grafana, ELK, Datadog. SLIs/SLOs.',
+   st:'"I use Prometheus + Grafana for metrics with alerting on SLO burn rate. ELK stack for centralized structured logs. Jaeger for distributed tracing. Alerts route to PagerDuty with escalation policies."',
+   rf:'Only knows how to add a CloudWatch alarm. No structured observability approach.'},
+  {n:4,t:'Experience',q:'Describe how you would handle a Kubernetes cluster issue in production.',
+   ex:'kubectl commands, pod states, resource limits, network policies, rollback procedures.',
+   st:'"I start with kubectl get events and pod describe to find the failure reason. Check resource limits for OOMKilled. For CrashLoopBackOff I check logs. If a deployment is bad, I rollback immediately with kubectl rollout undo."',
+   rf:'Heard of Kubernetes but never debugged a real production issue.'},
+  {n:5,t:'Skills',q:'How do you approach security in your DevOps practice (DevSecOps)?',
+   ex:'SAST/DAST scanning, secret management, container image scanning, RBAC.',
+   st:'"Security is shift-left: Trivy for image scanning, OWASP dependency check, SonarQube SAST. Secrets in HashiCorp Vault — never in env vars or code. RBAC everywhere. Pen testing quarterly."',
+   rf:'"Security is the security team\'s job." Hardcodes secrets in code.'}
+]},
+{id:'cloud', ico:'&#9729;', name:'Cloud Engineer', cat:'Technology', qs:[
+  {n:1,t:'Experience',q:'Which cloud platforms have you worked with and what are your strengths?',
+   ex:'AWS/Azure/GCP. Deep expertise in at least one. Cross-cloud awareness.',
+   st:'"Primary in AWS — 4 years. Strong in EC2, ECS/EKS, RDS, S3, Lambda, CloudFormation. Certified Solutions Architect. Also deployed Azure workloads for a client migration."',
+   rf:'Surface-level knowledge. Only used one or two services. No architecture experience.'},
+  {n:2,t:'Skills',q:'Explain VPC design for a multi-tier web application.',
+   ex:'Public/private subnets, NAT gateway, security groups, NACLs, internet gateway, routing tables.',
+   st:'"3-tier VPC: public subnet for ALB, private app subnet for ECS with NAT gateway for outbound, private data subnet for RDS with no internet access. Security groups least-privilege per tier. Multi-AZ for HA."',
+   rf:'Puts everything in a public subnet. No understanding of security layers.'},
+  {n:3,t:'Skills',q:'How do you optimize cloud costs without impacting performance?',
+   ex:'Reserved instances, auto-scaling, right-sizing, spot instances, S3 lifecycle policies.',
+   st:'"I run AWS Cost Explorer weekly. Right-size instances using CloudWatch metrics. Reserved instances for baseline, spot for batch workloads saving 60-80%. S3 lifecycle to Glacier for cold data. Reduced one client bill by 42%."',
+   rf:'No FinOps awareness. "Just use bigger instances." Never analyzed a cloud bill.'},
+  {n:4,t:'Experience',q:'Describe your experience with cloud migrations.',
+   ex:'Assessment, strategy (6Rs), phased approach, data migration, cutover, rollback plan.',
+   st:'"I led migration of a 40-service monolith to AWS using lift-and-shift then optimize. Used AWS DMS for DB migration, ran parallel environments for 4 weeks before cutover. Zero downtime with Route 53 weighted routing."',
+   rf:'Never led a migration. Cannot explain the 6Rs.'},
+  {n:5,t:'Skills',q:'How do you design for high availability and disaster recovery?',
+   ex:'Multi-AZ, multi-region, RTO/RPO definitions, backup strategies, failover testing.',
+   st:'"HA starts with multi-AZ by default. For DR I define RTO/RPO with the business first. Tier 1 apps: active-active multi-region. Tier 2: pilot light with Route 53 failover. I test DR quarterly — untested DR is not DR."',
+   rf:'Does not know RTO vs RPO. "We have backups" without any failover testing.'}
+]},
+{id:'qa', ico:'&#129514;', name:'QA / Test Engineer', cat:'Technology', qs:[
+  {n:1,t:'Skills',q:'Explain your approach to building a test strategy from scratch.',
+   ex:'Test pyramid, risk assessment, scope, automation vs manual decisions, tooling.',
+   st:'"I start with risk analysis, then define the test pyramid: unit (70%), integration (20%), E2E (10%). I document test scope, automation priorities, tooling choices, and entry/exit criteria. I involve devs early."',
+   rf:'Only writes test cases reactively. No strategic thinking. No automation awareness.'},
+  {n:2,t:'Tools',q:'What is your experience with test automation frameworks?',
+   ex:'Selenium/Playwright/Cypress for UI, pytest for unit, REST Assured for API. CI integration.',
+   st:'"I built an automation suite using Playwright (TypeScript) — 400+ tests running in CI. pytest for API tests. I moved the team from Selenium to Playwright, cutting flaky test rate from 18% to 2%."',
+   rf:'"I know Selenium" without describing a full framework. High flake rates with no mitigation.'},
+  {n:3,t:'Skills',q:'How do you handle flaky tests?',
+   ex:'Root cause analysis, retry strategies, test isolation, async timing issues, quarantine approach.',
+   st:'"Flakiness is technical debt. I categorize: timing issues (explicit waits not sleep), data dependency (use factories), environment (stabilize test infra). I quarantine immediately, fix root cause within the sprint."',
+   rf:'"I just add sleep statements." Accepts flakiness as normal. No root cause analysis.'},
+  {n:4,t:'Skills',q:'Describe your experience with performance and load testing.',
+   ex:'JMeter, k6, Locust. Load, stress, spike testing. Defining baselines and thresholds.',
+   st:'"I use k6 for load testing. I define baselines (p95 under 500ms at 100 concurrent users), then run load, stress, and spike scenarios. Found a connection pool exhaustion bug at 500 concurrent users before go-live."',
+   rf:'Never done performance testing. Thinks functional testing is sufficient.'},
+  {n:5,t:'Behavioural',q:'How do you collaborate with developers to shift testing left?',
+   ex:'Definition of Done, pair programming, TDD support, PR review, early requirement analysis.',
+   st:'"I join story refinement to flag testability issues early. I write test cases before dev starts in BDD format. I review PRs for testability. QA is a prevention role, not a detection gate."',
+   rf:'"I test after developers are done." No involvement in planning or design.'}
+]},
+{id:'ux', ico:'&#127912;', name:'UI/UX Designer', cat:'Technology', qs:[
+  {n:1,t:'Skills',q:'Walk me through your design process from brief to delivery.',
+   ex:'Discovery, user research, wireframes, prototypes, usability testing, iteration, developer handoff.',
+   st:'"Discovery: stakeholder interviews, user research, competitive audit. Then user flows before touching visuals. Low-fi wireframes for layout validation, high-fi prototypes for usability testing, iterate, then Figma handoff with design tokens."',
+   rf:'Jumps straight to high-fidelity Figma. No research or testing phase.'},
+  {n:2,t:'Skills',q:'How do you conduct user research and apply findings?',
+   ex:'Interviews, surveys, usability tests, card sorting. Synthesis methods and practical application.',
+   st:'"I have run 40+ usability tests. I start with 5-user moderated sessions, affinity map findings, prioritize issues by frequency and severity. I document insights in a research repository and revisit each design cycle."',
+   rf:'"I ask my colleagues what they think." No actual user research methods.'},
+  {n:3,t:'Tools',q:'Describe your experience with design systems.',
+   ex:'Component libraries, design tokens, documentation, collaboration with engineering.',
+   st:'"I built a design system from scratch for a fintech app — 80+ components, semantic design tokens, Storybook documentation, and Figma component library synced with code. Reduced design-to-dev time by 35%."',
+   rf:'Uses inconsistent styles across screens. No component thinking.'},
+  {n:4,t:'Behavioural',q:'How do you balance business requirements with user needs when they conflict?',
+   ex:'Negotiation, data-driven decisions, stakeholder alignment, compromise strategies.',
+   st:'"I use data to mediate. When business wants a 10-field form and users abandon at field 3, I show session recording data. I prototype both approaches, test them, and let results guide the decision."',
+   rf:'Always defers to business or always advocates for users without balance.'},
+  {n:5,t:'Skills',q:'How do you ensure your designs are accessible?',
+   ex:'WCAG 2.1 AA, color contrast ratios, keyboard navigation, screen reader support.',
+   st:'"Accessibility is built in, not bolted on. I check contrast ratios (4.5:1 minimum), use semantic HTML structure, test with keyboard-only navigation, and run Axe audits on prototypes."',
+   rf:'No awareness of WCAG. "Accessibility is a dev concern."'}
+]},
+{id:'pm', ico:'&#128241;', name:'Product Manager', cat:'Technology', qs:[
+  {n:1,t:'Skills',q:'How do you prioritize your product backlog?',
+   ex:'RICE, MoSCoW, Kano, value vs effort. Stakeholder input, data-driven decisions.',
+   st:'"I use RICE scoring: Reach x Impact x Confidence / Effort. I layer in strategic alignment and technical debt considerations. I share the scored backlog with stakeholders and engineering leads before committing to a roadmap."',
+   rf:'"The CEO tells me what to build." No framework.'},
+  {n:2,t:'Skills',q:'How do you define and measure product success?',
+   ex:'OKRs, KPIs, north star metric, leading vs lagging indicators, experimentation.',
+   st:'"I define a north star metric that captures core user value. For our SaaS it was weekly active power users. Supporting metrics: activation rate, retention, NPS. I set OKRs quarterly and track weekly."',
+   rf:'"Success means users like it." No metrics framework.'},
+  {n:3,t:'Behavioural',q:'Describe a time a product launch did not go as planned.',
+   ex:'Accountability, rapid response, stakeholder comms, learning, process improvement.',
+   st:'"We launched a checkout redesign that increased abandonment by 8%. I flagged it immediately with data, rolled back within 2 hours, ran a post-mortem, found we had not tested on mobile. Revamped mobile QA process."',
+   rf:'Blames engineering or design. Slow to recognize failure. No post-mortem.'},
+  {n:4,t:'Skills',q:'How do you gather and incorporate user feedback?',
+   ex:'User interviews, NPS, in-app surveys, session recording, support ticket analysis.',
+   st:'"I run bi-weekly user interviews with 5 customers minimum. I monitor NPS trends, analyze support ticket themes monthly, and use Hotjar. I maintain a feedback repository tagged by theme and impact, reviewed every sprint."',
+   rf:'"I read app store reviews sometimes." Passive feedback collection.'},
+  {n:5,t:'Behavioural',q:'How do you work with engineering teams effectively?',
+   ex:'Collaboration style, tech literacy, respect for estimates, clear requirements, trade-off discussions.',
+   st:'"I treat engineers as partners, not builders. I provide context (why), not specs (how). I participate in sprint planning and retrospectives. I have enough technical literacy to discuss trade-offs."',
+   rf:'"I write requirements and they build." Adversarial view of engineering.'}
+]},
+{id:'sec', ico:'&#128272;', name:'Cybersecurity Analyst', cat:'Technology', qs:[
+  {n:1,t:'Skills',q:'Walk me through how you would respond to a suspected security incident.',
+   ex:'Incident response lifecycle: identification, containment, eradication, recovery, lessons learned.',
+   st:'"I follow the NIST IR framework. Identification: correlate SIEM alerts, triage severity. Containment: isolate affected systems immediately. Eradication: remove threat actor artifacts. Recovery: restore from clean backups. Update playbooks within 72 hours."',
+   rf:'No structured approach. Would try to eradicate before containing.'},
+  {n:2,t:'Skills',q:'Explain the OWASP Top 10 and describe two vulnerabilities in detail.',
+   ex:'Should know current OWASP Top 10. Detailed explanation of at least 2.',
+   st:'"SQL injection: unvalidated input passed to DB queries — prevented by parameterized queries. IDOR: accessing resources by manipulating IDs without authorization checks — prevented by server-side access control on every resource request."',
+   rf:'Vague knowledge. Cannot explain how a vulnerability works or how to prevent it.'},
+  {n:3,t:'Skills',q:'How do you conduct a vulnerability assessment?',
+   ex:'Scope, asset inventory, scanning tools (Nessus, Qualys), manual testing, CVSS risk rating, remediation.',
+   st:'"I start with scoping and asset inventory. Run authenticated Nessus scans for known CVEs. Supplement with manual testing for logic flaws. Rate findings using CVSS. Deliver a report with executive summary and technical remediation guidance."',
+   rf:'"I run a tool and send the output." No manual testing. Cannot explain CVSS.'},
+  {n:4,t:'Tools',q:'Describe your experience with SIEM tools and log analysis.',
+   ex:'Splunk, Microsoft Sentinel, IBM QRadar. Log sources, correlation rules, alert tuning.',
+   st:'"I built correlation rules in Splunk for a financial client — detecting lateral movement, credential stuffing, and data exfiltration. Reduced alert fatigue by 70% by tuning false positives and adding behavioral baselines."',
+   rf:'Only used pre-built dashboards. Cannot write queries. High alert fatigue.'},
+  {n:5,t:'Behavioural',q:'How do you stay current with the evolving threat landscape?',
+   ex:'Threat intel sources, communities, CTFs, certifications, threat briefings.',
+   st:'"I follow CISA advisories, Krebs on Security, and AlienVault OTX. I participate in CTF competitions monthly. Hold CISSP and CEH certifications. I ran quarterly threat briefings for leadership."',
+   rf:'"I Google things when they come up." No professional development.'}
+]},
+/* ── Sales & Marketing (5) ── */
+{id:'bde', ico:'&#128200;', name:'Business Dev Executive', cat:'Sales', qs:[
+  {n:1,t:'Skills',q:'Walk me through your process for identifying and qualifying new leads.',
+   ex:'ICP definition, prospecting channels, BANT/MEDDIC qualification, CRM usage.',
+   st:'"I start with ICP definition: industry, company size, tech stack, pain point. I use LinkedIn Sales Navigator for outbound and Google Alerts for trigger events. I qualify using BANT and only take SQLs to a second call."',
+   rf:'"I call everyone." No ICP. No qualification framework.'},
+  {n:2,t:'Experience',q:'Describe your most successful business development win.',
+   ex:'Specific deal, approach, obstacles, outcome, revenue impact with actual numbers.',
+   st:'"I closed a Rs.45L annual contract with a BFSI enterprise client. It took 7 months and a competitive bake-off. I won by building a business case showing 18-month ROI, not just a feature comparison."',
+   rf:'Cannot quantify any win. Vague description. No understanding of complex sales cycle.'},
+  {n:3,t:'Behavioural',q:'How do you handle rejection and maintain pipeline through a long sales cycle?',
+   ex:'Resilience, systematic pipeline management, relationship nurturing, timeline discipline.',
+   st:'"Rejection is data. I always ask for the reason — it improves my pitch. For long cycles I maintain a nurture sequence with relevant content and trigger-based check-ins. I track pipeline health weekly."',
+   rf:'"I do not face rejection." No follow-up strategy. Emotional reaction to rejection.'},
+  {n:4,t:'Tools',q:'How do you use data and CRM to manage your pipeline?',
+   ex:'CRM hygiene, pipeline metrics, conversion rates by stage, forecasting discipline.',
+   st:'"I update Salesforce same-day, every interaction. I track conversion rates by stage to identify bottlenecks. I run a weekly pipeline review using deal age, next action, and probability. Forecasted within 8% of actual for 3 quarters."',
+   rf:'"I use Excel." No CRM discipline. Cannot produce a forecast.'},
+  {n:5,t:'Behavioural',q:'How do you collaborate with marketing and product teams?',
+   ex:'Feedback loops, ICP alignment, content requests, product roadmap input from field.',
+   st:'"I share field insights — objections, competitor positioning, customer language — weekly with marketing. I request content based on actual objections I face. I feed win/loss patterns to product."',
+   rf:'"Marketing and I do not really work together." Completely siloed.'}
+]},
+{id:'smgr', ico:'&#127919;', name:'Sales Manager', cat:'Sales', qs:[
+  {n:1,t:'Skills',q:'How do you build and develop a high-performing sales team?',
+   ex:'Hiring for coachability, structured onboarding, coaching cadence, performance management.',
+   st:'"I hire for coachability over raw talent. 90-day ramp plan, peer shadowing, structured deal reviews. Weekly 1:1s focused on skill development, not just pipeline. I celebrate good process even when deals are lost."',
+   rf:'"I hire good people and let them run." No development framework. No coaching approach.'},
+  {n:2,t:'Skills',q:'Describe your approach to sales forecasting.',
+   ex:'Pipeline analysis, stage-based probability, bottom-up forecasting, accuracy tracking.',
+   st:'"I use bottom-up forecasting. Each rep commits their qualified pipeline with stage probabilities. I apply historical conversion multipliers by stage. I maintained 92% forecast accuracy over 6 quarters."',
+   rf:'"I guess based on last quarter." No framework.'},
+  {n:3,t:'Behavioural',q:'How do you handle an underperforming sales rep?',
+   ex:'Diagnose root cause (skills vs motivation vs territory), coaching plan, PIP process, exit if needed.',
+   st:'"First I diagnose — is it skills, motivation, territory, or fit? I look at activity metrics and conversion rates by stage. If skills, I build a coaching plan with weekly checkpoints. If fit, I start the exit process early."',
+   rf:'"I give them more time." No root cause diagnosis.'},
+  {n:4,t:'Skills',q:'Describe your experience with a sales methodology.',
+   ex:'MEDDIC, SPIN, Challenger, Solution Selling. Application in practice, not just naming it.',
+   st:'"I trained my team in MEDDIC — we use it as a qualification and deal coaching tool, not a checklist. I run monthly MEDDIC deal clinics where reps present their top 3 deals for group review."',
+   rf:'"I have heard of Challenger." Cannot explain how to apply any methodology.'},
+  {n:5,t:'Skills',q:'How do you manage sales quotas and territory planning?',
+   ex:'Quota setting methodology, territory design, account segmentation.',
+   st:'"I set quotas bottom-up based on territory size and account potential. I use 70% attainment rate as the healthy zone. I review territories quarterly and rebalance when market conditions shift."',
+   rf:'Cannot explain how quotas are set.'}
+]},
+{id:'dmkt', ico:'&#128226;', name:'Digital Marketing Executive', cat:'Sales', qs:[
+  {n:1,t:'Skills',q:'Describe your experience with paid digital advertising campaigns.',
+   ex:'Google Ads, Meta Ads, LinkedIn Ads. Campaign structure, targeting, optimization, ROAS.',
+   st:'"I managed Rs.50L+ annual Google Ads budget. I structure campaigns by funnel stage. I run systematic A/B tests on ad copy, landing pages, and bidding strategies. Achieved 3.8x ROAS on e-commerce campaigns."',
+   rf:'"I boosted some posts on Facebook." No campaign structure knowledge. Cannot explain ROAS.'},
+  {n:2,t:'Skills',q:'How do you measure and optimize digital marketing performance?',
+   ex:'UTM tracking, GA4, conversion tracking, attribution models, A/B testing methodology.',
+   st:'"Full-funnel measurement: UTM tags on every campaign, GA4 events for micro and macro conversions. I use multi-touch attribution for email and social. A/B tests run to 95% significance."',
+   rf:'"I check likes and impressions." No conversion tracking.'},
+  {n:3,t:'Skills',q:'Describe your content marketing and SEO experience.',
+   ex:'Keyword research, on-page SEO, content strategy, link building.',
+   st:'"I led a content strategy that grew organic traffic from 5K to 45K monthly sessions in 18 months. I research keywords using Ahrefs focusing on intent match, write pillar and cluster content architecture."',
+   rf:'Writes content without keyword research. No understanding of SEO fundamentals.'},
+  {n:4,t:'Tools',q:'How do you approach email marketing and marketing automation?',
+   ex:'Segmentation, lifecycle flows, A/B testing, deliverability management, key metrics.',
+   st:'"I build behavioral email flows: welcome series, nurture by content consumption, cart abandon, win-back. I segment by engagement tier. I maintain list hygiene monthly. Average open rate 32% vs 21% industry benchmark."',
+   rf:'"I send the same email to everyone monthly." No segmentation or automation.'},
+  {n:5,t:'Behavioural',q:'Describe a campaign that did not perform as expected.',
+   ex:'Accountability, analysis of failure, specific learning, application to future campaigns.',
+   st:'"A product launch campaign underperformed by 40%. Post-analysis: our landing page messaging did not match the ad promise. I now run landing page audits before every campaign. Conversion rate on next launch was 2.1x higher."',
+   rf:'Blames platform algorithm. No root cause analysis.'}
+]},
+{id:'seo', ico:'&#128270;', name:'SEO / Content Specialist', cat:'Sales', qs:[
+  {n:1,t:'Skills',q:'Walk me through your keyword research process.',
+   ex:'Seed keywords, tools (Ahrefs/SEMrush), intent classification, competition assessment.',
+   st:'"I start with seed keywords from customer language in support tickets and sales calls. Expand using Ahrefs. Classify by intent. Prioritize by KD vs business value — moderate volume, low KD, high commercial intent first."',
+   rf:'"I search Google and see what comes up." No tool usage. No intent classification.'},
+  {n:2,t:'Skills',q:'Describe your on-page SEO optimization process for a new article.',
+   ex:'Title tag, meta description, H1/H2 structure, keyword placement, internal linking, schema.',
+   st:'"Keyword in title tag (front-loaded), compelling meta for CTR, H1 matches search intent, H2s for sub-topics. Natural keyword placement in first 100 words. 3-5 internal links. Schema markup for FAQ or How-to."',
+   rf:'Keyword stuffing. No understanding of user intent.'},
+  {n:3,t:'Skills',q:'How do you approach technical SEO?',
+   ex:'Site speed, crawlability, indexing, Core Web Vitals, structured data.',
+   st:'"I run monthly Screaming Frog crawls to catch broken links, duplicate content, and redirect chains. I monitor Core Web Vitals in GSC. I have fixed crawl budget issues for large e-commerce sites by optimizing robots.txt."',
+   rf:'"Technical SEO is for developers." Cannot explain what Core Web Vitals are.'},
+  {n:4,t:'Skills',q:'Describe your content strategy approach.',
+   ex:'Pillar-cluster model, audience definition, content calendar, distribution, repurposing.',
+   st:'"I build pillar-cluster architecture: one comprehensive pillar page per core topic, supported by 10-15 cluster articles targeting related long-tail terms. I repurpose each piece — blog, LinkedIn carousel, email, short video."',
+   rf:'"I write articles when we need content." No strategy. No topical clustering.'},
+  {n:5,t:'Skills',q:'How do you measure SEO success?',
+   ex:'Organic traffic, keyword rankings, click-through rate, conversions from organic.',
+   st:'"Primary metrics: organic traffic (GSC, GA4), keyword rankings for target terms, and organic conversion rate. I track CTR by position to identify title and meta optimization opportunities. I set a 6-month measurement window."',
+   rf:'"I track rankings only." No traffic or conversion measurement.'}
+]},
+{id:'brand', ico:'&#127991;', name:'Brand Manager', cat:'Sales', qs:[
+  {n:1,t:'Skills',q:'How do you define and maintain brand identity across all channels?',
+   ex:'Brand guidelines, tone of voice, visual identity, consistency audits, governance process.',
+   st:'"I build a brand system: positioning statement, personality pillars, tone of voice guide with examples and anti-examples, visual identity standards. I run quarterly brand audits and create governance for off-brand content."',
+   rf:'Confuses logo design with brand strategy. No governance process.'},
+  {n:2,t:'Experience',q:'Describe a brand campaign you led from concept to execution.',
+   ex:'Campaign brief, strategic insight, creative concept, execution plan, measurement results.',
+   st:'"I led a repositioning campaign shifting from software tool to trusted partner. Developed the brief, worked with agency on concept, produced 3 hero videos. Brand recall increased from 18% to 31% in target segment in 6 months."',
+   rf:'Can describe tactics but not a coherent campaign with strategic insight and outcome.'},
+  {n:3,t:'Skills',q:'How do you measure brand performance?',
+   ex:'Brand awareness, consideration, NPS, share of voice, brand tracking surveys.',
+   st:'"I track unaided brand awareness (bi-annual survey), share of voice vs competitors, NPS quarterly, and sentiment analysis. For campaigns I measure brand lift using pre/post surveys. Quarterly brand health dashboard to leadership."',
+   rf:'"Brand is hard to measure." No measurement framework.'},
+  {n:4,t:'Behavioural',q:'How do you handle a brand reputation crisis?',
+   ex:'Crisis plan, response speed, stakeholder communication, consistency, recovery strategy.',
+   st:'"Speed and honesty are paramount. I activate the crisis playbook within 1 hour: legal brief, CEO brief, holding statement. We own the mistake, state what we are doing about it, and provide regular updates."',
+   rf:'"Delete negative comments." Defensive response. No crisis plan.'},
+  {n:5,t:'Behavioural',q:'Describe your experience working with creative agencies.',
+   ex:'Briefing quality, feedback approach, relationship management, budget oversight.',
+   st:'"Great agency relationships start with a great brief — clear on business problem, target audience, tone, budget, timeline, and success metrics. I give structured specific feedback explaining the reasoning."',
+   rf:'"I just tell them what I want." Vague briefs. Cannot give constructive creative feedback.'}
+]},
+/* ── Finance (3) ── */
+{id:'ca', ico:'&#129534;', name:'Chartered Accountant', cat:'Finance', qs:[
+  {n:1,t:'Skills',q:'Describe your experience with financial statement preparation and analysis.',
+   ex:'P and L, Balance Sheet, Cash Flow. IND AS/IFRS. Variance analysis. Audit support.',
+   st:'"I prepare monthly P and L, balance sheet, and cash flow statements under IND AS. I lead variance analysis comparing actuals vs budget with root cause commentary. I supported 4 statutory audits achieving clean audit opinions each time."',
+   rf:'Can read financial statements but cannot prepare them.'},
+  {n:2,t:'Skills',q:'Explain your approach to tax planning and compliance.',
+   ex:'Direct tax (Income Tax), indirect tax (GST), TDS, advance tax.',
+   st:'"I manage end-to-end compliance: GST returns (GSTR-1, 3B, 9), TDS filing, advance tax computation, and IT returns for corporates. For tax planning, I review available deductions quarterly and advise management before year-end."',
+   rf:'Limited to one tax type. No planning experience. Relies entirely on external consultants.'},
+  {n:3,t:'Experience',q:'How have you contributed to cost reduction or financial efficiency?',
+   ex:'Specific initiative, analysis approach, recommendation made, quantified result.',
+   st:'"I identified Rs.28L in annual savings by analyzing vendor contracts and consolidating 7 vendors to 3 — same quality, better terms. I also automated month-end reconciliation using Excel VBA, saving 40 man-hours per month."',
+   rf:'Cannot point to any specific financial impact.'},
+  {n:4,t:'Skills',q:'Describe your experience with audit and internal controls.',
+   ex:'Statutory audit, internal audit, SOX, risk assessment, control testing.',
+   st:'"I have been the primary audit contact for 3 years — zero major findings. I built an internal controls framework, conducted quarterly control testing, and presented findings to the audit committee."',
+   rf:'Only peripheral audit exposure. Cannot explain the purpose of internal controls.'},
+  {n:5,t:'Behavioural',q:'How do you ensure accuracy and completeness in financial reporting?',
+   ex:'Reconciliation processes, maker-checker, materiality assessment, documentation.',
+   st:'"I run a month-end close checklist with hard deadlines, maker-checker on all journal entries, mandatory balance sheet reconciliation for every GL account, and a disclosure checklist against applicable standards."',
+   rf:'"I trust my team." No systematic controls.'}
+]},
+{id:'fana', ico:'&#128185;', name:'Financial Analyst', cat:'Finance', qs:[
+  {n:1,t:'Skills',q:'Describe your financial modelling experience.',
+   ex:'DCF, LBO, 3-statement, sensitivity analysis. Excel proficiency. Model audit discipline.',
+   st:'"I have built 3-statement integrated models for investment decisions and valuation. DCF models with WACC sensitivity tables. I audit models before any decision. I follow the FAST standard for model structure."',
+   rf:'"I use templates." Cannot build a model from scratch. No sensitivity analysis.'},
+  {n:2,t:'Skills',q:'Explain WACC and when you would use it.',
+   ex:'Weighted Average Cost of Capital formula, cost of equity (CAPM), cost of debt, tax shield, usage in DCF.',
+   st:'"WACC = (E/V x Ke) + (D/V x Kd x (1-Tax)). Cost of equity via CAPM. Cost of debt adjusted for tax shield. I use WACC as the discount rate in DCF — it represents the return required by all capital providers."',
+   rf:'Cannot explain the formula components. Does not know when to use WACC.'},
+  {n:3,t:'Skills',q:'How do you conduct variance analysis and present findings to management?',
+   ex:'Budget vs actual, volume/price/mix analysis, waterfall charts, actionable insights.',
+   st:'"I decompose variances into volume, price, and mix drivers for revenue; efficiency and rate for costs. I prepare a one-page summary with waterfall charts — executives see the story, not the spreadsheet."',
+   rf:'"I present the numbers and they decide." No storytelling. Cannot decompose variances.'},
+  {n:4,t:'Experience',q:'Describe your experience with financial planning and budgeting.',
+   ex:'Budget cycle, driver-based budgeting, scenario planning, reforecasting discipline.',
+   st:'"I lead the annual budgeting cycle for a Rs.200Cr revenue business. Driver-based budgeting rather than incremental. I run 3 scenarios: base, upside, downside. Monthly reforecasting updates actuals and revises the full-year view."',
+   rf:'Has only participated in budgeting, never led it.'},
+  {n:5,t:'Behavioural',q:'How do you stay updated on financial regulations and market developments?',
+   ex:'RBI, SEBI, ICAI updates, financial news, professional networks, certifications.',
+   st:'"Daily: Economic Times markets section. Weekly: SEBI and RBI circulars, ICAI e-learning modules. I am part of a CFA Charterholder network and attend quarterly panel discussions."',
+   rf:'No professional development. Reactive to regulation changes.'}
+]},
+{id:'acc', ico:'&#128176;', name:'Accounts Executive', cat:'Finance', qs:[
+  {n:1,t:'Experience',q:'Describe your day-to-day accounting responsibilities.',
+   ex:'AP, AR, bank reconciliation, journal entries, ledger management, petty cash.',
+   st:'"Daily: posting purchase invoices, raising sales invoices, matching receipts to orders. Weekly: bank reconciliation, AP aging review, AR follow-up on overdue accounts. Monthly: ledger review, prepayments and accruals, trial balance. I use Tally Prime and SAP FI."',
+   rf:'Vague description of duties. Cannot name the specific processes they handle.'},
+  {n:2,t:'Skills',q:'How do you handle accounts payable and receivable reconciliation?',
+   ex:'Vendor statement reconciliation, AR aging, dispute resolution, collection follow-up.',
+   st:'"For AP: monthly vendor statement reconciliation, resolve mismatches within 5 working days. For AR: weekly aging report, call or email customers at 30 days overdue, escalate at 60 days. I reduced DSO from 58 to 41 days."',
+   rf:'No reconciliation process. Cannot explain aging. Passive on collections.'},
+  {n:3,t:'Skills',q:'Describe your GST filing experience.',
+   ex:'GSTR-1, GSTR-3B, reconciliation with books, ITC claims, annual return (GSTR-9).',
+   st:'"I handle monthly GSTR-1 and GSTR-3B filings for our 3 GSTINs. I reconcile sales per books with GSTR-1 before filing. I validate ITC in GSTR-2B against purchase register monthly to ensure accurate credit claims."',
+   rf:'Has heard of GST but never filed independently.'},
+  {n:4,t:'Skills',q:'How do you ensure accuracy in your accounting work?',
+   ex:'Double-entry discipline, reconciliation habit, maker-checker, documentation.',
+   st:'"Double-entry principle is non-negotiable. Every entry has a voucher attached. I reconcile my work to the trial balance weekly — any difference is investigated immediately, not carried forward."',
+   rf:'"I am careful." No systematic approach. Cannot explain double-entry accounting.'},
+  {n:5,t:'Experience',q:'How have you improved an accounting process in your previous role?',
+   ex:'Specific process identified, problem analyzed, solution implemented, time or error reduction measured.',
+   st:'"Our vendor invoice processing had a 12% error rate due to manual data entry. I created an Excel template with validation rules and drop-downs, reducing processing to 1 day and errors to under 1%. Saved 20 hours per month."',
+   rf:'Cannot point to any process improvement. Only does what they are told.'}
+]},
+/* ── Operations & HR (3) ── */
+{id:'hr', ico:'&#128101;', name:'HR Executive / Recruiter', cat:'HR', qs:[
+  {n:1,t:'Skills',q:'Describe your end-to-end recruitment process for a critical role.',
+   ex:'JD creation, sourcing channels, screening, structured interviewing, offer, onboarding.',
+   st:'"I start with an intake with the hiring manager — not just the JD, but the definition of success in 90 days. Source from job boards, LinkedIn, referrals, and passive outreach. 2-stage screening. Panel interviews with a scorecard. 30-60-90 day onboarding plan."',
+   rf:'"I post a job and wait." No structured process. No onboarding plan.'},
+  {n:2,t:'Skills',q:'How do you reduce time-to-hire without compromising quality?',
+   ex:'Talent pipeline, pre-screening, structured process, SLA agreements with hiring managers.',
+   st:'"I build talent pipelines before roles open — warm candidates ready to interview. I set SLAs with hiring managers: feedback within 48 hours, offer within 3 business days. I track time-to-fill by stage. Reduced average time-to-hire from 45 to 28 days."',
+   rf:'"Hiring takes as long as it takes." No pipeline thinking. No SLAs.'},
+  {n:3,t:'Behavioural',q:'How do you ensure candidate experience is positive throughout the process?',
+   ex:'Communication standards, feedback, transparency, respectful rejection process.',
+   st:'"Every candidate gets acknowledgment within 24 hours. I set timeline expectations at each stage. Every interviewed candidate receives personal feedback — even rejections. I measure candidate NPS quarterly."',
+   rf:'No communication plan. Ghosts candidates.'},
+  {n:4,t:'Experience',q:'Describe your experience with HR operations and compliance.',
+   ex:'HRMS management, labour law compliance, documentation, employee lifecycle.',
+   st:'"I manage end-to-end employee lifecycle in Zoho People: onboarding, contract management, leave administration, performance cycle coordination, and offboarding. I ensure Shops and Establishment Act compliance, PF/ESIC filings."',
+   rf:'Only done recruitment. No HR operations exposure. Cannot name applicable labour laws.'},
+  {n:5,t:'Behavioural',q:'How do you handle a conflict between two employees?',
+   ex:'Neutral mediation, investigation, documentation, resolution process, follow-up.',
+   st:'"I conduct separate conversations first — let each person state their perspective without interruption. I document everything. For policy violations I investigate formally. For interpersonal conflicts I facilitate structured mediation. I follow up 2 weeks later."',
+   rf:'"I tell them to sort it out themselves." No structured approach. Takes sides.'}
+]},
+{id:'ops', ico:'&#127981;', name:'Operations Manager', cat:'HR', qs:[
+  {n:1,t:'Experience',q:'Describe how you manage day-to-day operations across multiple teams.',
+   ex:'Operating cadence, team structure, escalation paths, performance tracking.',
+   st:'"I run a daily standup (15 min) for blockers, weekly team leads review for metrics, monthly business review for performance vs targets. I use a tiered escalation model — frontline resolves 80%, team lead 15%, I handle 5%."',
+   rf:'Reactive management. No operating cadence. Cannot describe their team structure.'},
+  {n:2,t:'Skills',q:'How do you identify and implement process improvements?',
+   ex:'Process mapping, bottleneck identification, Lean/Six Sigma principles, change management.',
+   st:'"I map current-state processes using value stream mapping to identify waste. I run A3 problem-solving for recurring issues. Last initiative: reduced order fulfillment errors by 67% by adding a QC checkpoint. Saved Rs.12L annually."',
+   rf:'No systematic approach. "I do what works."'},
+  {n:3,t:'Behavioural',q:'How do you manage and motivate a large operations team?',
+   ex:'Goal setting, recognition, accountability, career development.',
+   st:'"Motivation comes from clarity and recognition. I set individual KPIs cascaded from team targets. I recognize publicly and address performance issues privately. I run quarterly career conversations — not just performance reviews."',
+   rf:'"I tell them what to do and monitor them." No development mindset.'},
+  {n:4,t:'Experience',q:'Describe your experience with vendor and supplier management.',
+   ex:'Vendor selection, SLA management, performance reviews, relationship management, renegotiation.',
+   st:'"I manage 12 vendors with monthly SLA scorecards covering quality, delivery, and cost. Quarterly business reviews with strategic vendors. I renegotiated 3 contracts saving 18% on total spend while improving service levels."',
+   rf:'"I just renew contracts when they expire." No performance management.'},
+  {n:5,t:'Skills',q:'How do you use data to make operational decisions?',
+   ex:'KPI dashboards, root cause analysis, data-driven accountability culture.',
+   st:'"I build a weekly operational dashboard: throughput, error rate, SLA compliance, cost per unit, headcount utilization. I investigate any KPI moving more than 10% from baseline."',
+   rf:'"I go by experience." No data usage. Cannot describe their team KPIs.'}
+]},
+{id:'sc', ico:'&#128666;', name:'Supply Chain Executive', cat:'HR', qs:[
+  {n:1,t:'Skills',q:'Describe your experience with inventory management.',
+   ex:'EOQ, safety stock, reorder points, ABC analysis, inventory tracking systems.',
+   st:'"I manage Rs.8Cr inventory across 3 warehouses. I use ABC analysis to differentiate management intensity. I calculate safety stock based on demand variability and lead time. Implemented cycle counting reducing inventory variance from 3.2% to 0.4%."',
+   rf:'"I track stock in Excel." No scientific approach. Cannot explain safety stock.'},
+  {n:2,t:'Skills',q:'How do you manage supplier relationships and procurement?',
+   ex:'Supplier evaluation, PO management, negotiation, contract terms.',
+   st:'"I evaluate suppliers on 4 dimensions: quality, delivery, cost, and responsiveness. Quarterly scorecard reviews. I negotiate contracts with payment terms, price escalation clauses, and SLAs for lead time and defect rates."',
+   rf:'"I call suppliers when I need something." No formal evaluation process.'},
+  {n:3,t:'Behavioural',q:'Describe how you handle supply chain disruptions.',
+   ex:'Risk identification, contingency planning, alternate sourcing, stakeholder communication.',
+   st:'"During COVID I activated our business continuity plan: identified at-risk single-source components, qualified 3 alternate suppliers within 30 days, and built 90-day safety stock for critical items."',
+   rf:'"I escalate to management." No contingency thinking. No alternate sourcing.'},
+  {n:4,t:'Tools',q:'What supply chain software and tools have you worked with?',
+   ex:'ERP (SAP/Oracle), WMS, TMS, demand planning tools.',
+   st:'"SAP MM for procurement and inventory in my current role. Implemented a WMS (Fishbowl) for warehouse operations — reduced picking errors by 55%. I use Power BI for supply chain dashboards."',
+   rf:'"I use Excel for everything." No ERP experience.'},
+  {n:5,t:'Skills',q:'How do you approach demand forecasting?',
+   ex:'Historical analysis, statistical methods, market input, S and OP collaboration.',
+   st:'"I use statistical baseline (moving average, exponential smoothing) combined with market intelligence from sales. I run monthly S and OP — sales, marketing, operations, finance align on a single demand number. I measure forecast accuracy monthly."',
+   rf:'"I go by last month." No forecasting methodology.'}
+]},
+/* ── Healthcare (2) ── */
+{id:'nurse', ico:'&#127973;', name:'Staff Nurse', cat:'Healthcare', qs:[
+  {n:1,t:'Experience',q:'Describe your clinical experience and specializations.',
+   ex:'Wards/departments worked, patient population, key procedures, years of experience.',
+   st:'"5 years experience — 3 years in medical-surgical ward (30-bed), 2 years in ICU. Competent in IV cannulation, NG tube insertion, catheterization, wound care, and ventilator monitoring. Handled adult and geriatric populations with complex comorbidities."',
+   rf:'Vague clinical history. Cannot describe specific procedures.'},
+  {n:2,t:'Skills',q:'How do you prioritize care when managing multiple critical patients?',
+   ex:'Triage principles, ABCDE assessment, early escalation, delegation.',
+   st:'"I use ABCDE (Airway, Breathing, Circulation, Disability, Exposure) for rapid prioritization. I assess all patients at shift start and flag any deteriorating patient immediately using ISBAR to the physician. I delegate stable patient tasks to support staff."',
+   rf:'No structured prioritization. Describes panicking or freezing. Cannot explain ABCDE.'},
+  {n:3,t:'Behavioural',q:'Describe a time you identified a patient safety concern and how you acted.',
+   ex:'Observation, early recognition, escalation, documentation, outcome, learning.',
+   st:'"I noticed a patient BP dropping progressively — still within normal range but a 40mmHg drop from baseline over 6 hours. I escalated to the physician using ISBAR. Turned out to be early septic shock. Patient recovered fully after ICU transfer."',
+   rf:'"I wait until it is clearly abnormal." Does not recognize subtle deterioration.'},
+  {n:4,t:'Skills',q:'How do you handle medication administration safely?',
+   ex:'5 Rights (patient, drug, dose, route, time), double-checking, allergy verification, documentation.',
+   st:'"I follow the 5 Rights strictly every single time — no shortcuts. High-risk medications require a double-check with a colleague before administration. I verify allergies at every medication pass. I document immediately after administration."',
+   rf:'"I know my patients." No systematic process.'},
+  {n:5,t:'Behavioural',q:'How do you communicate with patients and their families under stress?',
+   ex:'Empathy, clear plain language, information needs, cultural sensitivity, family involvement.',
+   st:'"I use plain language — no medical jargon with families. I explain what I am doing and why, even under time pressure. I involve the family in the care plan — they are part of the team."',
+   rf:'"I am too busy to explain." Dismissive of family involvement.'}
+]},
+{id:'mr', ico:'&#128138;', name:'Medical Representative (MR)', cat:'Healthcare', qs:[
+  {n:1,t:'Skills',q:'How do you build and maintain relationships with doctors and HCPs?',
+   ex:'Scientific credibility, value beyond product, consistent follow-up, trust building over time.',
+   st:'"I build relationships on scientific credibility first — I study clinical literature for my product area so I can have peer-level medical discussions. I add value beyond the product: sharing relevant research, connecting doctors to educational programs."',
+   rf:'"I bring gifts and lunches." No scientific approach.'},
+  {n:2,t:'Skills',q:'Describe how you plan and manage your territory.',
+   ex:'Doctor segmentation, call frequency planning, routing optimization, target achievement.',
+   st:'"I segment my 80 doctors into A/B/C tiers by prescription potential and influence. A-tier: 2 calls/month; B: 1 call; C: 1 call every 6 weeks. I plan routes weekly to minimize travel time and track call coverage monthly."',
+   rf:'"I visit whoever I can." No segmentation. No call planning.'},
+  {n:3,t:'Behavioural',q:'How do you handle a doctor who is resistant to your product?',
+   ex:'Objection understanding, clinical evidence response, persistence without pressure.',
+   st:'"I first listen to understand their specific concern — efficacy, side effects, cost? I respond with clinical data, not just reassurance. I do not pressure — I plant seeds with evidence and follow up consistently."',
+   rf:'Gives up at first rejection. Applies aggressive pressure on doctors.'},
+  {n:4,t:'Skills',q:'How do you stay updated on your therapeutic area and competitive products?',
+   ex:'Medical literature, CME programs, internal training, competitor analysis.',
+   st:'"I read journals in my therapeutic area monthly via PubMed alerts. I attend CME programs quarterly. I study competitor product monographs to understand differentiation. I maintain a competitor analysis document updated every 6 months."',
+   rf:'"I attend company training when it is scheduled." No self-driven learning.'},
+  {n:5,t:'Experience',q:'Describe a time you significantly grew sales in your territory.',
+   ex:'Specific metric at start and end, strategy used, execution discipline, measurable result.',
+   st:'"I inherited a territory at 62% of target. I mapped which doctors drove which products and found 8 high-prescribing doctors never called on regularly. Focused intensively on those 8 for 3 months. Territory hit 108% of target within 6 months."',
+   rf:'Cannot describe any specific result with numbers.'}
+]},
+/* ── Other (2) ── */
+{id:'cx', ico:'&#127911;', name:'Customer Support Executive', cat:'Other', qs:[
+  {n:1,t:'Behavioural',q:'How do you handle an angry or frustrated customer?',
+   ex:'De-escalation, active listening, empathy, resolution focus, follow-up discipline.',
+   st:'"I let them speak first — do not interrupt. Acknowledge the frustration. I focus immediately on what I CAN do, own the problem, and give a clear resolution timeline. I follow up to close the loop."',
+   rf:'"I tell them the policy." No empathy. Defensive posture. Escalates immediately.'},
+  {n:2,t:'Skills',q:'Describe how you manage high ticket volume without sacrificing quality.',
+   ex:'Prioritization by severity/SLA, response templates, time management, escalation criteria.',
+   st:'"I triage by severity and SLA deadline first. I use response templates for common issues — personalized, never robotic. I maintain quality using a checklist: did I answer the actual question? Is my resolution complete?"',
+   rf:'"I just work faster." No prioritization. Copy-paste responses without personalization.'},
+  {n:3,t:'Skills',q:'How do you use customer feedback to improve service quality?',
+   ex:'CSAT/NPS monitoring, pattern identification, escalation to product/operations, root cause fixing.',
+   st:'"I review CSAT scores daily and read every sub-4 rating comment. I track recurring themes monthly — if the same issue appears 5+ times it is a process problem. I document patterns and present to team lead for root cause discussion."',
+   rf:'"I try to get good ratings." No systematic analysis.'},
+  {n:4,t:'Tools',q:'What tools and systems have you used for customer support?',
+   ex:'Zendesk, Freshdesk, Intercom, CRM. Ticketing, live chat, phone. Queue management.',
+   st:'"Primary experience in Zendesk — 2 years. I have set up ticket automations, macros for common responses, and custom views for queue management. I also used Freshdesk and Intercom for live chat."',
+   rf:'"I have only used email." No ticketing system experience.'},
+  {n:5,t:'Behavioural',q:'Describe a time you went above and beyond for a customer.',
+   ex:'Specific situation, extra effort made, customer impact, personal initiative taken.',
+   st:'"A customer account was accidentally deleted before a critical demo. Standard process would take 48 hours. I manually rebuilt their configuration data from backup logs, stayed 2 extra hours, and had it ready 4 hours before their demo. They renewed their contract the next week."',
+   rf:'Cannot provide a specific example. Generic answer. No measurable customer impact.'}
+]},
+{id:'pjm', ico:'&#128203;', name:'Project Manager', cat:'Other', qs:[
+  {n:1,t:'Skills',q:'Walk me through your project planning and initiation process.',
+   ex:'Scope definition, stakeholder mapping, WBS, timeline, resource planning, risk register.',
+   st:'"Initiation: stakeholder alignment on scope, success criteria, and constraints. I build a WBS, create a Gantt with critical path identified, resource-load the plan, and establish a risk register with mitigation plans from day one."',
+   rf:'"I start assigning tasks immediately." No planning discipline.'},
+  {n:2,t:'Skills',q:'How do you manage project scope creep?',
+   ex:'Change control process, impact assessment, stakeholder communication, documented agreements.',
+   st:'"I spend extra time upfront defining what is IN and OUT of scope explicitly. For change requests, I have a formal change control process: document, assess impact on time/cost/quality, present options to the sponsor, get written approval before any work begins."',
+   rf:'"I just add it to the backlog." No change control.'},
+  {n:3,t:'Skills',q:'How do you keep projects on track when they fall behind schedule?',
+   ex:'Recovery plan, root cause analysis, fast-tracking, resource reallocation, stakeholder comms.',
+   st:'"First: understand root cause — resource, technical, or scope related? Assess critical path impact. Options: fast-track (parallelize tasks), crash (add resources to critical path), or scope reduction. I communicate delays proactively — never hide them."',
+   rf:'"I work harder." No structured recovery planning. Hides delays from stakeholders.'},
+  {n:4,t:'Skills',q:'Describe your risk management approach.',
+   ex:'Risk identification, probability x impact matrix, mitigation plans, contingency plans, monitoring.',
+   st:'"I run a risk identification workshop at project start. Rate each risk by probability and impact (1-5 scale). Top risks get mitigation plans and contingency plans. I review the risk register biweekly — risks change as projects progress."',
+   rf:'"I deal with problems when they arise." No proactive risk management. No risk register.'},
+  {n:5,t:'Behavioural',q:'How do you manage and communicate with difficult stakeholders?',
+   ex:'Stakeholder analysis, communication preferences, conflict management, escalation approach.',
+   st:'"I map stakeholders by influence and interest at project start. High-influence stakeholders get tailored communication matching their preference. For resistant stakeholders, I focus on their underlying concern rather than the stated objection."',
+   rf:'"I avoid difficult stakeholders." No stakeholder analysis or engagement strategy.'}
+]},
+/* ── SAP Consultant (Technology) ── */
+{id:'sap', ico:'&#9881;', name:'SAP Consultant', cat:'Technology', qs:[
+  {n:1,t:'Skills',q:'Which SAP modules have you worked with and at what level?',
+   ex:'Should name specific modules (FI, CO, SD, MM, HR, PP, WM) and differentiate between configuration experience and end-user experience.',
+   st:'"Primary expertise in SAP FI/CO for 5 years, including full-cycle implementations. I have also configured SD and MM for order-to-cash and procure-to-pay processes. Familiar with S/4HANA migration."',
+   rf:'Vague answer. "I have worked on SAP" without naming any module. Cannot distinguish configuration from end-user usage.'},
+  {n:2,t:'Experience',q:'Describe a full SAP implementation or rollout you were part of.',
+   ex:'Should cover project phases (blueprint, realization, testing, go-live, support), their specific role, and challenges faced.',
+   st:'"I was the lead FI consultant for a greenfield S/4HANA implementation for a 500-user manufacturing company. I led the blueprint workshops, configured the chart of accounts, document types, and payment terms, and managed the go-live cutover plan."',
+   rf:'Only experienced in support tickets or small enhancements. Cannot describe a full project lifecycle.'},
+  {n:3,t:'Skills',q:'How do you handle a gap between SAP standard functionality and a client requirement?',
+   ex:'Should understand the fit-gap analysis process, options (config, enhancement, custom development, workaround), and trade-offs.',
+   st:'"I first try to meet the requirement through standard configuration. If not possible, I evaluate user exits or BADIs before recommending ABAP development, which increases maintenance cost. I always document the decision and get sign-off."',
+   rf:'Jumps straight to custom development. No understanding of the cost and risk implications. No fit-gap process.'},
+  {n:4,t:'Tools',q:'What experience do you have with SAP testing and transport management?',
+   ex:'Unit testing, integration testing, UAT, transport orders, STMS, change management process.',
+   st:'"I write test scripts for unit and integration testing. I manage transport requests through DEV, QAS, and PRD landscapes using STMS. I ensure all changes are documented in the change log before transporting to production."',
+   rf:'Has never managed transports. Does not understand the three-system landscape (DEV, QAS, PRD).'},
+  {n:5,t:'Behavioural',q:'How do you manage a situation where end users resist adopting a new SAP process?',
+   ex:'Change management, training, communication, stakeholder engagement, key user programs.',
+   st:'"I identify key users early in the project and involve them in design. I run hands-on training with real scenarios from their work, not generic demos. I create quick reference guides and stay accessible during hyper-care."',
+   rf:'Blames users. No change management awareness. Thinks training alone is sufficient without stakeholder buy-in.'}
+]},
+/* ── Content Writer (Sales) ── */
+{id:'writer', ico:'&#128221;', name:'Content Writer / Copywriter', cat:'Sales', qs:[
+  {n:1,t:'Skills',q:'Walk me through your content creation process from brief to final delivery.',
+   ex:'Research, audience understanding, outline, draft, self-edit, feedback incorporation, final polish.',
+   st:'"I start by clarifying the brief — audience, goal, tone, and format. I research the topic and competitors. I write a structured outline before drafting. After drafting I always read it aloud to catch awkward phrasing, then review against the brief before submitting."',
+   rf:'Goes straight to writing. No research or planning phase. Cannot describe a repeatable process.'},
+  {n:2,t:'Skills',q:'How do you write for SEO without sacrificing readability?',
+   ex:'Keyword research, natural placement, user intent focus, heading structure, avoiding keyword stuffing.',
+   st:'"I start with keyword research to understand intent. I incorporate the primary keyword in the title, first paragraph, and one H2. The rest flows naturally. I write for humans first — Google rewards content that users actually engage with."',
+   rf:'Keyword stuffs or has no understanding of SEO. Treats SEO and readability as separate concerns.'},
+  {n:3,t:'Experience',q:'Describe a piece of content you are most proud of and why it worked.',
+   ex:'Should show strategic thinking — not just writing skill but understanding of why it performed (traffic, conversions, engagement).',
+   st:'"I wrote a long-form guide on payroll compliance that ranked on page 1 within 3 months and generated 200+ leads. It worked because it answered specific questions no competitor addressed, and I interviewed an actual HR lawyer for credibility."',
+   rf:'Points to something they liked personally with no metrics or strategic rationale.'},
+  {n:4,t:'Tools',q:'What tools do you use for writing, editing, and content management?',
+   ex:'Google Docs, Grammarly, Hemingway, WordPress/CMS, Notion, Ahrefs/SEMrush, plagiarism checkers.',
+   st:'"I draft in Google Docs and use Hemingway Editor to keep readability high. Grammarly catches grammar issues. For CMS work I am comfortable with WordPress and Webflow. I use Ahrefs for keyword research and content gap analysis."',
+   rf:'Only uses Microsoft Word. No CMS experience. No SEO or editing tool knowledge.'},
+  {n:5,t:'Behavioural',q:'How do you handle receiving critical feedback on your writing?',
+   ex:'Professional response to feedback, distinction between subjective opinion and structural feedback, growth mindset.',
+   st:'"I separate ego from the work. If feedback is structural — clarity, accuracy, flow — I incorporate it without debate. If it is stylistic preference I ask what outcome we are trying to achieve and find a middle ground with data if possible."',
+   rf:'Defensive about feedback. Cannot distinguish between valid critique and personal preference. Takes all criticism personally.'}
+]},
+/* ── Financial Controller (Finance) ── */
+{id:'fc', ico:'&#128196;', name:'Financial Controller', cat:'Finance', qs:[
+  {n:1,t:'Skills',q:'Describe your experience owning the month-end and year-end close process.',
+   ex:'Close schedule, accruals, reconciliations, audit support, timeline management, stakeholder reporting.',
+   st:'"I own the full month-end close for a Rs.500Cr business — close in 4 working days. I manage a 40-step close checklist, oversee accruals across 8 cost centres, review balance sheet reconciliations, and present the financial pack to the CFO on day 5."',
+   rf:'Has participated in close but never owned it. Cannot describe the specific steps or timeline they managed.'},
+  {n:2,t:'Skills',q:'How do you ensure the integrity of financial data across multiple systems?',
+   ex:'ERP controls, reconciliation between systems, system access management, data validation, audit trails.',
+   st:'"I implement a three-point reconciliation: ERP to sub-ledger, sub-ledger to bank statement, and bank to management accounts. I review system access quarterly and ensure no single person can post and approve a transaction."',
+   rf:'Relies on the IT team for data integrity. No understanding of reconciliation controls or segregation of duties.'},
+  {n:3,t:'Experience',q:'Describe a time you identified a significant financial risk or error.',
+   ex:'Should show proactive detection, root cause analysis, quantification of impact, corrective action, prevention.',
+   st:'"I noticed a Rs.12L accrual reversal had not been posted for 3 months, inflating expenses. I traced it to a process gap in the handover procedure, corrected the accounts, updated the close checklist, and added a reviewer sign-off step."',
+   rf:'Cannot recall a specific example. Only finds errors reactively when auditors flag them.'},
+  {n:4,t:'Skills',q:'How do you manage relationships with external auditors?',
+   ex:'Preparation, documentation, PBC list management, query resolution, timeline adherence.',
+   st:'"I prepare a PBC list 4 weeks before audit fieldwork begins. I assign ownership to each item and track completion daily. I respond to auditor queries within 24 hours and flag any contentious items to the CFO early rather than letting them escalate."',
+   rf:'Sees auditors as adversaries. Slow to respond to queries. Unprepared at audit start.'},
+  {n:5,t:'Behavioural',q:'How do you develop and manage the finance team below you?',
+   ex:'Hiring, delegation, skill development, performance management, succession planning.',
+   st:'"I delegate with clear outcomes, not tasks — I explain the why. I hold weekly 1:1s focused on development blockers, not just workload. I have promoted 2 analysts to senior roles in the last 18 months by giving them stretch projects and visible stakeholder exposure."',
+   rf:'Micromanages. No delegation. Cannot describe any team development initiative or outcome.'}
+]}
+];
+
+/* ═══════════════════════════
+   APP STATE
+═══════════════════════════ */
+var currentUser    = null;
+var currentProfile = null;
+var currentCatTab  = 'All';
+var isDark         = true;
+var usedProfiles   = [];
+var activeCat      = 'All';
+var jdFile         = null;
+
+/* ═══════════════════════════
+   INIT
+═══════════════════════════ */
+window.onload = function() {
+  var saved = localStorage.getItem('hk_user');
+  if (saved) {
+    try { currentUser = JSON.parse(saved); } catch(e) { currentUser = null; }
+    if (currentUser) {
+      usedProfiles = JSON.parse(localStorage.getItem('hk_used') || '[]');
+      applyLoggedIn();
+    }
+  }
+  var savedTheme = localStorage.getItem('hk_theme');
+  if (savedTheme === 'light') {
+    isDark = false;
+    document.body.classList.add('light');
+    syncThemeIcons();
+  }
+  renderGrid();
+};
+
+/* ═══════════════════════════
+   THEME
+═══════════════════════════ */
+function toggleTheme() {
+  isDark = !isDark;
+  document.body.classList.toggle('light', !isDark);
+  localStorage.setItem('hk_theme', isDark ? 'dark' : 'light');
+  syncThemeIcons();
+}
+
+function syncThemeIcons() {
+  var icon = isDark ? '&#9790;' : '&#9728;&#65039;';
+  var btns = document.querySelectorAll('.btn-icon');
+  var i;
+  for (i = 0; i < btns.length; i++) {
+    btns[i].innerHTML = icon;
+  }
+}
+
+/* ═══════════════════════════
+   PAGES
+═══════════════════════════ */
+function showPage(id) {
+  var all = document.querySelectorAll('.page');
+  var i;
+  for (i = 0; i < all.length; i++) all[i].classList.remove('active');
+  var pg = document.getElementById('page-' + id);
+  if (pg) pg.classList.add('active');
+}
+
+function goHome() {
+  showPage('home');
+  renderGrid();
+}
+
+/* ═══════════════════════════
+   AUTH
+═══════════════════════════ */
+function openAuth(mode) {
+  showPage('auth');
+  if (mode === 'login') {
+    document.getElementById('form-su').classList.add('hidden');
+    document.getElementById('form-li').classList.remove('hidden');
+  } else {
+    document.getElementById('form-su').classList.remove('hidden');
+    document.getElementById('form-li').classList.add('hidden');
+  }
+}
+
+function showSignup() {
+  document.getElementById('form-su').classList.remove('hidden');
+  document.getElementById('form-li').classList.add('hidden');
+}
+
+function showLogin() {
+  document.getElementById('form-li').classList.remove('hidden');
+  document.getElementById('form-su').classList.add('hidden');
+}
+
+function doSignup() {
+  var name  = document.getElementById('su-n').value.trim();
+  var email = document.getElementById('su-e').value.trim();
+  var pass  = document.getElementById('su-p').value;
+  var errEl = document.getElementById('su-err');
+  errEl.style.display = 'none';
+
+  if (!name || !email || !pass) {
+    errEl.textContent = 'Please fill in all fields.';
+    errEl.style.display = 'block';
+    return;
+  }
+  if (pass.length < 8) {
+    errEl.textContent = 'Password must be at least 8 characters.';
+    errEl.style.display = 'block';
+    return;
+  }
+  if (email.indexOf('@') < 1) {
+    errEl.textContent = 'Please enter a valid email address.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  var users = JSON.parse(localStorage.getItem('hk_users') || '[]');
+  var i, exists = false;
+  for (i = 0; i < users.length; i++) {
+    if (users[i].email === email) { exists = true; break; }
+  }
+  if (exists) {
+    errEl.textContent = 'An account with this email already exists.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  var user = { name: name, email: email, pass: pass, plan: 'free', createdAt: Date.now() };
+  users.push(user);
+  localStorage.setItem('hk_users', JSON.stringify(users));
+  currentUser  = user;
+  usedProfiles = [];
+  localStorage.setItem('hk_user', JSON.stringify(user));
+  localStorage.setItem('hk_used', '[]');
+  applyLoggedIn();
+  goHome();
+  toast('Welcome to HireKit, ' + name.split(' ')[0] + '!');
+}
+
+function doLogin() {
+  var email = document.getElementById('li-e').value.trim();
+  var pass  = document.getElementById('li-p').value;
+  var errEl = document.getElementById('li-err');
+  errEl.style.display = 'none';
+
+  /* Admin */
+  if (email === 'contact@aaronvaidya.com' && pass === 'Aaron@IQ2025') {
+    currentUser = { name: 'Aaron Vaidya', email: email, plan: 'admin' };
+    localStorage.setItem('hk_user', JSON.stringify(currentUser));
+    applyLoggedIn(); goHome(); toast('Welcome back, Aaron!'); return;
+  }
+
+  /* Test guests */
+  var guests = [
+    { name: 'Test Guest 1', email: 'guest1@hirekit.online', pass: 'Guest@123', plan: 'free' },
+    { name: 'Test Guest 2', email: 'guest2@hirekit.online', pass: 'Guest@123', plan: 'pro'  },
+    { name: 'Test Guest 3', email: 'guest3@hirekit.online', pass: 'Guest@123', plan: 'free' }
+  ];
+  var i, g = null;
+  for (i = 0; i < guests.length; i++) {
+    if (guests[i].email === email && guests[i].pass === pass) { g = guests[i]; break; }
+  }
+  if (g) {
+    currentUser  = g;
+    usedProfiles = [];
+    localStorage.setItem('hk_user', JSON.stringify(g));
+    applyLoggedIn(); goHome(); toast('Welcome back, ' + g.name + '!'); return;
+  }
+
+  /* Regular users */
+  var users = JSON.parse(localStorage.getItem('hk_users') || '[]');
+  var user = null;
+  for (i = 0; i < users.length; i++) {
+    if (users[i].email === email && users[i].pass === pass) { user = users[i]; break; }
+  }
+  if (!user) {
+    errEl.textContent = 'Invalid email or password.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  currentUser  = user;
+  usedProfiles = JSON.parse(localStorage.getItem('hk_used') || '[]');
+  localStorage.setItem('hk_user', JSON.stringify(user));
+  applyLoggedIn(); goHome(); toast('Welcome back, ' + user.name.split(' ')[0] + '!');
+}
+
+function logout() {
+  currentUser  = null;
+  usedProfiles = [];
+  localStorage.removeItem('hk_user');
+  document.getElementById('nav-g').classList.remove('hidden');
+  document.getElementById('nav-u').classList.add('hidden');
+  goHome(); toast('Logged out successfully.');
+}
+
+function applyLoggedIn() {
+  document.getElementById('nav-g').classList.add('hidden');
+  document.getElementById('nav-u').classList.remove('hidden');
+  document.getElementById('nav-name').textContent = currentUser.name.split(' ')[0];
+  var badge = document.getElementById('nav-plan');
+  if (currentUser.plan === 'pro') {
+    badge.textContent = 'PRO';
+    badge.style.background = 'rgba(26,185,84,.15)';
+    badge.style.color = 'var(--c-green)';
+  } else if (currentUser.plan === 'admin') {
+    badge.textContent = 'ADMIN';
+    badge.style.background = 'rgba(255,200,0,.15)';
+    badge.style.color = '#ffcc00';
+  } else {
+    badge.textContent = 'FREE';
+    badge.style.background = '';
+    badge.style.color = '';
+  }
+  buildSidebar();
+}
+
+/* ═══════════════════════════
+   PROFILES GRID
+═══════════════════════════ */
+function renderGrid() {
+  var q    = (document.getElementById('q-input') || { value: '' }).value.toLowerCase();
+  var grid = document.getElementById('pgrid');
+  if (!grid) return;
+
+  var filtered = [];
+  var i, p;
+  for (i = 0; i < PD.length; i++) {
+    p = PD[i];
+    var catOk  = (activeCat === 'All' || p.cat === activeCat);
+    var termOk = (!q || p.name.toLowerCase().indexOf(q) >= 0 || p.cat.toLowerCase().indexOf(q) >= 0);
+    if (catOk && termOk) filtered.push(p);
+  }
+
+  var ctEl = document.getElementById('grid-ct');
+  if (ctEl) ctEl.textContent = filtered.length + ' profiles';
+
+  var html = '';
+  var locked;
+  for (i = 0; i < filtered.length; i++) {
+    p = filtered[i];
+    locked = currentUser && currentUser.plan === 'free' &&
+             usedProfiles.length >= 3 && usedProfiles.indexOf(p.id) < 0;
+
+    html += '<div class="pcard" onclick="openProfile(\'' + p.id + '\')">';
+    html +=   '<div class="pcard-q">' + p.qs.length + ' Qs</div>';
+    html +=   '<span class="pcard-ico">' + p.ico + '</span>';
+    html +=   '<div class="pcard-name">' + p.name + '</div>';
+    html +=   '<div class="pcard-cat">' + p.cat + '</div>';
+    if (locked) html += '<div class="pcard-lock">&#128274;</div>';
+    html += '</div>';
+  }
+  grid.innerHTML = html;
+}
+
+function setCat(el) {
+  var pills = document.querySelectorAll('.cpill');
+  var i;
+  for (i = 0; i < pills.length; i++) pills[i].classList.remove('on');
+  el.classList.add('on');
+  activeCat = el.dataset.c;
+  renderGrid();
+}
+
+/* ═══════════════════════════
+   Q&A PAGE
+═══════════════════════════ */
+function openProfile(id) {
+  if (!currentUser) { openAuth('signup'); return; }
+
+  var profile = null;
+  var i;
+  for (i = 0; i < PD.length; i++) { if (PD[i].id === id) { profile = PD[i]; break; } }
+  if (!profile) return;
+
+  /* Paywall check */
+  if (currentUser.plan === 'free' && usedProfiles.indexOf(id) < 0) {
+    if (usedProfiles.length >= 3) { openPricing(); return; }
+    usedProfiles.push(id);
+    localStorage.setItem('hk_used', JSON.stringify(usedProfiles));
+    renderGrid();
+  }
+
+  currentProfile = profile;
+  currentCatTab  = 'All';
+  renderQAPage();
+  showPage('qa');
+
+  var items = document.querySelectorAll('.side-item');
+  for (i = 0; i < items.length; i++) {
+    items[i].classList.toggle('on', items[i].dataset.id === id);
+  }
+}
+
+function renderQAPage() {
+  var p = currentProfile;
+  document.getElementById('qa-pname').textContent = p.name;
+  document.getElementById('qa-pmeta').textContent =
+    p.qs.length + ' questions &#8212; Skills, Behavioural, Experience & Tools';
+
+  var tabs = ['All', 'Skills', 'Behavioural', 'Experience', 'Tools'];
+  var tHtml = '';
+  var i, t;
+  for (i = 0; i < tabs.length; i++) {
+    t = tabs[i];
+    tHtml += '<div class="ctab' + (currentCatTab === t ? ' on' : '') +
+             '" onclick="setQCat(\'' + t + '\')">' + t + '</div>';
+  }
+  document.getElementById('cat-tabs').innerHTML = tHtml;
+
+  renderCards();
+
+  var banner = document.getElementById('paywall');
+  if (currentUser && currentUser.plan === 'free') {
+    banner.classList.remove('hidden');
+    document.getElementById('used-ct').textContent = usedProfiles.length;
+  } else {
+    banner.classList.add('hidden');
+  }
+}
+
+function setQCat(cat) {
+  currentCatTab = cat;
+  var tabs = document.querySelectorAll('.ctab');
+  var i;
+  for (i = 0; i < tabs.length; i++) {
+    tabs[i].classList.toggle('on', tabs[i].textContent === cat);
+  }
+  renderCards();
+}
+
+function renderCards() {
+  var p  = currentProfile;
+  var qs = [];
+  var i;
+  for (i = 0; i < p.qs.length; i++) {
+    if (currentCatTab === 'All' || p.qs[i].t === currentCatTab) qs.push(p.qs[i]);
+  }
+
+  var el = document.getElementById('cards');
+  if (qs.length === 0) {
+    el.innerHTML = '<div style="color:var(--c-muted);padding:28px 0;text-align:center">No questions in this category.</div>';
+    return;
+  }
+
+  var html = '';
+  var q;
+  for (i = 0; i < qs.length; i++) {
+    q = qs[i];
+    html += '<div class="qcard" id="qc' + i + '">';
+    html +=   '<div class="qcard-hd" onclick="toggleCard(' + i + ')">';
+    html +=     '<div class="qcard-num">Q' + q.n + '</div>';
+    html +=     '<div class="qcard-q">' + q.q + '</div>';
+    html +=     '<div class="qcard-tag">' + q.t + '</div>';
+    html +=     '<div class="qcard-chev">&#9660;</div>';
+    html +=   '</div>';
+    html +=   '<div class="qcard-bd">';
+    html +=     '<div class="ans-lbl">Expected Answer</div>';
+    html +=     '<div class="ans-box ans-n">' + q.ex + '</div>';
+    html +=     '<div class="ans-lbl">&#9989; Strong Answer</div>';
+    html +=     '<div class="ans-box ans-g">';
+    html +=       '<span class="ans-flag fg">&#9989; Green Flag</span><br>' + q.st;
+    html +=     '</div>';
+    html +=     '<div class="ans-lbl">&#128681; Red Flag Answer</div>';
+    html +=     '<div class="ans-box ans-r">';
+    html +=       '<span class="ans-flag fr">&#128681; Red Flag</span><br>' + q.rf;
+    html +=     '</div>';
+    html +=   '</div>';
+    html += '</div>';
+  }
+  el.innerHTML = html;
+}
+
+function toggleCard(i) {
+  var c = document.getElementById('qc' + i);
+  if (c) c.classList.toggle('open');
+}
+
+function buildSidebar() {
+  var list = document.getElementById('side-list');
+  if (!list) return;
+  var html = '';
+  var i, p;
+  for (i = 0; i < PD.length; i++) {
+    p = PD[i];
+    html += '<div class="side-item" data-id="' + p.id + '" onclick="openProfile(\'' + p.id + '\')">' + p.name + '</div>';
+  }
+  list.innerHTML = html;
+}
+
+/* ═══════════════════════════
+   JD UPLOAD
+═══════════════════════════ */
+function clickJD() {
+  if (!currentUser) { openAuth('signup'); return; }
+  if (currentUser.plan === 'free') { openPricing(); return; }
+  showPage('jd');
+}
+
+function onFile(e) {
+  var f = e.target.files && e.target.files[0];
+  if (!f) return;
+  jdFile = f;
+  var msgEl = document.getElementById('file-ok');
+  msgEl.textContent = 'File selected: ' + f.name + ' (' + Math.round(f.size / 1024) + ' KB)';
+  msgEl.style.display = 'block';
+}
+
+function clearJD() {
+  jdFile = null;
+  document.getElementById('jd-ta').value = '';
+  document.getElementById('kw-in').value = '';
+  document.getElementById('file-ok').style.display = 'none';
+  document.getElementById('jd-out').classList.add('hidden');
+  document.getElementById('jd-load').classList.add('hidden');
+}
+
+function genJD() {
+  var text = document.getElementById('jd-ta').value.trim();
+  var kw   = document.getElementById('kw-in').value.trim();
+  if (!text && !jdFile) { toast('Please upload a file or paste the JD text.'); return; }
+
+  document.getElementById('jd-load').classList.remove('hidden');
+  document.getElementById('jd-out').classList.add('hidden');
+
+  var content = text || ('Job Description from file: ' + (jdFile ? jdFile.name : ''));
+  var prompt  =
+    'Generate 8 interview screening questions for this Job Description.\n\n' +
+    'For each question provide:\n' +
+    '1. The question\n' +
+    '2. Category (Skills/Behavioural/Experience/Tools)\n' +
+    '3. Expected answer\n' +
+    '4. Strong answer example (GREEN FLAG) in quotes\n' +
+    '5. Red flag answer (RED FLAG) warning signs\n\n' +
+    'Be specific to this exact role.\n\nJD:\n' +
+    content.substring(0, 20000) +
+    (kw ? '\n\nKey requirements: ' + kw : '');
+
+  callAI({
+    system: 'You are an expert HR interviewer and talent acquisition specialist. Generate specific, insightful interview questions based on the job description provided.',
+    messages: [{ role: 'user', content: prompt }],
+    max_tokens: 3000
+  }).then(function(resp) {
+    var txt = resp && resp.content && resp.content[0] ? resp.content[0].text : '';
+    document.getElementById('jd-load').classList.add('hidden');
+    var outEl = document.getElementById('jd-out');
+    outEl.innerHTML =
+      '<div style="font-family:var(--fh);font-weight:700;font-size:.98rem;margin-bottom:14px;color:var(--c-yellow)">Your Custom Q&amp;A Kit</div>' +
+      '<div class="jd-result">' + txt + '</div>';
+    outEl.classList.remove('hidden');
+  }).catch(function(err) {
+    document.getElementById('jd-load').classList.add('hidden');
+    toast('Error: ' + (err.message || 'Generation failed. Please try again.'));
+  });
+}
+
+/* ═══════════════════════════
+   AI API CALL
+═══════════════════════════ */
+function callAI(opts) {
+  var system     = opts.system || '';
+  var messages   = opts.messages || [];
+  var max_tokens = opts.max_tokens || 2000;
+  var MAX        = 25000;
+
+  if (system.length > MAX) system = system.substring(0, MAX);
+  var safeMsgs = [];
+  var i, m;
+  for (i = 0; i < messages.length; i++) {
+    m = messages[i];
+    safeMsgs.push({
+      role: m.role,
+      content: (typeof m.content === 'string' && m.content.length > MAX)
+        ? m.content.substring(0, MAX) + '\n[Truncated]'
+        : m.content
+    });
+  }
+
+  return fetch('/api/chat', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ system: system, messages: safeMsgs, max_tokens: max_tokens })
+  }).then(function(r) {
+    return r.json().then(function(d) {
+      if (!r.ok) {
+        var msg = r.status === 413
+          ? 'File too large. Please paste the text directly.'
+          : (d && d.error ? d.error : 'Server error ' + r.status);
+        throw new Error(msg);
+      }
+      return d;
+    });
+  });
+}
+
+/* ═══════════════════════════
+   PRICING MODAL
+═══════════════════════════ */
+function openPricing()  { document.getElementById('ov').classList.add('open'); }
+function closePricing() { document.getElementById('ov').classList.remove('open'); }
+function doUpgrade() {
+  closePricing();
+  window.location.href = 'mailto:contact@aaronvaidya.com?subject=HireKit Pro Upgrade&body=Hi Aaron, I would like to upgrade to HireKit Pro (Rs.1700/month). Please share payment details.';
+}
+document.getElementById('ov').addEventListener('click', function(e) {
+  if (e.target === this) closePricing();
+});
+
+/* ═══════════════════════════
+   TOAST
+═══════════════════════════ */
+function toast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 3500);
+}
+
+</script>
+</body>
+</html>
