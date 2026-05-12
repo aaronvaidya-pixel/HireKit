@@ -441,9 +441,9 @@ footer a:hover { color:var(--c-yellow); }
     <h1 class="hero-h1">Screen smarter.<br><em>Hire faster.</em></h1>
     <p class="hero-p">Instant Q&amp;A kits for 28 job profiles. Strong answers highlighted in green, red flags in red &#8212; built for recruiters who move fast.</p>
     <div class="hero-ctas">
-      <button class="btn btn-y btn-lg" onclick="openAuth('signup')">Start Free &#8212; 3 Profiles</button>
+      <button class="btn btn-y btn-lg" id="hero-cta-btn" onclick="openAuth('signup')">Start Free &#8212; 3 Profiles</button>
     </div>
-    <p class="hero-note">Free plan: 3 profiles &middot; No credit card required</p>
+    <p class="hero-note" id="hero-note">Free plan: 3 profiles &middot; No credit card required</p>
   </div>
 
   <div class="browse">
@@ -1404,6 +1404,16 @@ function applyLoggedIn() {
     badge.textContent = 'FREE';
     badge.style.background = '';
     badge.style.color = '';
+  }
+  var heroCtaBtn = document.getElementById('hero-cta-btn');
+  if (heroCtaBtn) heroCtaBtn.style.display = 'none';
+  var heroNote = document.getElementById('hero-note');
+  if (heroNote) {
+    if (currentUser.plan === 'free') {
+      heroNote.style.display = '';
+    } else {
+      heroNote.style.display = 'none';
+    }
   }
   buildSidebar();
 }
