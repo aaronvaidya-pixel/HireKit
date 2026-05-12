@@ -610,7 +610,11 @@ var PD = [
   {n:5,t:'Behavioural',q:'Tell me about a time you had to learn a new technology quickly.',
    ex:'Adaptability, learning approach, practical application, timeline management.',
    st:'"I had 2 weeks to implement a GraphQL API having only used REST. I built a sandbox first, read the spec docs, studied GitHub patterns, and delivered the feature on time with tests."',
-   rf:'Resistant to new tech. Vague learning process. No concrete outcome or timeline.'}
+   rf:'Resistant to new tech. Vague learning process. No concrete outcome or timeline.'},
+  {n:6,t:'Tools',q:'What tools do you use for debugging, monitoring and performance profiling?',
+   ex:'DevTools, APM like Datadog or New Relic, logging tools, Chrome profiler, Lighthouse.',
+   st:'"I use Chrome DevTools for frontend profiling, Datadog APM for backend performance, and Sentry for error tracking. For database query performance I use EXPLAIN ANALYZE. I also run Lighthouse audits on every major release."',
+   rf:'"I use console.log." No APM or monitoring tool experience.'}
 ]},
 {id:'da', ico:'&#128202;', name:'Data Analyst', cat:'Technology', qs:[
   {n:1,t:'Skills',q:'What is your process for cleaning and validating a new dataset?',
@@ -654,7 +658,15 @@ var PD = [
   {n:5,t:'Skills',q:'How do you handle missing data in a dataset?',
    ex:'Understand missingness type (MCAR/MAR/MNAR), appropriate imputation strategies.',
    st:'"I diagnose why data is missing. MCAR: may drop rows. MAR: impute using median or KNN. MNAR needs domain discussion as it introduces bias. I never impute before data leakage analysis."',
-   rf:'"I just fill nulls with 0." Unaware that strategy depends on missingness type.'}
+   rf:'"I just fill nulls with 0." Unaware that strategy depends on missingness type.'},
+  {n:6,t:'Behavioural',q:'Tell me about a time your model failed in production and how you handled it.',
+   ex:'Honest account of failure, diagnosis, fix, and what they changed going forward.',
+   st:'"A churn model dropped 15 points in precision after a product change altered user behaviour. I detected it via weekly performance monitoring, reran feature importance analysis, identified the drift, and retrained with recent data within 3 days."',
+   rf:'Claims models never fail. Cannot describe a real production issue or what they learned from it.'},
+  {n:7,t:'Tools',q:'What MLOps tools and platforms have you used for experiment tracking and deployment?',
+   ex:'MLflow, Weights and Biases, Airflow, SageMaker, DVC, feature stores.',
+   st:'"I use MLflow for experiment tracking and model registry, DVC for data versioning, and Airflow for retraining pipelines. Models are served on AWS SageMaker with Evidently AI for drift monitoring."',
+   rf:'Runs all experiments in notebooks with no tracking. Cannot explain what experiment tracking is for.'}
 ]},
 {id:'devops', ico:'&#9881;', name:'DevOps Engineer', cat:'Technology', qs:[
   {n:1,t:'Skills',q:'Describe your experience designing CI/CD pipelines from scratch.',
@@ -676,7 +688,11 @@ var PD = [
   {n:5,t:'Skills',q:'How do you approach security in your DevOps practice (DevSecOps)?',
    ex:'SAST/DAST scanning, secret management, container image scanning, RBAC.',
    st:'"Security is shift-left: Trivy for image scanning, OWASP dependency check, SonarQube SAST. Secrets in HashiCorp Vault — never in env vars or code. RBAC everywhere. Pen testing quarterly."',
-   rf:'"Security is the security team\'s job." Hardcodes secrets in code.'}
+   rf:'"Security is the security team\'s job." Hardcodes secrets in code.'},
+  {n:6,t:'Behavioural',q:'Describe a production outage you caused or helped resolve.',
+   ex:'Accountability, detection time, steps taken, rollback, post-mortem, systemic fix.',
+   st:'"A Terraform change accidentally modified a security group rule. Detected in 4 minutes via CloudWatch alarm. I rolled back the change, restored traffic in 9 minutes, and ran a post-mortem. Added a pre-plan security group validation step to CI to prevent recurrence."',
+   rf:'Blames others. Cannot describe a specific incident. No rollback plan or post-mortem experience.'}
 ]},
 {id:'cloud', ico:'&#9729;', name:'Cloud Engineer', cat:'Technology', qs:[
   {n:1,t:'Experience',q:'Which cloud platforms have you worked with and what are your strengths?',
@@ -698,7 +714,15 @@ var PD = [
   {n:5,t:'Skills',q:'How do you design for high availability and disaster recovery?',
    ex:'Multi-AZ, multi-region, RTO/RPO definitions, backup strategies, failover testing.',
    st:'"HA starts with multi-AZ by default. For DR I define RTO/RPO with the business first. Tier 1 apps: active-active multi-region. Tier 2: pilot light with Route 53 failover. I test DR quarterly — untested DR is not DR."',
-   rf:'Does not know RTO vs RPO. "We have backups" without any failover testing.'}
+   rf:'Does not know RTO vs RPO. "We have backups" without any failover testing.'},
+  {n:6,t:'Behavioural',q:'Describe a cloud architecture decision you made that you would do differently now.',
+   ex:'Self-awareness, technical depth, honest reflection on trade-offs made under constraints.',
+   st:'"I chose a single-region active-passive setup for a tier-1 app to save cost. When the primary region had a partial failure, recovery took 22 minutes instead of our 5-minute RTO target. I now always right-size HA requirements with the business before design, not after."',
+   rf:'Defensive about past decisions. Cannot reflect critically on any architecture choice they made.'},
+  {n:7,t:'Tools',q:'What cloud management and cost optimisation tools do you use?',
+   ex:'CloudWatch, Cost Explorer, Terraform, AWS Budgets, Infracost, Datadog.',
+   st:'"I use Terraform for all infra, Infracost in CI to flag cost changes before deploy, AWS Cost Explorer weekly, and Datadog for unified observability across cloud accounts. I run Trusted Advisor checks monthly as part of a cloud health review."',
+   rf:'"I check the AWS console manually." No IaC tool. Never analysed a cloud cost report.'}
 ]},
 {id:'qa', ico:'&#129514;', name:'QA / Test Engineer', cat:'Technology', qs:[
   {n:1,t:'Skills',q:'Explain your approach to building a test strategy from scratch.',
@@ -720,7 +744,11 @@ var PD = [
   {n:5,t:'Behavioural',q:'How do you collaborate with developers to shift testing left?',
    ex:'Definition of Done, pair programming, TDD support, PR review, early requirement analysis.',
    st:'"I join story refinement to flag testability issues early. I write test cases before dev starts in BDD format. I review PRs for testability. QA is a prevention role, not a detection gate."',
-   rf:'"I test after developers are done." No involvement in planning or design.'}
+   rf:'"I test after developers are done." No involvement in planning or design.'},
+  {n:6,t:'Experience',q:'Describe your experience working in an Agile team as a QA engineer.',
+   ex:'Sprint participation, shifting left, definition of done, collaboration with devs and PMs.',
+   st:'"I embed in the sprint team from day one. I write test cases during refinement, flag testability issues in sprint planning, review PRs for quality, and own the Definition of Done checklist. QA is a prevention function in my team, not a late-stage gate."',
+   rf:'"I get the build at the end of the sprint and test it." No involvement in planning or design.'}
 ]},
 {id:'ux', ico:'&#127912;', name:'UI/UX Designer', cat:'Technology', qs:[
   {n:1,t:'Skills',q:'Walk me through your design process from brief to delivery.',
@@ -742,7 +770,11 @@ var PD = [
   {n:5,t:'Skills',q:'How do you ensure your designs are accessible?',
    ex:'WCAG 2.1 AA, color contrast ratios, keyboard navigation, screen reader support.',
    st:'"Accessibility is built in, not bolted on. I check contrast ratios (4.5:1 minimum), use semantic HTML structure, test with keyboard-only navigation, and run Axe audits on prototypes."',
-   rf:'No awareness of WCAG. "Accessibility is a dev concern."'}
+   rf:'No awareness of WCAG. "Accessibility is a dev concern."'},
+  {n:6,t:'Experience',q:'Describe a design you shipped that you are not proud of and what you learned.',
+   ex:'Honest reflection on a compromised design, what the constraints were, and what changed.',
+   st:'"We shipped a checkout flow under time pressure without usability testing. Abandonment rate was 24% higher than expected. Post-launch research revealed a confusing field label. I used this to establish a rule: no flow ships without at least 3 user test sessions."',
+   rf:'Claims all their work was excellent. Cannot reflect critically on any design they shipped.'}
 ]},
 {id:'pm', ico:'&#128241;', name:'Product Manager', cat:'Technology', qs:[
   {n:1,t:'Skills',q:'How do you prioritize your product backlog?',
@@ -764,7 +796,15 @@ var PD = [
   {n:5,t:'Behavioural',q:'How do you work with engineering teams effectively?',
    ex:'Collaboration style, tech literacy, respect for estimates, clear requirements, trade-off discussions.',
    st:'"I treat engineers as partners, not builders. I provide context (why), not specs (how). I participate in sprint planning and retrospectives. I have enough technical literacy to discuss trade-offs."',
-   rf:'"I write requirements and they build." Adversarial view of engineering.'}
+   rf:'"I write requirements and they build." Adversarial view of engineering.'},
+  {n:6,t:'Experience',q:'Describe the most complex product problem you have solved.',
+   ex:'Ambiguity, stakeholder complexity, data-driven approach, solution, measurable result.',
+   st:'"We had 40% trial-to-paid conversion but no data on why. I designed a mixed-method research programme: exit surveys, session recordings, and sales call analysis. Identified the onboarding as the primary drop-off. Redesigned it and conversion improved from 40% to 61% in 2 months."',
+   rf:'Cannot describe a complex product problem. Jumps to solutions without diagnosing root causes.'},
+  {n:7,t:'Tools',q:'What analytics and product management tools do you rely on daily?',
+   ex:'Jira or Linear, Amplitude or Mixpanel, Figma, Notion, SQL for self-serve data.',
+   st:'"I roadmap in Productboard, run sprints in Jira, and track product metrics in Amplitude. I write SQL to pull my own cohort data rather than waiting on analysts. I collaborate in Figma daily with the design team."',
+   rf:'"I use PowerPoint for roadmaps." Cannot name an analytics tool. Fully dependent on others for data.'}
 ]},
 {id:'sec', ico:'&#128272;', name:'Cybersecurity Analyst', cat:'Technology', qs:[
   {n:1,t:'Skills',q:'Walk me through how you would respond to a suspected security incident.',
@@ -786,7 +826,11 @@ var PD = [
   {n:5,t:'Behavioural',q:'How do you stay current with the evolving threat landscape?',
    ex:'Threat intel sources, communities, CTFs, certifications, threat briefings.',
    st:'"I follow CISA advisories, Krebs on Security, and AlienVault OTX. I participate in CTF competitions monthly. Hold CISSP and CEH certifications. I ran quarterly threat briefings for leadership."',
-   rf:'"I Google things when they come up." No professional development.'}
+   rf:'"I Google things when they come up." No professional development.'},
+  {n:6,t:'Experience',q:'Describe the most serious security incident you have personally managed.',
+   ex:'Severity, scope, containment approach, stakeholder communication, outcome, lessons.',
+   st:'"I managed a ransomware incident at a logistics company. Activated IR plan within 20 minutes, isolated 14 affected endpoints, engaged our forensics vendor, and restored from clean backups within 18 hours. No ransom paid. Implemented mandatory MFA and EDR company-wide post-incident."',
+   rf:'Has only dealt with minor incidents. Cannot describe containment decisions or stakeholder communication under pressure.'}
 ]},
 /* ── Sales & Marketing (5) ── */
 {id:'bde', ico:'&#128200;', name:'Business Dev Executive', cat:'Sales', qs:[
@@ -831,7 +875,15 @@ var PD = [
   {n:5,t:'Skills',q:'How do you manage sales quotas and territory planning?',
    ex:'Quota setting methodology, territory design, account segmentation.',
    st:'"I set quotas bottom-up based on territory size and account potential. I use 70% attainment rate as the healthy zone. I review territories quarterly and rebalance when market conditions shift."',
-   rf:'Cannot explain how quotas are set.'}
+   rf:'Cannot explain how quotas are set.'},
+  {n:6,t:'Experience',q:'Describe the largest revenue target you have been personally accountable for.',
+   ex:'Target size, attainment result, what drove success or failure, what they changed.',
+   st:'"I owned a Rs.8Cr annual revenue target for a mid-market team of 8 AEs. We hit 112% driven by improved qualification discipline and shortening the average sales cycle from 90 to 58 days by introducing a mutual action plan template."',
+   rf:'Cannot state a revenue number they were accountable for. Confuses team target with personal accountability.'},
+  {n:7,t:'Tools',q:'What CRM, sales intelligence, and coaching tools does your team use?',
+   ex:'Salesforce or HubSpot, Gong or Chorus, Salesloft, LinkedIn Sales Navigator.',
+   st:'"We run Salesforce as the CRM with custom dashboards for pipeline health. I use Gong for call coaching, reviewing 3 calls per rep per week. Salesloft manages sequences and LinkedIn Sales Navigator feeds our outbound prospecting."',
+   rf:'"I use Excel and WhatsApp." No CRM discipline. Cannot name a sales coaching or enablement tool.'}
 ]},
 {id:'dmkt', ico:'&#128226;', name:'Digital Marketing Executive', cat:'Sales', qs:[
   {n:1,t:'Skills',q:'Describe your experience with paid digital advertising campaigns.',
@@ -853,7 +905,11 @@ var PD = [
   {n:5,t:'Behavioural',q:'Describe a campaign that did not perform as expected.',
    ex:'Accountability, analysis of failure, specific learning, application to future campaigns.',
    st:'"A product launch campaign underperformed by 40%. Post-analysis: our landing page messaging did not match the ad promise. I now run landing page audits before every campaign. Conversion rate on next launch was 2.1x higher."',
-   rf:'Blames platform algorithm. No root cause analysis.'}
+   rf:'Blames platform algorithm. No root cause analysis.'},
+  {n:6,t:'Experience',q:'Describe the most successful digital campaign you have run end to end.',
+   ex:'Campaign brief, channels, creative decisions, budget, result, what made it work.',
+   st:'"I ran a product launch campaign across Google and LinkedIn with a Rs.18L budget. We used intent-based Google targeting combined with LinkedIn job title targeting. Delivered 340 MQLs at a 22% lower CPL than our benchmark. Key success factor was tight message-to-audience matching."',
+   rf:'Cannot describe a campaign with specific numbers. Vague answers about boosting posts and increasing followers.'}
 ]},
 {id:'seo', ico:'&#128270;', name:'SEO / Content Specialist', cat:'Sales', qs:[
   {n:1,t:'Skills',q:'Walk me through your keyword research process.',
@@ -875,7 +931,19 @@ var PD = [
   {n:5,t:'Skills',q:'How do you measure SEO success?',
    ex:'Organic traffic, keyword rankings, click-through rate, conversions from organic.',
    st:'"Primary metrics: organic traffic (GSC, GA4), keyword rankings for target terms, and organic conversion rate. I track CTR by position to identify title and meta optimization opportunities. I set a 6-month measurement window."',
-   rf:'"I track rankings only." No traffic or conversion measurement.'}
+   rf:'"I track rankings only." No traffic or conversion measurement.'},
+  {n:6,t:'Behavioural',q:'Describe a time an algorithm update significantly hit your organic traffic.',
+   ex:'Detection speed, root cause analysis, recovery strategy, timeline, outcome.',
+   st:'"After a core update we dropped 28% in organic sessions. I ran a content quality audit, identified 35 thin pages failing E-E-A-T signals, consolidated and rewrote them with expert input. Traffic recovered in 10 weeks and then grew 15% above the pre-update baseline."',
+   rf:'Not aware of algorithm updates. Cannot describe any traffic impact or recovery action they took personally.'},
+  {n:7,t:'Experience',q:'What is the largest organic traffic growth you have driven and over what timeline?',
+   ex:'Specific numbers, strategy used, timeline, what worked and what did not.',
+   st:'"I grew organic sessions from 12K to 95K per month in 14 months for a B2B SaaS company. Strategy: technical audit and fix (180+ issues), pillar-cluster content for 5 core topics, and a systematic internal linking rebuild."',
+   rf:'Cannot state specific traffic numbers. Attributes growth to "posting consistently" with no strategic framework.'},
+  {n:8,t:'Tools',q:'What SEO tools do you use daily and what do you use each one for?',
+   ex:'GSC, Ahrefs or SEMrush, Screaming Frog, Surfer SEO or Clearscope, GA4.',
+   st:'"Google Search Console for daily performance monitoring, Ahrefs for keyword research and competitor gap analysis, Screaming Frog for monthly technical crawls, and Surfer SEO for on-page optimisation briefs. GA4 tracks organic conversions."',
+   rf:'"I use Google Analytics." Cannot name a keyword research or technical crawl tool.'}
 ]},
 {id:'brand', ico:'&#127991;', name:'Brand Manager', cat:'Sales', qs:[
   {n:1,t:'Skills',q:'How do you define and maintain brand identity across all channels?',
@@ -897,7 +965,11 @@ var PD = [
   {n:5,t:'Behavioural',q:'Describe your experience working with creative agencies.',
    ex:'Briefing quality, feedback approach, relationship management, budget oversight.',
    st:'"Great agency relationships start with a great brief — clear on business problem, target audience, tone, budget, timeline, and success metrics. I give structured specific feedback explaining the reasoning."',
-   rf:'"I just tell them what I want." Vague briefs. Cannot give constructive creative feedback.'}
+   rf:'"I just tell them what I want." Vague briefs. Cannot give constructive creative feedback.'},
+  {n:6,t:'Tools',q:'What tools do you use for brand tracking, design production, and campaign management?',
+   ex:'Brandwatch, Kantar, Adobe Creative Suite or Canva, project management tools.',
+   st:'"I use Brandwatch for social listening and sentiment tracking, commission Kantar brand health surveys bi-annually, and manage creative production in Adobe Illustrator and Photoshop. I run campaign timelines in Asana with a shared creative brief template."',
+   rf:'"I check our Instagram comments." No brand tracking tool. No design software experience.'}
 ]},
 /* ── Finance (3) ── */
 {id:'ca', ico:'&#129534;', name:'Chartered Accountant', cat:'Finance', qs:[
@@ -920,7 +992,11 @@ var PD = [
   {n:5,t:'Behavioural',q:'How do you ensure accuracy and completeness in financial reporting?',
    ex:'Reconciliation processes, maker-checker, materiality assessment, documentation.',
    st:'"I run a month-end close checklist with hard deadlines, maker-checker on all journal entries, mandatory balance sheet reconciliation for every GL account, and a disclosure checklist against applicable standards."',
-   rf:'"I trust my team." No systematic controls.'}
+   rf:'"I trust my team." No systematic controls.'},
+  {n:6,t:'Tools',q:'What accounting, ERP, and tax filing software have you used?',
+   ex:'SAP FICO, Tally, Zoho Books, GSTN portal, MCA portal, advanced Excel.',
+   st:'"Primary tools are Tally Prime for day-to-day accounting, SAP FICO for corporate clients, and the GSTN portal for all GST filings. I also use advanced Excel for financial analysis, MIS reporting, and building reconciliation templates. Filed ITRs through the IT portal independently."',
+   rf:'"I use only basic Tally and Excel." No ERP exposure. Has not filed any tax returns independently.'}
 ]},
 {id:'fana', ico:'&#128185;', name:'Financial Analyst', cat:'Finance', qs:[
   {n:1,t:'Skills',q:'Describe your financial modelling experience.',
@@ -942,7 +1018,11 @@ var PD = [
   {n:5,t:'Behavioural',q:'How do you stay updated on financial regulations and market developments?',
    ex:'RBI, SEBI, ICAI updates, financial news, professional networks, certifications.',
    st:'"Daily: Economic Times markets section. Weekly: SEBI and RBI circulars, ICAI e-learning modules. I am part of a CFA Charterholder network and attend quarterly panel discussions."',
-   rf:'No professional development. Reactive to regulation changes.'}
+   rf:'No professional development. Reactive to regulation changes.'},
+  {n:6,t:'Tools',q:'What financial modelling, BI, and data tools do you use at an advanced level?',
+   ex:'Excel (advanced), Power BI or Tableau, Bloomberg, Python or SQL for financial data.',
+   st:'"Advanced Excel is my core — dynamic arrays, Power Query, VBA for automation. I build Power BI dashboards for management reporting. I use SQL to pull raw data from our data warehouse directly rather than relying on pre-built reports. Bloomberg for market data when needed."',
+   rf:'"I use standard Excel formulas." No BI tool or data query experience beyond basic spreadsheets.'}
 ]},
 {id:'acc', ico:'&#128176;', name:'Accounts Executive', cat:'Finance', qs:[
   {n:1,t:'Experience',q:'Describe your day-to-day accounting responsibilities.',
@@ -964,7 +1044,15 @@ var PD = [
   {n:5,t:'Experience',q:'How have you improved an accounting process in your previous role?',
    ex:'Specific process identified, problem analyzed, solution implemented, time or error reduction measured.',
    st:'"Our vendor invoice processing had a 12% error rate due to manual data entry. I created an Excel template with validation rules and drop-downs, reducing processing to 1 day and errors to under 1%. Saved 20 hours per month."',
-   rf:'Cannot point to any process improvement. Only does what they are told.'}
+   rf:'Cannot point to any process improvement. Only does what they are told.'},
+  {n:6,t:'Behavioural',q:'Tell me about a time you caught a significant accounting error.',
+   ex:'How it was found, what the error was, how they fixed it, what process change followed.',
+   st:'"During a monthly reconciliation I noticed a Rs.4.2L discrepancy between the bank statement and the ledger. Traced it to a duplicate payment to a vendor that had slipped past the approval process. I reversed the entry, flagged it to management, and introduced a duplicate payment check into our monthly checklist."',
+   rf:'Cannot recall any specific error they caught. Only finds issues when management or auditors point them out.'},
+  {n:7,t:'Tools',q:'What accounting software and tools have you used in your daily work?',
+   ex:'Tally, SAP FI, Zoho Books, QuickBooks, Excel for reconciliation and MIS.',
+   st:'"I use Tally Prime daily for voucher entry, ledger management, and GST report generation. I have also worked on SAP FI for a corporate client engagement. Excel is my go-to for bank reconciliation templates and monthly MIS packs."',
+   rf:'"I have used only manual ledgers." No accounting software experience at all.'}
 ]},
 /* ── Operations & HR (3) ── */
 {id:'hr', ico:'&#128101;', name:'HR Executive / Recruiter', cat:'HR', qs:[
@@ -987,7 +1075,11 @@ var PD = [
   {n:5,t:'Behavioural',q:'How do you handle a conflict between two employees?',
    ex:'Neutral mediation, investigation, documentation, resolution process, follow-up.',
    st:'"I conduct separate conversations first — let each person state their perspective without interruption. I document everything. For policy violations I investigate formally. For interpersonal conflicts I facilitate structured mediation. I follow up 2 weeks later."',
-   rf:'"I tell them to sort it out themselves." No structured approach. Takes sides.'}
+   rf:'"I tell them to sort it out themselves." No structured approach. Takes sides.'},
+  {n:6,t:'Tools',q:'What HRMS, ATS, and payroll tools have you worked with?',
+   ex:'Zoho People or Darwinbox, Naukri or LinkedIn Recruiter, Keka or Greytip for payroll.',
+   st:'"I manage employee records and leave in Zoho People, run recruitment on Naukri and LinkedIn Recruiter with structured scorecards, and process payroll on Keka. I set up automated offer letter workflows in Zoho which saved the HR team 6 hours per week."',
+   rf:'"I use Excel for HR." No HRMS, ATS, or payroll tool experience.'}
 ]},
 {id:'ops', ico:'&#127981;', name:'Operations Manager', cat:'HR', qs:[
   {n:1,t:'Experience',q:'Describe how you manage day-to-day operations across multiple teams.',
@@ -1009,7 +1101,11 @@ var PD = [
   {n:5,t:'Skills',q:'How do you use data to make operational decisions?',
    ex:'KPI dashboards, root cause analysis, data-driven accountability culture.',
    st:'"I build a weekly operational dashboard: throughput, error rate, SLA compliance, cost per unit, headcount utilization. I investigate any KPI moving more than 10% from baseline."',
-   rf:'"I go by experience." No data usage. Cannot describe their team KPIs.'}
+   rf:'"I go by experience." No data usage. Cannot describe their team KPIs.'},
+  {n:6,t:'Tools',q:'What tools do you use for operations tracking, reporting, and process documentation?',
+   ex:'ERP, project management tools, Power BI or Tableau, Confluence or Notion for SOPs.',
+   st:'"I use SAP for procurement and inventory, Jira for operational project management, and Power BI for weekly performance dashboards. All SOPs are documented in Confluence with version history so any team member can run a process independently without asking anyone."',
+   rf:'"I use WhatsApp groups and Excel." No structured operations tool or SOP documentation process.'}
 ]},
 {id:'sc', ico:'&#128666;', name:'Supply Chain Executive', cat:'HR', qs:[
   {n:1,t:'Skills',q:'Describe your experience with inventory management.',
@@ -1031,7 +1127,11 @@ var PD = [
   {n:5,t:'Skills',q:'How do you approach demand forecasting?',
    ex:'Historical analysis, statistical methods, market input, S and OP collaboration.',
    st:'"I use statistical baseline (moving average, exponential smoothing) combined with market intelligence from sales. I run monthly S and OP — sales, marketing, operations, finance align on a single demand number. I measure forecast accuracy monthly."',
-   rf:'"I go by last month." No forecasting methodology.'}
+   rf:'"I go by last month." No forecasting methodology.'},
+  {n:6,t:'Experience',q:'Describe the most complex supply chain problem you have personally solved.',
+   ex:'Specific disruption or inefficiency, their analysis, the solution, measurable result.',
+   st:'"During a port congestion crisis our lead times doubled to 90 days. I ran a rapid supplier audit, identified 2 domestic alternate sources for our top 10 critical SKUs, negotiated emergency terms, and built a 45-day buffer stock. Service level stayed above 97% throughout."',
+   rf:'Cannot describe a specific supply chain problem. Only describes day-to-day routine tasks.'}
 ]},
 /* ── Healthcare (2) ── */
 {id:'nurse', ico:'&#127973;', name:'Staff Nurse', cat:'Healthcare', qs:[
@@ -1054,7 +1154,11 @@ var PD = [
   {n:5,t:'Behavioural',q:'How do you communicate with patients and their families under stress?',
    ex:'Empathy, clear plain language, information needs, cultural sensitivity, family involvement.',
    st:'"I use plain language — no medical jargon with families. I explain what I am doing and why, even under time pressure. I involve the family in the care plan — they are part of the team."',
-   rf:'"I am too busy to explain." Dismissive of family involvement.'}
+   rf:'"I am too busy to explain." Dismissive of family involvement.'},
+  {n:6,t:'Tools',q:'What medical equipment, HMIS, and clinical documentation systems have you used?',
+   ex:'Patient monitors, ventilators, infusion pumps, HMIS for EMR, medication administration records.',
+   st:'"I am proficient with Philips IntelliVue patient monitors and Hamilton ventilators from my ICU rotation. I document care plans and medication administration in our hospital HMIS. I trained 3 new nurses on the infusion pump protocol and safe drug calculation procedures."',
+   rf:'Cannot name any clinical equipment or hospital system. No experience with EMR or medication documentation.'}
 ]},
 {id:'mr', ico:'&#128138;', name:'Medical Representative (MR)', cat:'Healthcare', qs:[
   {n:1,t:'Skills',q:'How do you build and maintain relationships with doctors and HCPs?',
@@ -1076,7 +1180,11 @@ var PD = [
   {n:5,t:'Experience',q:'Describe a time you significantly grew sales in your territory.',
    ex:'Specific metric at start and end, strategy used, execution discipline, measurable result.',
    st:'"I inherited a territory at 62% of target. I mapped which doctors drove which products and found 8 high-prescribing doctors never called on regularly. Focused intensively on those 8 for 3 months. Territory hit 108% of target within 6 months."',
-   rf:'Cannot describe any specific result with numbers.'}
+   rf:'Cannot describe any specific result with numbers.'},
+  {n:6,t:'Tools',q:'What CRM, reporting, and sales tools do you use to manage your territory?',
+   ex:'MR reporting apps, CRM like Salesforce or company-specific tools, call reporting systems.',
+   st:'"I use our company CRM to log every doctor visit with call notes, samples given, and follow-up actions. I track my territory metrics weekly on the reporting dashboard. I also use LinkedIn to stay connected with KOLs and share relevant clinical content."',
+   rf:'"I maintain a notebook." No CRM or digital reporting tool experience. Relies entirely on manual records.'}
 ]},
 /* ── Other (2) ── */
 {id:'cx', ico:'&#127911;', name:'Customer Support Executive', cat:'Other', qs:[
@@ -1099,7 +1207,11 @@ var PD = [
   {n:5,t:'Behavioural',q:'Describe a time you went above and beyond for a customer.',
    ex:'Specific situation, extra effort made, customer impact, personal initiative taken.',
    st:'"A customer account was accidentally deleted before a critical demo. Standard process would take 48 hours. I manually rebuilt their configuration data from backup logs, stayed 2 extra hours, and had it ready 4 hours before their demo. They renewed their contract the next week."',
-   rf:'Cannot provide a specific example. Generic answer. No measurable customer impact.'}
+   rf:'Cannot provide a specific example. Generic answer. No measurable customer impact.'},
+  {n:6,t:'Experience',q:'Describe the most difficult customer situation you have handled.',
+   ex:'Specific situation, steps taken, outcome, what they learned or changed after.',
+   st:'"A long-term client threatened to cancel after 3 consecutive delayed deliveries caused by a vendor issue. I personally called the CEO within the hour, owned the failure completely, arranged a priority shipment at our cost, and set up weekly check-ins for 6 weeks. They renewed and became our NPS promoter."',
+   rf:'Cannot describe a specific high-stakes situation. Gives vague answers about always being polite.'}
 ]},
 {id:'pjm', ico:'&#128203;', name:'Project Manager', cat:'Other', qs:[
   {n:1,t:'Skills',q:'Walk me through your project planning and initiation process.',
@@ -1121,7 +1233,15 @@ var PD = [
   {n:5,t:'Behavioural',q:'How do you manage and communicate with difficult stakeholders?',
    ex:'Stakeholder analysis, communication preferences, conflict management, escalation approach.',
    st:'"I map stakeholders by influence and interest at project start. High-influence stakeholders get tailored communication matching their preference. For resistant stakeholders, I focus on their underlying concern rather than the stated objection."',
-   rf:'"I avoid difficult stakeholders." No stakeholder analysis or engagement strategy.'}
+   rf:'"I avoid difficult stakeholders." No stakeholder analysis or engagement strategy.'},
+  {n:6,t:'Experience',q:'Describe the largest or most complex project you have delivered.',
+   ex:'Budget, team size, duration, complexity factors, how they managed it, outcome.',
+   st:'"I delivered a Rs.12Cr ERP implementation across 4 business units in 14 months with a 22-person cross-functional team. Key challenges: parallel workstreams, change resistance, and data migration from 3 legacy systems. Delivered on time and 3% under budget."',
+   rf:'Cannot describe a project with a budget or timeline. Describes a small internal task as a major project.'},
+  {n:7,t:'Tools',q:'What project management tools and methodologies do you use?',
+   ex:'Jira, MS Project, Asana, Monday, Smartsheet. Agile, Waterfall, hybrid.',
+   st:'"I use MS Project for Waterfall programmes with complex dependencies and Jira for Agile delivery. For executive reporting I use a RAG status dashboard in Confluence. I adapt methodology to the project: waterfall for fixed-scope infrastructure, agile for product development."',
+   rf:'"I use Excel for tracking." Cannot name a PM tool. No awareness of different methodologies.'}
 ]},
 /* ── SAP Consultant (Technology) ── */
 {id:'sap', ico:'&#9881;', name:'SAP Consultant', cat:'Technology', qs:[
@@ -1192,7 +1312,107 @@ var PD = [
    st:'"I delegate with clear outcomes, not tasks — I explain the why. I hold weekly 1:1s focused on development blockers, not just workload. I have promoted 2 analysts to senior roles in the last 18 months by giving them stretch projects and visible stakeholder exposure."',
    rf:'Micromanages. No delegation. Cannot describe any team development initiative or outcome.'}
 ]}
-];
+,
+  {n:6,t:'Tools',q:'What tools and services do you use for monitoring and logging in production?',
+   ex:'APM tools, log aggregation, alerting. Awareness of observability beyond just uptime.',
+   st:'"I use Datadog for APM and infrastructure metrics, and the ELK stack for structured log aggregation. I set up alerts on error rate and P95 latency thresholds. I also use Sentry for frontend exception tracking."',
+   rf:'"I check logs manually when something breaks." No proactive monitoring. Unaware of APM tools.'},
+  {n:6,t:'Behavioural',q:'Describe a time your model performed well in testing but failed in production.',
+   ex:'Honest reflection on train-test mismatch, data drift, or leakage. Systematic post-mortem.',
+   st:'"Our fraud model hit 94% precision in testing but dropped to 71% in production. Root cause was target leakage in the training pipeline. I rebuilt the pipeline with strict temporal splits and added drift monitoring."',
+   rf:'Claims models always work. Cannot describe any production failure or what they learned from it.'},
+  {n:7,t:'Tools',q:'What MLOps tools and platforms have you worked with?',
+   ex:'MLflow, Weights and Biases, Airflow, Kubeflow, SageMaker, DVC, feature stores.',
+   st:'"I use MLflow for experiment tracking and model registry. DVC for dataset versioning. Airflow for retraining pipelines. I have deployed models on SageMaker and used Evidently AI for drift detection."',
+   rf:'Runs everything manually in notebooks. No awareness of experiment tracking or model versioning.'},
+  {n:6,t:'Behavioural',q:'Tell me about a time an infrastructure change caused a production outage.',
+   ex:'Accountability, incident timeline, rollback decision, post-mortem, permanent fix.',
+   st:'"A Terraform change to security groups accidentally blocked the load balancer. I detected it within 3 minutes via alerting, rolled back immediately, and restored service in 11 minutes. I ran a post-mortem and added a pre-apply security group validation step to CI."',
+   rf:'Blames others. No rollback plan. Cannot describe a specific incident with a timeline.'},
+  {n:6,t:'Behavioural',q:'Describe a cloud migration challenge you personally resolved.',
+   ex:'Specific technical blocker, how they diagnosed it, what they did, what the outcome was.',
+   st:'"During an RDS migration the replication lag spiked to 4 hours due to a large binary column we had missed in planning. I switched to AWS DMS full-load-plus-CDC mode and pre-migrated that table separately. We hit our cutover window with zero data loss."',
+   rf:'Vague story with no technical detail. Cannot describe what specifically went wrong or how they fixed it.'},
+  {n:7,t:'Tools',q:'What cloud monitoring and cost management tools do you use regularly?',
+   ex:'CloudWatch, Cost Explorer, Datadog, Grafana, AWS Budgets, Trusted Advisor.',
+   st:'"I use CloudWatch for AWS native metrics and alarms, Grafana with Prometheus for Kubernetes workloads, and AWS Cost Explorer weekly. I set up Budget alerts and use Trusted Advisor checks as part of monthly cloud health reviews."',
+   rf:'"I log into the console and check manually." No alerting. Never looked at a cloud bill analytically.'},
+  {n:6,t:'Experience',q:'Describe your experience with API testing and what tools you have used.',
+   ex:'REST API testing, tools like Postman, REST Assured, pytest-requests. Contract testing awareness.',
+   st:'"I write API test suites using pytest and the requests library. I use Postman for exploratory testing and contract testing with Pact to ensure service compatibility in our microservices. I validate status codes, response schemas, and error handling."',
+   rf:'Only does UI testing. Has used Postman for manual testing only but no automated API tests.'},
+  {n:6,t:'Experience',q:'Describe your experience working on a product from zero to launch.',
+   ex:'0-to-1 product experience, discovery, design decisions under uncertainty, launch, iteration.',
+   st:'"I was the sole designer on a B2B SaaS product from concept to launch. I ran discovery interviews, built the IA from scratch, iterated through 4 prototype rounds with users, and worked directly with 2 engineers for handoff. We launched in 4 months."',
+   rf:'Has only worked on existing products. No experience defining a product from scratch. Cannot describe design decisions made under uncertainty.'},
+  {n:6,t:'Tools',q:'What product management tools do you use for roadmapping, tracking and analytics?',
+   ex:'Jira, Linear, Productboard, Amplitude, Mixpanel, Figma, Notion, SQL for self-serve analytics.',
+   st:'"I roadmap in Productboard, run sprints in Jira, and track metrics in Amplitude. I write basic SQL to pull my own data rather than waiting on analysts. I use Figma daily to collaborate with design and review prototypes."',
+   rf:'"I use PowerPoint for roadmaps." Cannot name any analytics tool. Fully dependent on others for data.'},
+  {n:7,t:'Experience',q:'Describe a product you built from zero that is now live with real users.',
+   ex:'0-to-1 product story, decisions made, trade-offs, launch, real user metrics.',
+   st:'"I built a self-serve analytics dashboard from scratch. Ran 12 discovery interviews, wrote the PRD, prioritised an MVP of 4 core features, launched in 3 months. Within 6 months it had 400 weekly active users and reduced BI team requests by 30%."',
+   rf:'Has only managed features on existing products. Cannot describe a full product lifecycle or real user impact.'},
+  {n:6,t:'Tools',q:'What CRM and sales enablement tools have you used to manage your team?',
+   ex:'Salesforce, HubSpot, Gong, Salesloft, dashboards, pipeline reporting.',
+   st:'"I manage pipeline in Salesforce, use Gong for call coaching, and Salesloft for sequence management. I build custom Salesforce reports for weekly team reviews rather than relying on pre-built dashboards."',
+   rf:'"I use Excel for everything." Cannot name a CRM. No sales enablement tool awareness.'},
+  {n:7,t:'Experience',q:'Describe the largest team you have managed and how you structured it.',
+   ex:'Team size, structure (pods, verticals), hiring decisions, onboarding approach, results.',
+   st:'"I managed a team of 14 AEs across 3 segments: SMB, mid-market, and enterprise. I structured them into pods with dedicated SDR support. I hired 6 people in one quarter, ran a 30-60-90 day ramp programme, and the team hit 108% of quota that year."',
+   rf:'Managed fewer than 3 people. Cannot describe how they structured a team or scaled it.'},
+  {n:6,t:'Experience',q:'Describe the largest marketing budget you have managed and how you allocated it.',
+   ex:'Total budget size, channel allocation rationale, performance review cadence, ROI achieved.',
+   st:'"I managed a Rs.1.2Cr annual digital budget. I allocated 50% to Google Ads (highest ROI channel), 25% to LinkedIn for B2B targeting, and 25% to remarketing. I reviewed allocation monthly and shifted spend based on ROAS data."',
+   rf:'Cannot state a budget size. No rationale for channel allocation. Never reviewed or rebalanced spend.'},
+  {n:6,t:'Behavioural',q:'Describe a time a Google algorithm update significantly impacted your site.',
+   ex:'Detection, root cause analysis, recovery strategy, timeline, what changed in practice.',
+   st:'"After a core update we lost 22% of organic traffic in 2 weeks. I diagnosed thin content on 40 pages and E-E-A-T gaps. I rewrote and consolidated those pages and added expert author bios. Traffic recovered fully in 3 months and exceeded the pre-update baseline."',
+   rf:'Not aware of algorithm updates. Cannot describe any traffic impact or recovery work.'},
+  {n:7,t:'Tools',q:'What SEO and content tools do you use regularly?',
+   ex:'Ahrefs or SEMrush, Google Search Console, Screaming Frog, Surfer SEO or Clearscope.',
+   st:'"My daily stack: Google Search Console for performance data, Ahrefs for keyword research and backlink analysis, Screaming Frog for technical audits, and Surfer SEO for on-page optimisation briefs. I also use GA4 for organic conversion tracking."',
+   rf:'"I use Google Analytics." Cannot name a keyword research or technical SEO tool.'},
+  {n:8,t:'Experience',q:'What is the biggest organic traffic growth you have driven and how?',
+   ex:'Specific numbers, strategy, timeline, what worked and what did not.',
+   st:'"I grew organic from 8K to 120K monthly sessions in 18 months for a SaaS company. The strategy: pillar-cluster content architecture for 6 core topics, fixing 200+ technical errors found in a crawl, and a systematic internal linking overhaul."',
+   rf:'Cannot state any specific traffic numbers. Attributes growth to "posting regularly" with no strategy.'},
+  {n:6,t:'Tools',q:'What tools do you use for brand tracking, social listening, and creative production?',
+   ex:'Brand tracking surveys, Brandwatch or Mention, Canva or Adobe Suite, project management.',
+   st:'"I use Brandwatch for social listening and sentiment tracking, Kantar for bi-annual brand health surveys, and Adobe Creative Suite for brand asset production. I project manage campaigns in Notion with a shared creative brief template."',
+   rf:'"I check our Instagram comments." No formal brand tracking. Cannot name a social listening tool.'},
+  {n:6,t:'Tools',q:'What accounting and ERP software have you worked with?',
+   ex:'Tally, SAP FICO, Oracle Financials, Zoho Books, QuickBooks, MS Excel for modelling.',
+   st:'"Primary experience in SAP FICO for accounts and cost centres, Tally Prime for SME clients. Strong Excel skills including pivot tables, VLOOKUP, and basic VBA for automating reconciliation reports. Also used Zoho Books for a startup client."',
+   rf:'"I use Excel only." No ERP exposure. Cannot describe how they have used accounting software in practice.'},
+  {n:6,t:'Tools',q:'What financial modelling and BI tools do you use and at what level?',
+   ex:'Excel (advanced), Power BI or Tableau, Bloomberg or FactSet, Python or SQL for data.',
+   st:'"Advanced Excel: dynamic arrays, Power Query, VBA. I build Power BI dashboards for management reporting. I use Python (pandas) for large dataset analysis and SQL for pulling raw financial data directly from our data warehouse."',
+   rf:'"I use Excel for everything." Cannot describe any BI tool or data query experience beyond basic spreadsheets.'},
+  {n:6,t:'Tools',q:'What accounting software and tools have you used day to day?',
+   ex:'Tally, SAP, Zoho Books, QuickBooks, Excel for reconciliation and reporting.',
+   st:'"I use Tally Prime daily for voucher posting, ledger management, and GST reports. I have also worked on SAP FI for a client project. I am proficient in Excel for bank reconciliation templates and monthly MIS reports."',
+   rf:'"I have only used manual ledgers or basic spreadsheets." No exposure to any accounting software.'},
+  {n:6,t:'Tools',q:'What HRMS, ATS, and recruitment tools have you used?',
+   ex:'Zoho People, Darwinbox, Keka, Workday, Naukri, LinkedIn Recruiter, Greenhouse.',
+   st:'"I manage employee lifecycle in Zoho People and run recruitment in Naukri and LinkedIn Recruiter. I have also used Greenhouse as an ATS for structured hiring pipelines. I am comfortable setting up job workflows, scorecards, and automated candidate communications."',
+   rf:'"I use Excel for everything." No HRMS or ATS experience. Manages all HR manually.'},
+  {n:6,t:'Tools',q:'What tools do you use for operations management, reporting, and process documentation?',
+   ex:'ERP, project management tools, BI dashboards, SOP documentation platforms.',
+   st:'"I use SAP for inventory and procurement, Jira for operational project tracking, and Power BI for my weekly ops dashboard. I document all SOPs in Confluence with version control so any team member can run a process independently."',
+   rf:'"I use WhatsApp and Excel." No structured operations tooling. SOPs exist only in people\'s heads.'},
+  {n:6,t:'Tools',q:'What hospital systems, medical devices, or clinical tools have you worked with?',
+   ex:'HMIS, EMR systems, patient monitoring equipment, infusion pumps, ventilators.',
+   st:'"I have worked with Philips patient monitors and Hamilton ventilators in the ICU. I am familiar with our hospital HMIS for patient records and medication administration records. I also trained new nurses on the infusion pump protocol."',
+   rf:'No familiarity with any clinical equipment or hospital systems. Cannot name a single device or HMIS.'},
+  {n:6,t:'Experience',q:'Describe the highest volume support environment you have worked in.',
+   ex:'Ticket volume, team size, channel mix, SLA targets, how they managed quality at scale.',
+   st:'"I handled 80 to 100 tickets per day across email and live chat in a fintech company. Our team of 12 maintained a 4-hour first response SLA with 92% CSAT. I introduced a ticket tagging system that reduced average handle time by 18%."',
+   rf:'Cannot state ticket volumes. No SLA awareness. Never worked in a structured support environment.'},
+  {n:6,t:'Tools',q:'What ERP, reporting, and financial consolidation tools have you worked with?',
+   ex:'SAP FICO, Oracle Financials, Hyperion, Power BI, Excel at advanced level.',
+   st:'"I use SAP FICO for the full accounting cycle and month-end close. I built a Power BI financial reporting suite that replaced 12 manual Excel reports. For consolidation I use Hyperion. I am also strong in Excel — VBA, Power Query, and dynamic modelling."',
+   rf:'"I use Excel and Tally." No ERP or consolidation tool experience. Cannot describe any reporting automation.'}];
 
 /* ═══════════════════════════
    APP STATE
