@@ -1541,7 +1541,8 @@ function goHome() {
   activeCat = 'All';
   var pills = document.querySelectorAll('.cpill');
   for (var i = 0; i < pills.length; i++) {
-    pills[i].classList.toggle('on', pills[i].dataset.c === 'All');
+    var pillCat = pills[i].getAttribute('data-c');
+    pills[i].classList.toggle('on', pillCat === 'All');
   }
   var qi = document.getElementById('q-input');
   if (qi) qi.value = '';
@@ -1711,7 +1712,7 @@ function applyLoggedIn() {
    PROFILES GRID
 ═══════════════════════════ */
 function renderGrid() {
-  var q    = (document.getElementById('q-input') || { value: '' }).value.toLowerCase();
+  var q    = (document.getElementById('q-input') || { value: '' }).value.toLowerCase().trim();
   var grid = document.getElementById('pgrid');
   if (!grid) return;
 
@@ -1719,7 +1720,7 @@ function renderGrid() {
   var i, p;
   for (i = 0; i < PD.length; i++) {
     p = PD[i];
-    var catOk  = (activeCat === 'All' || p.cat === activeCat);
+    var catOk  = (!activeCat || activeCat === 'All' || p.cat === activeCat);
     var termOk = (!q || p.name.toLowerCase().indexOf(q) >= 0 || p.cat.toLowerCase().indexOf(q) >= 0);
     if (catOk && termOk) filtered.push(p);
   }
@@ -1750,7 +1751,9 @@ function setCat(el) {
   var i;
   for (i = 0; i < pills.length; i++) pills[i].classList.remove('on');
   el.classList.add('on');
-  activeCat = el.dataset.c;
+  // Read from data attribute directly — dataset.c decodes HTML entities correctly
+  activeCat = el.getAttribute('data-c');
+  showPage('home');
   renderGrid();
 }
 
