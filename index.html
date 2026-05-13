@@ -1563,6 +1563,14 @@ function goHome() {
    AUTH
 ═══════════════════════════ */
 function openAuth(mode) {
+  if (currentUser && (currentUser.plan === 'admin' || currentUser.plan === 'pro')) {
+    goHome();
+    return;
+  }
+  if (currentUser) {
+    goHome();
+    return;
+  }
   showPage('auth');
   if (mode === 'login') {
     document.getElementById('form-su').classList.add('hidden');
