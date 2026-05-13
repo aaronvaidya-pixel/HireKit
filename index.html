@@ -1490,6 +1490,15 @@ var activeCat      = 'All';
    INIT
 ═══════════════════════════ */
 window.onload = function() {
+  /* ── Version cache-bust ── */
+  var APP_VERSION = 'v2.3';
+  if (localStorage.getItem('hk_version') !== APP_VERSION) {
+    var theme = localStorage.getItem('hk_theme');
+    localStorage.clear();
+    if (theme) localStorage.setItem('hk_theme', theme);
+    localStorage.setItem('hk_version', APP_VERSION);
+  }
+
   var saved = localStorage.getItem('hk_user');
   if (saved) {
     try { currentUser = JSON.parse(saved); } catch(e) { currentUser = null; }
