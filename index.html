@@ -409,6 +409,60 @@ footer a:hover { color:var(--c-yellow); }
   .auth-box { padding:32px 22px; }
   .hero-h1 { font-size:1.88rem; }
 }
+
+/* ─────────────────────────────────────────
+   ADMIN DASHBOARD
+───────────────────────────────────────── */
+#page-admin { min-height:calc(100vh - var(--nav-h)); padding:36px 52px; }
+.admin-wrap { max-width:1050px; margin:0 auto; }
+.admin-h2 { font-family:var(--fh); font-weight:800; font-size:1.5rem; margin-bottom:4px; letter-spacing:-.025em; }
+.admin-sub { color:var(--c-muted); font-size:.82rem; margin-bottom:28px; }
+.stat-row { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:12px; margin-bottom:28px; }
+.stat-card { background:var(--c-navy2); border:1.5px solid var(--c-border2); border-radius:var(--r); padding:18px 20px; }
+.stat-card .sv { font-family:var(--fh); font-size:2rem; font-weight:800; color:var(--c-yellow); line-height:1; }
+.stat-card .sl { font-size:.74rem; color:var(--c-muted); margin-top:4px; text-transform:uppercase; letter-spacing:.06em; font-weight:600; }
+.admin-tbl { width:100%; border-collapse:collapse; font-size:.83rem; margin-bottom:28px; }
+.admin-tbl th { text-align:left; padding:10px 14px; color:var(--c-muted); font-size:.68rem; letter-spacing:.08em; text-transform:uppercase; border-bottom:1px solid var(--c-border2); font-weight:700; }
+.admin-tbl td { padding:11px 14px; border-bottom:1px solid var(--c-border); vertical-align:middle; }
+.admin-tbl tr:hover td { background:rgba(245,197,24,.03); }
+.plan-pill { display:inline-block; font-size:.65rem; font-weight:700; padding:2px 9px; border-radius:100px; letter-spacing:.04em; }
+.pp-free  { background:var(--c-ybg); color:var(--c-yellow); border:1px solid var(--c-ybd); }
+.pp-pro   { background:var(--c-gbg); color:var(--c-green);  border:1px solid var(--c-gbd); }
+.pp-admin { background:rgba(255,200,0,.12); color:#ffcc00; border:1px solid rgba(255,200,0,.3); }
+.jd-req-row { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+.jd-req-row td:first-child { font-weight:600; color:var(--c-yellow); }
+.req-section { background:var(--c-navy2); border:1.5px solid var(--c-border2); border-radius:var(--r); padding:20px 24px; margin-top:24px; }
+.req-section h3 { font-family:var(--fh); font-weight:700; font-size:.94rem; margin-bottom:14px; }
+
+/* ─────────────────────────────────────────
+   REQUEST A JD (User page)
+───────────────────────────────────────── */
+#page-reqjd { min-height:calc(100vh - var(--nav-h)); padding:40px 52px; }
+.reqjd-wrap { max-width:620px; margin:0 auto; }
+.reqjd-wrap h2 { font-family:var(--fh); font-weight:800; font-size:1.48rem; margin-bottom:5px; letter-spacing:-.025em; }
+.reqjd-sub { color:var(--c-muted); font-size:.84rem; margin-bottom:26px; line-height:1.6; }
+.upload-row { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px; }
+.file-btn { position:relative; display:inline-flex; align-items:center; gap:8px; padding:11px 18px; background:var(--c-navy2); border:1.5px dashed var(--c-border2); border-radius:10px; cursor:pointer; font-size:.84rem; color:var(--c-muted); transition:all .18s; flex:1; min-width:180px; }
+.file-btn:hover { border-color:var(--c-yellow); color:var(--c-yellow); }
+.file-btn input { position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; }
+.file-chosen { font-size:.72rem; color:var(--c-green); margin-top:4px; }
+.req-field { margin-bottom:14px; }
+.req-field label { display:block; font-size:.71rem; font-weight:700; color:var(--c-muted); letter-spacing:.07em; text-transform:uppercase; margin-bottom:6px; }
+.req-field input, .req-field textarea, .req-field select {
+  width:100%; background:var(--c-navy2); border:1.5px solid var(--c-border);
+  border-radius:10px; padding:11px 14px; color:var(--c-white);
+  font-size:.88rem; outline:none; font-family:var(--fb); transition:border-color .18s;
+}
+.req-field input:focus, .req-field textarea:focus, .req-field select:focus { border-color:var(--c-yellow); }
+.req-field textarea { min-height:90px; resize:vertical; }
+.req-field select option { background:var(--c-navy2); }
+.req-success { background:var(--c-gbg); border:1px solid var(--c-gbd); border-radius:12px; padding:22px 24px; text-align:center; display:none; }
+.req-success h3 { font-family:var(--fh); font-weight:700; font-size:1.05rem; color:var(--c-green); margin-bottom:6px; }
+.req-success p { font-size:.82rem; color:var(--c-muted); }
+
+@media (max-width:768px) {
+  #page-admin, #page-reqjd { padding:24px 20px; }
+}
 </style>
 </head>
 <body id="body">
@@ -424,6 +478,8 @@ footer a:hover { color:var(--c-yellow); }
     <button class="btn btn-y btn-sm" onclick="openAuth('signup')">Get Started Free</button>
   </div>
   <div class="nav-r hidden" id="nav-u">
+    <button class="btn btn-ghost btn-sm hidden" id="nav-admin-btn" onclick="showAdminDash()">&#128101; Admin</button>
+    <button class="btn btn-ghost btn-sm" id="nav-reqjd-btn" onclick="showReqJD()">&#128196; Request Kit</button>
     <button class="btn-icon" onclick="toggleTheme()" title="Toggle theme" id="tbtn2">&#9790;</button>
     <div class="user-chip">
       <div class="u-dot"></div>
@@ -515,6 +571,107 @@ footer a:hover { color:var(--c-yellow); }
         <div class="pw-price">&#8377;1,700 <small>/month</small></div>
         <button class="btn btn-y mt8" onclick="openPricing()">Upgrade to Pro &#8594;</button>
       </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════ ADMIN DASHBOARD ══════ -->
+<div class="page" id="page-admin">
+  <div class="admin-wrap">
+    <button class="btn btn-ghost btn-sm" onclick="goHome()" style="margin-bottom:20px">&#8592; Back</button>
+    <h2 class="admin-h2">&#128101; Admin Dashboard</h2>
+    <p class="admin-sub">Account overview and activity for HireKit&#8482;</p>
+
+    <div class="stat-row" id="admin-stats"></div>
+
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:10px;">
+      <div style="font-family:var(--fh);font-weight:700;font-size:.92rem;">All Registered Accounts</div>
+      <input type="text" id="admin-search" placeholder="Search by name or email&#8230;"
+        oninput="renderAdminTable()"
+        style="background:var(--c-navy2);border:1.5px solid var(--c-border2);border-radius:8px;padding:8px 14px;color:var(--c-white);font-size:.82rem;outline:none;width:240px;">
+    </div>
+    <div style="overflow-x:auto;">
+      <table class="admin-tbl">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Plan</th>
+            <th>Profiles Used</th>
+            <th>Joined</th>
+          </tr>
+        </thead>
+        <tbody id="admin-tbody"></tbody>
+      </table>
+    </div>
+
+    <div class="req-section">
+      <h3>&#128196; JD Kit Requests</h3>
+      <div id="admin-requests">
+        <p style="color:var(--c-muted);font-size:.82rem;">No requests yet.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ REQUEST A KIT ══════ -->
+<div class="page" id="page-reqjd">
+  <div class="reqjd-wrap">
+    <button class="btn btn-ghost btn-sm" onclick="goHome()" style="margin-bottom:20px">&#8592; Back</button>
+    <h2>&#128196; Request a Screening Kit</h2>
+    <p class="reqjd-sub">Don&#8217;t see the profile you need? Upload your JD and keywords. Aaron will build a custom screening kit and add it to HireKit within 2 business days.</p>
+
+    <div id="req-form">
+      <div class="req-field">
+        <label>Job Title *</label>
+        <input type="text" id="req-title" placeholder="e.g. Salesforce Admin, Embedded Systems Engineer">
+      </div>
+
+      <div class="req-field">
+        <label>Upload JD File <span style="color:var(--c-muted);font-weight:400">(PDF, DOCX, TXT)</span></label>
+        <div class="upload-row">
+          <label class="file-btn">
+            <input type="file" id="req-jd-file" accept=".pdf,.docx,.txt,.doc">
+            <span>&#128206;</span> <span id="req-jd-label">Choose JD file&#8230;</span>
+          </label>
+          <label class="file-btn">
+            <input type="file" id="req-kw-file" accept=".pdf,.docx,.txt,.doc,.csv,.xlsx,.xls">
+            <span>&#128221;</span> <span id="req-kw-label">Choose keywords file&#8230;</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="req-field">
+        <label>Or paste keywords / key requirements</label>
+        <textarea id="req-kw-text" placeholder="e.g. Python, 5+ years, fintech, client-facing, Agile, team lead&#8230;"></textarea>
+      </div>
+
+      <div class="req-field">
+        <label>Your Name</label>
+        <input type="text" id="req-name" placeholder="Auto-filled from your account">
+      </div>
+
+      <div class="req-field">
+        <label>Your Email</label>
+        <input type="email" id="req-email" placeholder="Auto-filled from your account">
+      </div>
+
+      <div class="req-field">
+        <label>Additional Notes <span style="color:var(--c-muted);font-weight:400">(optional)</span></label>
+        <textarea id="req-notes" placeholder="Any specific focus areas, seniority level, must-haves&#8230;" style="min-height:70px"></textarea>
+      </div>
+
+      <div id="req-err" style="color:var(--c-red);font-size:.8rem;margin-bottom:10px;display:none"></div>
+      <button class="btn btn-y btn-lg" onclick="submitReqJD()">&#9993; Send Request to HireKit</button>
+      <p style="font-size:.73rem;color:var(--c-muted);margin-top:10px;">Requests are sent to <strong>hello@hirekit.online</strong> and handled personally by Aaron Vaidya. You will hear back within 2 business days.</p>
+    </div>
+
+    <div class="req-success" id="req-success">
+      <h3>&#10003; Request Sent!</h3>
+      <p>Your request has been received. Aaron will review your JD and build a custom screening kit within 2 business days. You&#8217;ll get a confirmation at <strong id="req-success-email"></strong></p>
+      <button class="btn btn-ghost btn-sm" onclick="goHome()" style="margin-top:14px">&#8592; Back to Profiles</button>
     </div>
   </div>
 </div>
@@ -1726,6 +1883,8 @@ function applyLoggedIn() {
       heroNote.style.display = 'none';
     }
   }
+  var adminBtn = document.getElementById('nav-admin-btn');
+  if (adminBtn) adminBtn.classList.toggle('hidden', currentUser.plan !== 'admin');
   buildSidebar();
 }
 
@@ -1923,6 +2082,162 @@ function toast(msg) {
   setTimeout(function() { t.classList.remove('show'); }, 3500);
 }
 
+
+
+/* ═══════════════════════════
+   ADMIN DASHBOARD
+═══════════════════════════ */
+function showAdminDash() {
+  if (!currentUser || currentUser.plan !== 'admin') { goHome(); return; }
+  renderAdminStats();
+  renderAdminTable();
+  renderAdminRequests();
+  showPage('admin');
+}
+
+function renderAdminStats() {
+  var users = JSON.parse(localStorage.getItem('hk_users') || '[]');
+  var requests = JSON.parse(localStorage.getItem('hk_requests') || '[]');
+  var free = 0; var pro = 0;
+  for (var i = 0; i < users.length; i++) {
+    if (users[i].plan === 'pro') pro++; else free++;
+  }
+  var el = document.getElementById('admin-stats');
+  if (!el) return;
+  el.innerHTML =
+    '<div class="stat-card"><div class="sv">' + users.length + '</div><div class="sl">Total Accounts</div></div>' +
+    '<div class="stat-card"><div class="sv">' + free + '</div><div class="sl">Free Users</div></div>' +
+    '<div class="stat-card"><div class="sv" style="color:var(--c-green)">' + pro + '</div><div class="sl">Pro Users</div></div>' +
+    '<div class="stat-card"><div class="sv" style="color:var(--c-white)">' + requests.length + '</div><div class="sl">JD Requests</div></div>';
+}
+
+function renderAdminTable() {
+  var q = (document.getElementById('admin-search') || { value: '' }).value.toLowerCase().trim();
+  var users = JSON.parse(localStorage.getItem('hk_users') || '[]');
+  var tbody = document.getElementById('admin-tbody');
+  if (!tbody) return;
+  var rows = '';
+  var count = 0;
+  for (var i = 0; i < users.length; i++) {
+    var u = users[i];
+    if (q && u.name.toLowerCase().indexOf(q) < 0 && u.email.toLowerCase().indexOf(q) < 0) continue;
+    count++;
+    var planCls = u.plan === 'pro' ? 'pp-pro' : u.plan === 'admin' ? 'pp-admin' : 'pp-free';
+    var joined = u.createdAt ? new Date(u.createdAt).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }) : 'N/A';
+    // Get how many profiles this user has used (stored per-email key)
+    var usedKey = 'hk_used_' + u.email;
+    var used = JSON.parse(localStorage.getItem(usedKey) || '[]').length;
+    rows +=
+      '<tr>' +
+      '<td style="color:var(--c-muted)">' + count + '</td>' +
+      '<td style="font-weight:600">' + u.name + '</td>' +
+      '<td style="color:var(--c-muted)">' + u.email + '</td>' +
+      '<td><span class="plan-pill ' + planCls + '">' + u.plan.toUpperCase() + '</span></td>' +
+      '<td>' + (used || '0') + ' profiles</td>' +
+      '<td style="color:var(--c-muted)">' + joined + '</td>' +
+      '</tr>';
+  }
+  tbody.innerHTML = rows || '<tr><td colspan="6" style="color:var(--c-muted);text-align:center;padding:24px">No accounts found.</td></tr>';
+}
+
+function renderAdminRequests() {
+  var requests = JSON.parse(localStorage.getItem('hk_requests') || '[]');
+  var el = document.getElementById('admin-requests');
+  if (!el) return;
+  if (requests.length === 0) {
+    el.innerHTML = '<p style="color:var(--c-muted);font-size:.82rem">No JD kit requests yet.</p>';
+    return;
+  }
+  var html = '';
+  for (var i = requests.length - 1; i >= 0; i--) {
+    var r = requests[i];
+    var dt = r.ts ? new Date(r.ts).toLocaleString('en-IN') : '';
+    html +=
+      '<div style="padding:14px 0;border-bottom:1px solid var(--c-border)">' +
+      '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px">' +
+      '<span style="font-weight:700;color:var(--c-yellow)">' + r.title + '</span>' +
+      '<span style="font-size:.72rem;color:var(--c-muted)">' + r.name + ' &middot; ' + r.email + '</span>' +
+      '<span style="font-size:.7rem;color:var(--c-muted);margin-left:auto">' + dt + '</span>' +
+      '</div>' +
+      (r.keywords ? '<div style="font-size:.78rem;color:var(--c-muted);margin-bottom:3px">Keywords: ' + r.keywords + '</div>' : '') +
+      (r.notes ? '<div style="font-size:.78rem;color:var(--c-muted)">Notes: ' + r.notes + '</div>' : '') +
+      '<div style="font-size:.7rem;margin-top:5px;color:var(--c-muted)">Files: ' + (r.jdFile || 'none') + (r.kwFile ? ' + ' + r.kwFile : '') + '</div>' +
+      '</div>';
+  }
+  el.innerHTML = html;
+}
+
+/* ═══════════════════════════
+   REQUEST A KIT (User)
+═══════════════════════════ */
+function showReqJD() {
+  if (!currentUser) { openAuth('signup'); return; }
+  // Pre-fill name and email
+  var ni = document.getElementById('req-name');
+  var ei = document.getElementById('req-email');
+  if (ni && currentUser.name) ni.value = currentUser.name;
+  if (ei && currentUser.email) ei.value = currentUser.email;
+  document.getElementById('req-form').style.display = 'block';
+  document.getElementById('req-success').style.display = 'none';
+  showPage('reqjd');
+}
+
+function submitReqJD() {
+  var title  = (document.getElementById('req-title') || { value: '' }).value.trim();
+  var name   = (document.getElementById('req-name')  || { value: '' }).value.trim();
+  var email  = (document.getElementById('req-email') || { value: '' }).value.trim();
+  var kw     = (document.getElementById('req-kw-text') || { value: '' }).value.trim();
+  var notes  = (document.getElementById('req-notes') || { value: '' }).value.trim();
+  var jdFile = document.getElementById('req-jd-file');
+  var kwFile = document.getElementById('req-kw-file');
+  var errEl  = document.getElementById('req-err');
+  errEl.style.display = 'none';
+
+  if (!title) { errEl.textContent = 'Please enter a job title.'; errEl.style.display = 'block'; return; }
+  if (!name || !email) { errEl.textContent = 'Please fill in your name and email.'; errEl.style.display = 'block'; return; }
+
+  var jdFileName = jdFile && jdFile.files[0] ? jdFile.files[0].name : '';
+  var kwFileName = kwFile && kwFile.files[0] ? kwFile.files[0].name : '';
+
+  // Save request to localStorage (admin can see it)
+  var requests = JSON.parse(localStorage.getItem('hk_requests') || '[]');
+  requests.push({
+    ts: Date.now(), title: title, name: name, email: email,
+    keywords: kw, notes: notes,
+    jdFile: jdFileName, kwFile: kwFileName
+  });
+  localStorage.setItem('hk_requests', JSON.stringify(requests));
+
+  // Build mailto string — opens their email client pre-filled
+  var subject = 'HireKit JD Kit Request: ' + title;
+  var body = 'Job Title: ' + title + '%0D%0A' +
+    'Requested by: ' + name + ' (' + email + ')%0D%0A%0D%0A' +
+    'Keywords / Key Requirements:%0D%0A' + (kw || 'See attached file') + '%0D%0A%0D%0A' +
+    'Additional Notes:%0D%0A' + (notes || 'None') + '%0D%0A%0D%0A' +
+    'Files: ' + (jdFileName || 'none') + (kwFileName ? ', ' + kwFileName : '') + '%0D%0A%0D%0A' +
+    '(Please attach JD and keywords files to this email before sending.)';
+
+  window.location.href = 'mailto:hello@hirekit.online?subject=' + encodeURIComponent(subject) + '&body=' + body;
+
+  // Show success screen
+  document.getElementById('req-form').style.display = 'none';
+  document.getElementById('req-success').style.display = 'block';
+  document.getElementById('req-success-email').textContent = email;
+}
+
+// File label updates
+document.addEventListener('DOMContentLoaded', function() {
+  var jdInput = document.getElementById('req-jd-file');
+  var kwInput = document.getElementById('req-kw-file');
+  if (jdInput) jdInput.addEventListener('change', function() {
+    var lbl = document.getElementById('req-jd-label');
+    if (lbl) lbl.textContent = this.files[0] ? this.files[0].name : 'Choose JD file…';
+  });
+  if (kwInput) kwInput.addEventListener('change', function() {
+    var lbl = document.getElementById('req-kw-label');
+    if (lbl) lbl.textContent = this.files[0] ? this.files[0].name : 'Choose keywords file…';
+  });
+});
 </script>
 </body>
 </html>
