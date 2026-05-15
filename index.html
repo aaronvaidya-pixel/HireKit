@@ -1491,11 +1491,15 @@ var activeCat      = 'All';
 ═══════════════════════════ */
 window.onload = function() {
   /* ── Version cache-bust ── */
-  var APP_VERSION = 'v2.3';
+  var APP_VERSION = 'v2.4';
   if (localStorage.getItem('hk_version') !== APP_VERSION) {
     var theme = localStorage.getItem('hk_theme');
+    var users = localStorage.getItem('hk_users');
+    var user  = localStorage.getItem('hk_user');
     localStorage.clear();
     if (theme) localStorage.setItem('hk_theme', theme);
+    if (users) localStorage.setItem('hk_users', users);
+    if (user)  localStorage.setItem('hk_user',  user);
     localStorage.setItem('hk_version', APP_VERSION);
   }
 
