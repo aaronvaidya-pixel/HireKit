@@ -2183,46 +2183,62 @@ function showReqJD() {
 }
 
 function submitReqJD() {
-  var title  = (document.getElementById('req-title') || { value: '' }).value.trim();
-  var name   = (document.getElementById('req-name')  || { value: '' }).value.trim();
-  var email  = (document.getElementById('req-email') || { value: '' }).value.trim();
+  var title  = (document.getElementById('req-title')   || { value: '' }).value.trim();
+  var name   = (document.getElementById('req-name')    || { value: '' }).value.trim();
+  var email  = (document.getElementById('req-email')   || { value: '' }).value.trim();
   var kw     = (document.getElementById('req-kw-text') || { value: '' }).value.trim();
-  var notes  = (document.getElementById('req-notes') || { value: '' }).value.trim();
-  var jdFile = document.getElementById('req-jd-file');
-  var kwFile = document.getElementById('req-kw-file');
-  var errEl  = document.getElementById('req-err');
+  var notes  = (document.getElementById('req-notes')   || { value: '' }).value.trim();
+  var jdInput = document.getElementById('req-jd-file');
+  var kwInput = document.getElementById('req-kw-file');
+  var errEl   = document.getElementById('req-err');
   errEl.style.display = 'none';
 
   if (!title) { errEl.textContent = 'Please enter a job title.'; errEl.style.display = 'block'; return; }
   if (!name || !email) { errEl.textContent = 'Please fill in your name and email.'; errEl.style.display = 'block'; return; }
 
-  var jdFileName = jdFile && jdFile.files[0] ? jdFile.files[0].name : '';
-  var kwFileName = kwFile && kwFile.files[0] ? kwFile.files[0].name : '';
+  var btn = document.querySelector('#req-form .btn-y');
+  if (btn) { btn.textContent = 'Sending...'; btn.disabled = true; }
 
-  // Save request to localStorage (admin can see it)
-  var requests = JSON.parse(localStorage.getItem('hk_requests') || '[]');
-  requests.push({
-    ts: Date.now(), title: title, name: name, email: email,
-    keywords: kw, notes: notes,
-    jdFile: jdFileName, kwFile: kwFileName
-  });
-  localStorage.setItem('hk_requests', JSON.stringify(requests));
+  var formData = new FormData();
+  formData.append('access_key', 'REPLACE_WITH_WEB3FORMS_KEY');
+  formData.append('subject', 'HireKit JD Kit Request: ' + title);
+  formData.append('from_name', 'HireKit Request Form');
+  formData.append('Job Title', title);
+  formData.append('name', name);
+  formData.append('email', email);
+  formData.append('Keywords', kw || 'See attached file');
+  formData.append('Notes', notes || 'None');
 
-  // Build mailto string — opens their email client pre-filled
-  var subject = 'HireKit JD Kit Request: ' + title;
-  var body = 'Job Title: ' + title + '%0D%0A' +
-    'Requested by: ' + name + ' (' + email + ')%0D%0A%0D%0A' +
-    'Keywords / Key Requirements:%0D%0A' + (kw || 'See attached file') + '%0D%0A%0D%0A' +
-    'Additional Notes:%0D%0A' + (notes || 'None') + '%0D%0A%0D%0A' +
-    'Files: ' + (jdFileName || 'none') + (kwFileName ? ', ' + kwFileName : '') + '%0D%0A%0D%0A' +
-    '(Please attach JD and keywords files to this email before sending.)';
+  if (jdInput && jdInput.files[0]) formData.append('JD File', jdInput.files[0]);
+  if (kwInput && kwInput.files[0]) formData.append('Keywords File', kwInput.files[0]);
 
-  window.location.href = 'mailto:hello@hirekit.online?subject=' + encodeURIComponent(subject) + '&body=' + body;
-
-  // Show success screen
-  document.getElementById('req-form').style.display = 'none';
-  document.getElementById('req-success').style.display = 'block';
-  document.getElementById('req-success-email').textContent = email;
+  fetch('https://api.web3forms.com/submit', { method: 'POST', body: formData })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (btn) { btn.textContent = 'Send Request to HireKit'; btn.disabled = false; }
+      if (data.success) {
+        // Save to admin dashboard too
+        var requests = JSON.parse(localStorage.getItem('hk_requests') || '[]');
+        requests.push({
+          ts: Date.now(), title: title, name: name, email: email,
+          keywords: kw, notes: notes,
+          jdFile: (jdInput && jdInput.files[0]) ? jdInput.files[0].name : '',
+          kwFile: (kwInput && kwInput.files[0]) ? kwInput.files[0].name : ''
+        });
+        localStorage.setItem('hk_requests', JSON.stringify(requests));
+        document.getElementById('req-form').style.display = 'none';
+        document.getElementById('req-success').style.display = 'block';
+        document.getElementById('req-success-email').textContent = email;
+      } else {
+        errEl.textContent = 'Something went wrong. Please email directly: contact@aaronvaidya.com';
+        errEl.style.display = 'block';
+      }
+    })
+    .catch(function() {
+      if (btn) { btn.textContent = 'Send Request to HireKit'; btn.disabled = false; }
+      errEl.textContent = 'Network error. Please email: contact@aaronvaidya.com';
+      errEl.style.display = 'block';
+    });
 }
 
 // File label updates
