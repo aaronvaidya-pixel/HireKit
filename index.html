@@ -466,9 +466,66 @@ footer a:hover { color:var(--c-yellow); }
 @media (max-width:768px) {
   #page-admin, #page-reqjd { padding:24px 20px; }
 }
+
+/* ── Skeleton Loader ── */
+.skeleton { background:linear-gradient(90deg,var(--c-navy3) 25%,var(--c-navy4) 50%,var(--c-navy3) 75%); background-size:200% 100%; animation:shimmer 1.4s infinite; border-radius:8px; }
+@keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+.skel-card { background:var(--c-navy2); border:1.5px solid var(--c-border); border-radius:var(--r); padding:19px 16px; }
+.skel-ico  { width:36px; height:36px; margin-bottom:9px; }
+.skel-name { width:80%; height:13px; margin-bottom:6px; }
+.skel-cat  { width:50%; height:10px; }
+
+/* ── Page loading bar ── */
+#topbar { position:fixed; top:0; left:0; height:3px; background:var(--c-yellow); width:0%; z-index:9999; transition:width .3s ease; border-radius:0 2px 2px 0; }
+
+/* ── Global error banner ── */
+#err-banner { position:fixed; bottom:72px; left:50%; transform:translateX(-50%); background:var(--c-red); color:#fff; padding:10px 22px; border-radius:10px; font-size:.84rem; font-weight:600; z-index:998; display:none; max-width:90vw; text-align:center; box-shadow:0 4px 20px rgba(232,53,80,.4); }
+
+/* ── Trust bar ── */
+.trust-bar { display:flex; align-items:center; justify-content:center; gap:28px; flex-wrap:wrap; padding:14px 52px; border-top:1px solid var(--c-border); border-bottom:1px solid var(--c-border); margin-bottom:0; }
+.trust-item { display:flex; align-items:center; gap:7px; font-size:.76rem; color:var(--c-muted); }
+.trust-item span:first-child { color:var(--c-yellow); font-size:.95rem; }
+
+/* ── Sample output card ── */
+.sample-strip { background:linear-gradient(135deg,rgba(245,197,24,.05),rgba(26,185,84,.03)); border:1px solid var(--c-border2); border-radius:14px; padding:20px 28px; max-width:1200px; margin:0 auto 32px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+.sample-strip h3 { font-family:var(--fh); font-weight:700; font-size:.9rem; margin-bottom:3px; }
+.sample-strip p { font-size:.76rem; color:var(--c-muted); }
+
+/* ── Feedback widget ── */
+#feedback-btn { position:fixed; bottom:22px; right:22px; z-index:400; background:var(--c-yellow); color:#0b1d35; border:none; border-radius:100px; padding:10px 18px; font-size:.8rem; font-weight:700; cursor:pointer; box-shadow:0 4px 18px rgba(245,197,24,.35); font-family:var(--fb); transition:transform .18s; }
+#feedback-btn:hover { transform:translateY(-2px); }
+#feedback-modal { position:fixed; inset:0; background:rgba(0,0,0,.6); backdrop-filter:blur(4px); z-index:600; display:none; align-items:flex-end; justify-content:center; padding:20px; }
+#feedback-modal.open { display:flex; }
+.fb-box { background:var(--c-navy2); border:1.5px solid var(--c-border2); border-radius:20px 20px 0 0; padding:28px; width:100%; max-width:480px; box-shadow:var(--shadow); }
+.fb-box h3 { font-family:var(--fh); font-weight:700; font-size:1.05rem; margin-bottom:4px; }
+.fb-box p { font-size:.78rem; color:var(--c-muted); margin-bottom:16px; }
+.fb-stars { display:flex; gap:8px; margin-bottom:14px; }
+.fb-star { font-size:1.6rem; cursor:pointer; opacity:.35; transition:opacity .15s, transform .15s; }
+.fb-star.on, .fb-star:hover { opacity:1; transform:scale(1.15); }
+.fb-ta { width:100%; background:var(--c-navy3); border:1.5px solid var(--c-border); border-radius:10px; padding:11px 14px; color:var(--c-white); font-size:.87rem; min-height:80px; resize:none; outline:none; font-family:var(--fb); transition:border-color .18s; }
+.fb-ta:focus { border-color:var(--c-yellow); }
+.fb-row { display:flex; gap:10px; margin-top:12px; }
+
+/* ── Privacy page ── */
+#page-privacy { min-height:calc(100vh - var(--nav-h)); padding:40px 52px; }
+.priv-wrap { max-width:720px; margin:0 auto; }
+.priv-wrap h2 { font-family:var(--fh); font-weight:800; font-size:1.5rem; margin-bottom:6px; }
+.priv-wrap h3 { font-family:var(--fh); font-weight:700; font-size:.98rem; margin:20px 0 6px; color:var(--c-yellow); }
+.priv-wrap p  { font-size:.87rem; color:var(--c-muted); line-height:1.75; margin-bottom:10px; }
+.priv-wrap ul { font-size:.87rem; color:var(--c-muted); line-height:1.75; padding-left:18px; margin-bottom:10px; }
+
+@media(max-width:768px){
+  .trust-bar { padding:12px 20px; gap:14px; }
+  #page-privacy { padding:24px 20px; }
+  .sample-strip { padding:16px 20px; }
+}
 </style>
 </head>
 <body id="body">
+
+<!-- ══════ NAV ══════ -->
+<div id="topbar"></div>
+<div id="err-banner"></div>
 
 <!-- ══════ NAV ══════ -->
 <nav id="nav">
@@ -505,8 +562,22 @@ footer a:hover { color:var(--c-yellow); }
     <p class="hero-note" id="hero-note">Free plan: 3 profiles &middot; No credit card required</p>
   </div>
 
-  <div class="browse">
-    <div class="search-wrap">
+  <div class="trust-bar">
+  <div class="trust-item"><span>&#10003;</span><span>31 job profiles</span></div>
+  <div class="trust-item"><span>&#9733;</span><span>5 questions per profile</span></div>
+  <div class="trust-item"><span>&#128274;</span><span>Free plan — no credit card</span></div>
+  <div class="trust-item"><span>&#9993;</span><span>Built by Aaron Vaidya</span></div>
+  <div class="trust-item"><span>&#128241;</span><span>Mobile friendly</span></div>
+</div>
+<div class="browse">
+    <div class="sample-strip">
+  <div>
+    <h3>&#128161; See a sample Q&amp;A kit before signing up</h3>
+    <p>Click any profile below to preview the first question — no account needed.</p>
+  </div>
+  <button class="btn btn-ghost btn-sm" onclick="openProfile('swe')">View Sample &#8594;</button>
+</div>
+<div class="search-wrap">
       <span class="s-ico">&#128269;</span>
       <input type="text" id="q-input" placeholder="Search profile e.g. Data Analyst, HR Executive&#8230;" oninput="renderGrid()">
     </div>
@@ -708,7 +779,9 @@ footer a:hover { color:var(--c-yellow); }
 <div id="toast"></div>
 <footer>
   &#169; 2026 HireKit&#8482; &middot; Built by <a href="mailto:contact@aaronvaidya.com">Aaron Vaidya</a>
-  &middot; Agency enquiries: <a href="mailto:contact@aaronvaidya.com">contact@aaronvaidya.com</a>
+  &middot; <a href="mailto:contact@aaronvaidya.com">contact@aaronvaidya.com</a>
+  &middot; <span onclick="showPage('privacy')" style="cursor:pointer">Privacy Policy</span>
+  &middot; <a href="mailto:contact@aaronvaidya.com?subject=HireKit Feedback">Send Feedback</a>
 </footer>
 
 <!-- ══════════════════════════════════════════
@@ -1736,7 +1809,8 @@ function goHome() {
   var qi = document.getElementById('q-input');
   if (qi) qi.value = '';
   showPage('home');
-  renderGrid();
+  showSkeletons();
+  setTimeout(renderGrid, 120);
 }
 
 /* ═══════════════════════════
@@ -1914,6 +1988,7 @@ function renderGrid() {
   var q    = (document.getElementById('q-input') || { value: '' }).value.toLowerCase().trim();
   var grid = document.getElementById('pgrid');
   if (!grid) return;
+  if (!q && activeCat === 'All') showSkeletons();
 
   var filtered = [];
   var i, p;
@@ -1960,7 +2035,8 @@ function setCat(el) {
    Q&A PAGE
 ═══════════════════════════ */
 function openProfile(id) {
-  if (!currentUser) { openAuth('signup'); return; }
+  barStart();
+  if (!currentUser) { barDone(); openAuth('signup'); return; }
 
   var profile = null;
   var i;
@@ -1978,6 +2054,7 @@ function openProfile(id) {
   currentProfile = profile;
   currentCatTab  = 'All';
   renderQAPage();
+  barDone();
   showPage('qa');
 
   var items = document.querySelectorAll('.side-item');
@@ -2117,6 +2194,7 @@ function showAdminDash() {
 function renderAdminStats() {
   var users = JSON.parse(localStorage.getItem('hk_users') || '[]');
   var requests = JSON.parse(localStorage.getItem('hk_requests') || '[]');
+  var feedbacks = JSON.parse(localStorage.getItem('hk_feedbacks') || '[]');
   var free = 0; var pro = 0;
   for (var i = 0; i < users.length; i++) {
     if (users[i].plan === 'pro') pro++; else free++;
@@ -2127,7 +2205,8 @@ function renderAdminStats() {
     '<div class="stat-card"><div class="sv">' + users.length + '</div><div class="sl">Total Accounts</div></div>' +
     '<div class="stat-card"><div class="sv">' + free + '</div><div class="sl">Free Users</div></div>' +
     '<div class="stat-card"><div class="sv" style="color:var(--c-green)">' + pro + '</div><div class="sl">Pro Users</div></div>' +
-    '<div class="stat-card"><div class="sv" style="color:var(--c-white)">' + requests.length + '</div><div class="sl">JD Requests</div></div>';
+    '<div class="stat-card"><div class="sv" style="color:var(--c-white)">' + requests.length + '</div><div class="sl">JD Requests</div></div>' +
+    '<div class="stat-card"><div class="sv" style="color:var(--c-yellow2)">' + feedbacks.length + '</div><div class="sl">Feedbacks</div></div>';
 }
 
 function renderAdminTable() {
@@ -2274,6 +2353,155 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 
+
+
+/* ═══════════════════════════
+   GLOBAL ERROR HANDLER
+═══════════════════════════ */
+window.onerror = function(msg, src, line) {
+  console.error('HireKit error:', msg, 'line:', line);
+  var b = document.getElementById('err-banner');
+  if (b) {
+    b.textContent = 'Something went wrong. Please refresh the page.';
+    b.style.display = 'block';
+    setTimeout(function() { b.style.display = 'none'; }, 6000);
+  }
+  return false;
+};
+
+/* ═══════════════════════════
+   LOADING BAR
+═══════════════════════════ */
+function barStart() {
+  var b = document.getElementById('topbar');
+  if (b) { b.style.width = '0%'; b.style.opacity = '1'; b.style.width = '70%'; }
+}
+function barDone() {
+  var b = document.getElementById('topbar');
+  if (b) { b.style.width = '100%'; setTimeout(function() { b.style.opacity = '0'; setTimeout(function() { b.style.width = '0%'; }, 300); }, 300); }
+}
+
+/* ═══════════════════════════
+   SKELETON LOADERS
+═══════════════════════════ */
+function showSkeletons() {
+  var grid = document.getElementById('pgrid');
+  if (!grid) return;
+  var html = '';
+  for (var i = 0; i < 12; i++) {
+    html += '<div class="skel-card">' +
+      '<div class="skeleton skel-ico"></div>' +
+      '<div class="skeleton skel-name"></div>' +
+      '<div class="skeleton skel-cat"></div>' +
+      '</div>';
+  }
+  grid.innerHTML = html;
+}
+
+/* ═══════════════════════════
+   FEEDBACK WIDGET
+═══════════════════════════ */
+var fbRating = 0;
+function openFeedback() {
+  document.getElementById('feedback-modal').classList.add('open');
+}
+function closeFeedback() {
+  document.getElementById('feedback-modal').classList.remove('open');
+}
+function setRating(n) {
+  fbRating = n;
+  var stars = document.querySelectorAll('.fb-star');
+  for (var i = 0; i < stars.length; i++) {
+    stars[i].classList.toggle('on', i < n);
+  }
+}
+function submitFeedback() {
+  var text = (document.getElementById('fb-text') || { value: '' }).value.trim();
+  if (!fbRating && !text) { toast('Please add a rating or comment.'); return; }
+  var feedbacks = JSON.parse(localStorage.getItem('hk_feedbacks') || '[]');
+  feedbacks.push({
+    ts: Date.now(),
+    rating: fbRating,
+    text: text,
+    user: currentUser ? currentUser.email : 'guest'
+  });
+  localStorage.setItem('hk_feedbacks', JSON.stringify(feedbacks));
+
+  // Send via Web3Forms if key set
+  var key = 'REPLACE_WITH_WEB3FORMS_KEY';
+  if (key !== 'REPLACE_WITH_WEB3FORMS_KEY') {
+    var fd = new FormData();
+    fd.append('access_key', key);
+    fd.append('subject', 'HireKit Feedback — ' + fbRating + ' stars');
+    fd.append('Rating', fbRating + '/5');
+    fd.append('Comment', text || 'No comment');
+    fd.append('User', currentUser ? currentUser.email : 'guest');
+    fetch('https://api.web3forms.com/submit', { method: 'POST', body: fd }).catch(function(){});
+  }
+
+  closeFeedback();
+  fbRating = 0;
+  document.getElementById('fb-text').value = '';
+  document.querySelectorAll('.fb-star').forEach(function(s){ s.classList.remove('on'); });
+  toast('Thank you for your feedback!');
+}
+document.addEventListener('click', function(e) {
+  var modal = document.getElementById('feedback-modal');
+  if (modal && e.target === modal) closeFeedback();
+});
 </script>
+
+<!-- ══════ FEEDBACK ══════ -->
+<button id="feedback-btn" onclick="openFeedback()">&#128172; Feedback</button>
+<div id="feedback-modal">
+  <div class="fb-box">
+    <h3>How are we doing?</h3>
+    <p>Your feedback helps us improve HireKit for everyone.</p>
+    <div class="fb-stars" id="fb-stars">
+      <span class="fb-star" onclick="setRating(1)">&#9733;</span>
+      <span class="fb-star" onclick="setRating(2)">&#9733;</span>
+      <span class="fb-star" onclick="setRating(3)">&#9733;</span>
+      <span class="fb-star" onclick="setRating(4)">&#9733;</span>
+      <span class="fb-star" onclick="setRating(5)">&#9733;</span>
+    </div>
+    <textarea class="fb-ta" id="fb-text" placeholder="Tell us what you love, what's broken, or what you'd like to see next&#8230;"></textarea>
+    <div class="fb-row">
+      <button class="btn btn-y" onclick="submitFeedback()">Send Feedback</button>
+      <button class="btn btn-ghost" onclick="closeFeedback()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ PRIVACY PAGE ══════ -->
+<div class="page" id="page-privacy">
+  <div class="priv-wrap">
+    <button class="btn btn-ghost btn-sm" onclick="goHome()" style="margin-bottom:20px">&#8592; Back</button>
+    <h2>Privacy Policy</h2>
+    <p style="font-size:.78rem;color:var(--c-muted)">Last updated: May 2026</p>
+    <p>HireKit&#8482; is built and operated by Aaron Vaidya. We take your privacy seriously. This policy explains what data we collect, how we use it, and your rights.</p>
+    <h3>Data We Collect</h3>
+    <ul>
+      <li>Account information: your name, email address, and password (stored locally in your browser)</li>
+      <li>Usage data: which profiles you have opened (stored locally, not on our servers)</li>
+      <li>JD kit requests: job title, keywords, and notes you submit via the Request a Kit form</li>
+      <li>Feedback: ratings and comments you submit voluntarily</li>
+    </ul>
+    <h3>How We Store Your Data</h3>
+    <p>HireKit currently stores all account data in your browser's localStorage. This means your data stays on your device and is never sent to our servers. If you clear your browser data, your account will be removed.</p>
+    <h3>What We Do Not Do</h3>
+    <ul>
+      <li>We do not sell your data to any third party</li>
+      <li>We do not use advertising trackers or analytics cookies</li>
+      <li>We do not store passwords in plain text (they are stored only in your local browser)</li>
+      <li>We do not send you marketing emails without your consent</li>
+    </ul>
+    <h3>JD Kit Requests</h3>
+    <p>When you submit a Request a Kit form, your job title, name, email, keywords, and notes are sent to Aaron Vaidya at contact@aaronvaidya.com for the purpose of building a custom screening kit. This data is not shared with anyone else.</p>
+    <h3>Contact</h3>
+    <p>For any privacy questions, email <a href="mailto:contact@aaronvaidya.com" style="color:var(--c-yellow)">contact@aaronvaidya.com</a></p>
+  </div>
+</div>
+
+
 </body>
 </html>
