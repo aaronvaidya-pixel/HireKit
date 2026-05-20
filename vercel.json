@@ -1,8 +1,11 @@
 {
   "functions": {
-    "api/chat.js": {
-      "maxDuration": 30,
-      "memory": 1024
-    }
-  }
+    "api/chat.js": { "maxDuration": 30, "memory": 1024 }
+  },
+  "routes": [
+    { "src": "/api/(.*)", "dest": "/api/$1" },
+    { "src": "/profiles.js", "dest": "/profiles.js" },
+    { "src": "/full.css", "dest": "/full.css" },
+    { "src": "/(.*)", "dest": "/index.html" }
+  ]
 }
