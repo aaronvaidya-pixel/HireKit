@@ -498,7 +498,7 @@ footer span[onclick]:hover{color:var(--yellow);}
       <div class="req-field"><label>Additional Notes <span style="color:var(--muted);font-weight:400;text-transform:none">(optional)</span></label><textarea id="req-notes" placeholder="Seniority level, focus areas, must-haves&#8230;" style="min-height:68px"></textarea></div>
       <div id="req-err" style="color:var(--red);font-size:.8rem;margin-bottom:10px;display:none;"></div>
       <button class="btn btn-y btn-lg" onclick="submitReqJD()">&#9993; Send Request</button>
-      <p style="font-size:.73rem;color:var(--muted);margin-top:10px;">Handled personally by Aaron Vaidya &middot; Reply within 2 business days</p>
+      <p style="font-size:.73rem;color:var(--muted);margin-top:10px;">Requests go to request.hirekit@gmail.com &middot; Reply within 2 business days</p>
     </div>
     <div class="req-success" id="req-success">
       <h3>&#10003; Request Sent!</h3>
@@ -522,7 +522,7 @@ footer span[onclick]:hover{color:var(--yellow);}
     <h3>What We Don&#8217;t Do</h3>
     <ul><li>We do not sell your data</li><li>We do not use ad trackers or analytics cookies</li><li>We do not send unsolicited emails</li></ul>
     <h3>Contact</h3>
-    <p>Email <a href="mailto:contact@aaronvaidya.com" style="color:var(--yellow)">contact@aaronvaidya.com</a> for any privacy questions.</p>
+    <p>Email <a href="mailto:hellohirekit@gmail.com" style="color:var(--yellow)">hellohirekit@gmail.com</a> for any privacy questions.</p>
   </div>
 </div>
 
@@ -546,7 +546,7 @@ footer span[onclick]:hover{color:var(--yellow);}
       <div class="plan-f">Multiple seats</div>
       <div class="plan-f">Dedicated account manager</div>
       <div class="plan-f">Invoice billing</div>
-      <button class="btn btn-ghost btn-full mt12" onclick="window.location='mailto:contact@aaronvaidya.com?subject=HireKit Agency Enquiry'">Contact for Quote &#8594;</button>
+      <button class="btn btn-ghost btn-full mt12" onclick="window.location='mailto:hellohirekit@gmail.com?subject=HireKit Agency Enquiry'">Contact for Quote &#8594;</button>
     </div>
   </div>
 </div>
@@ -554,10 +554,10 @@ footer span[onclick]:hover{color:var(--yellow);}
 <div id="toast"></div>
 
 <footer>
-  &#169; 2026 HireKit&#8482; &middot; Built by <a href="mailto:contact@aaronvaidya.com">Aaron Vaidya</a>
-  &middot; <a href="mailto:contact@aaronvaidya.com">contact@aaronvaidya.com</a>
+  &#169; 2026 HireKit&#8482; &middot; Built by <a href="mailto:hellohirekit@gmail.com">Aaron Vaidya</a>
+  &middot; <a href="mailto:hellohirekit@gmail.com">hellohirekit@gmail.com</a>
   &middot; <span onclick="showPage('privacy')">Privacy Policy</span>
-  &middot; <a href="mailto:contact@aaronvaidya.com?subject=HireKit Feedback">Send Feedback</a>
+  &middot; <a href="mailto:hellohirekit@gmail.com?subject=HireKit Feedback">Send Feedback</a>
 </footer>
 
 <button id="feedback-btn" onclick="openFeedback()">&#128172; Feedback</button>
@@ -768,7 +768,7 @@ function doLogin() {
   var pass  = document.getElementById('li-p').value;
   var errEl = document.getElementById('li-err');
   errEl.style.display = 'none';
-  if (email === 'contact@aaronvaidya.com' && pass === 'Aaron@IQ2025') {
+  if (email === 'hellohirekit@gmail.com' && pass === 'Aaron@IQ2025') {
     currentUser = { name:'Aaron Vaidya', email:email, plan:'admin' };
     localStorage.setItem('hk_user', JSON.stringify(currentUser));
     applyLoggedIn(); goHome(); toast('Welcome back, Aaron! &#128101;'); return;
@@ -991,7 +991,7 @@ function openPricing()  { document.getElementById('ov').classList.add('open'); }
 function closePricing() { document.getElementById('ov').classList.remove('open'); }
 function doUpgrade() {
   closePricing();
-  window.location.href = 'mailto:contact@aaronvaidya.com?subject=HireKit Pro Upgrade&body=Hi Aaron, I would like to upgrade to HireKit Pro. Please share payment details.';
+  window.location.href = 'mailto:request.hirekit@gmail.com?subject=HireKit Pro Upgrade&body=Hi Aaron, I would like to upgrade to HireKit Pro. Please share payment details.';
 }
 document.getElementById('ov').addEventListener('click', function(e) { if (e.target === this) closePricing(); });
 
