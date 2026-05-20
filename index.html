@@ -2,67 +2,323 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HireKit&#8482; &#8212; AI Interview Screening</title>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta name="description" content="HireKit - Interview Q&A kits for 31 job profiles. Green flag answers and red flag warnings. Built for recruiters who move fast. Free plan available.">
+<meta property="og:title" content="HireKit - Smart Interview Screening">
+<meta property="og:description" content="31 job profiles. Instant Q&A kits. Green flags and red flags. Screen candidates faster.">
+<title>HireKit&#8482; &#8212; Interview Screening Tool</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<meta name="description" content="HireKit - AI Interview Screening Tool. 31 job profiles with structured Q&A kits. Green flag and red flag answers for faster, smarter hiring.">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600&display=swap" rel="stylesheet">
-<style>:root{--c-navy:#0b1d35;--c-navy2:#122545;--c-navy3:#1c3358;--c-navy4:#244070;--c-yellow:#f5c518;--c-yellow2:#ffd740;--c-ybg:rgba(245,197,24,.09);--c-ybd:rgba(245,197,24,.22);--c-white:#f3f8ff;--c-white2:#c4d6ec;--c-muted:#6888a4;--c-green:#1ab954;--c-gbg:rgba(26,185,84,.10);--c-gbd:rgba(26,185,84,.24);--c-red:#e83550;--c-rbg:rgba(232,53,80,.10);--c-rbd:rgba(232,53,80,.24);--c-border:rgba(243,248,255,.07);--c-border2:rgba(243,248,255,.14);--nav-h:64px;--r:13px;--shadow:0 8px 40px rgba(0,0,0,.44);--fh:'Syne',sans-serif;--fb:'DM Sans',sans-serif;}
-body.light{--c-navy:#edf2f9;--c-navy2:#fff;--c-navy3:#dce6f2;--c-white:#0b1d35;--c-muted:#506880;--c-border:rgba(11,29,53,.08);--c-border2:rgba(11,29,53,.16);}
+<style>
+/* ── TOKENS ── */
+:root{
+  --navy:#0b1d35;--navy2:#0f2444;--navy3:#162d52;--navy4:#1d3660;
+  --yellow:#f5c518;--yellow2:#ffd740;--ybg:rgba(245,197,24,.1);--ybd:rgba(245,197,24,.25);
+  --white:#f0f6ff;--white2:#c0d4ee;--muted:#5a7a96;
+  --green:#1ab954;--gbg:rgba(26,185,84,.11);--gbd:rgba(26,185,84,.28);
+  --red:#e83550;--rbg:rgba(232,53,80,.11);--rbd:rgba(232,53,80,.28);
+  --border:rgba(240,246,255,.07);--border2:rgba(240,246,255,.14);
+  --nav-h:64px;--r:14px;--r2:10px;
+  --sh:0 8px 40px rgba(0,0,0,.45);--sh2:0 2px 12px rgba(0,0,0,.25);
+  --fh:'Syne',sans-serif;--fb:'DM Sans',sans-serif;
+}
+body.light{
+  --navy:#eef3fa;--navy2:#ffffff;--navy3:#e2eaf4;--navy4:#d4e0f0;
+  --white:#0b1d35;--white2:#1c3358;--muted:#4a6a88;
+  --border:rgba(11,29,53,.08);--border2:rgba(11,29,53,.16);
+  --sh:0 4px 24px rgba(0,0,0,.10);--sh2:0 2px 8px rgba(0,0,0,.08);
+}
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:var(--fb);background:var(--c-navy);color:var(--c-white);min-height:100vh;line-height:1.6;transition:background .25s,color .25s;}
-button{cursor:pointer;font-family:var(--fb);}input,textarea{font-family:var(--fb);}
-.hidden{display:none!important;}.page{display:none;}.page.active{display:block;}#page-qa.active,#page-auth.active{display:flex;}
-#nav{height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;padding:0 52px;border-bottom:1px solid var(--c-border);position:sticky;top:0;z-index:300;background:var(--c-navy);}
-.logo{font-family:var(--fh);font-weight:800;font-size:1.38rem;letter-spacing:-.03em;cursor:pointer;display:flex;align-items:baseline;}
-.logo-hire{color:var(--c-white);}.logo-kit{color:var(--c-yellow);}.logo-tm{font-size:.45rem;color:var(--c-muted);vertical-align:super;margin-left:1px;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--fb);background:var(--navy);color:var(--white);min-height:100vh;line-height:1.6;transition:background .25s,color .25s;-webkit-font-smoothing:antialiased;}
+button{cursor:pointer;font-family:var(--fb);}
+input,textarea,select{font-family:var(--fb);}
+a{text-decoration:none;}
+img{max-width:100%;}
+
+/* ── UTILITIES ── */
+.hidden{display:none!important;}
+.page{display:none;}
+.page.active{display:block;}
+#page-qa.active{display:flex;}
+#page-auth.active{display:flex;}
+
+/* ── TOP BAR ── */
+#topbar{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--yellow),var(--green));width:0%;z-index:9999;transition:width .4s ease;border-radius:0 3px 3px 0;opacity:0;}
+
+/* ── ERROR BANNER ── */
+#err-banner{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--red);color:#fff;padding:12px 24px;border-radius:12px;font-size:.85rem;font-weight:600;z-index:998;display:none;max-width:92vw;text-align:center;box-shadow:0 4px 20px rgba(232,53,80,.4);opacity:0;transition:opacity .25s,transform .25s;}
+#err-banner.show{display:block;opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:none;border-radius:var(--r2);font-size:.875rem;font-weight:600;padding:11px 22px;transition:all .18s;cursor:pointer;white-space:nowrap;letter-spacing:.01em;}
+.btn-y{background:var(--yellow);color:#0a1a2e;border:2px solid var(--yellow);}
+.btn-y:hover{background:var(--yellow2);border-color:var(--yellow2);transform:translateY(-1px);box-shadow:0 4px 18px rgba(245,197,24,.35);}
+.btn-y:active{transform:translateY(0);}
+.btn-ghost{background:transparent;color:var(--white);border:1.5px solid var(--border2);}
+.btn-ghost:hover{border-color:var(--yellow);color:var(--yellow);}
+.btn-sm{padding:8px 16px;font-size:.8rem;border-radius:8px;}
+.btn-lg{padding:15px 32px;font-size:1rem;border-radius:var(--r);}
+.btn-full{width:100%;}
+.btn-icon{width:38px;height:38px;padding:0;border-radius:50%;background:var(--navy3);border:1.5px solid var(--border2);color:var(--white);font-size:1rem;display:inline-flex;align-items:center;justify-content:center;transition:all .18s;}
+.btn-icon:hover{border-color:var(--yellow);color:var(--yellow);background:var(--ybg);}
+.mt8{margin-top:8px;}.mt12{margin-top:12px;}.mt16{margin-top:16px;}
+
+/* ── NAV ── */
+#nav{height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;padding:0 48px;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:300;background:rgba(11,29,53,.95);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);transition:background .25s;}
+body.light #nav{background:rgba(238,243,250,.95);}
+.logo{font-family:var(--fh);font-weight:800;font-size:1.4rem;letter-spacing:-.03em;cursor:pointer;display:flex;align-items:baseline;gap:1px;transition:opacity .18s;}
+.logo:hover{opacity:.85;}
+.logo-hire{color:var(--white);}
+.logo-kit{color:var(--yellow);}
+.logo-tm{font-size:.42rem;color:var(--muted);vertical-align:super;margin-left:2px;font-weight:400;}
 .nav-r{display:flex;align-items:center;gap:10px;}
-.btn{display:inline-flex;align-items:center;gap:7px;border:none;border-radius:10px;font-size:.87rem;font-weight:600;padding:11px 22px;transition:all .18s;cursor:pointer;white-space:nowrap;}
-.btn-y{background:var(--c-yellow);color:#0b1d35;border:2px solid var(--c-yellow);}.btn-y:hover{background:var(--c-yellow2);}
-.btn-ghost{background:transparent;color:var(--c-white);border:1.5px solid var(--c-border2);}.btn-ghost:hover{border-color:var(--c-yellow);color:var(--c-yellow);}
-.btn-sm{padding:8px 16px;font-size:.8rem;}.btn-lg{padding:14px 30px;font-size:.95rem;border-radius:12px;}.btn-full{width:100%;justify-content:center;}
-.btn-icon{width:38px;height:38px;padding:0;border-radius:50%;background:var(--c-navy3);border:1.5px solid var(--c-border2);color:var(--c-white);font-size:1rem;display:inline-flex;align-items:center;justify-content:center;}
-.hero{padding:76px 52px 52px;text-align:center;position:relative;overflow:hidden;}
-.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 78% 62% at 50% -5%,rgba(245,197,24,.09) 0%,transparent 68%);pointer-events:none;}
-.hero-badge{display:inline-flex;align-items:center;gap:8px;background:var(--c-ybg);border:1px solid var(--c-ybd);color:var(--c-yellow);padding:5px 16px;border-radius:100px;font-size:.74rem;font-weight:600;margin-bottom:22px;letter-spacing:.05em;text-transform:uppercase;}
-.hero-badge::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--c-yellow);animation:blink 2s infinite;}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
-.hero-h1{font-family:var(--fh);font-size:clamp(2rem,5.4vw,3.8rem);font-weight:800;line-height:1.07;letter-spacing:-.03em;margin-bottom:18px;}
-.hero-h1 em{color:var(--c-yellow);font-style:normal;}
-.hero-p{color:var(--c-muted);font-size:1.01rem;max-width:490px;margin:0 auto 32px;line-height:1.76;}
-.hero-ctas{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:14px;}.hero-note{font-size:.74rem;color:var(--c-muted);}
-.browse{padding:0 52px 48px;}.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:11px;max-width:1200px;margin:0 auto;}
-.skeleton{background:linear-gradient(90deg,var(--c-navy3) 25%,var(--c-navy4) 50%,var(--c-navy3) 75%);background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:8px;}
+.user-chip{display:flex;align-items:center;gap:8px;padding:6px 14px;background:var(--navy3);border:1px solid var(--border2);border-radius:100px;font-size:.79rem;transition:background .25s;}
+.u-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 2px rgba(26,185,84,.2);}
+.plan-tag{font-size:.65rem;font-weight:700;background:var(--ybg);color:var(--yellow);padding:2px 8px;border-radius:100px;border:1px solid var(--ybd);letter-spacing:.04em;}
+
+/* ── HERO ── */
+.hero{padding:80px 48px 56px;text-align:center;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;top:-30%;left:50%;transform:translateX(-50%);width:800px;height:600px;background:radial-gradient(ellipse,rgba(245,197,24,.1) 0%,transparent 65%);pointer-events:none;z-index:0;}
+.hero::after{content:'';position:absolute;bottom:-10%;right:-5%;width:400px;height:400px;background:radial-gradient(ellipse,rgba(26,185,84,.06) 0%,transparent 65%);pointer-events:none;z-index:0;}
+.hero>*{position:relative;z-index:1;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:var(--ybg);border:1px solid var(--ybd);color:var(--yellow);padding:5px 16px;border-radius:100px;font-size:.74rem;font-weight:600;margin-bottom:24px;letter-spacing:.06em;text-transform:uppercase;}
+.hero-badge-dot{width:6px;height:6px;border-radius:50%;background:var(--yellow);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.8)}}
+.hero-h1{font-family:var(--fh);font-size:clamp(2.2rem,5.5vw,4rem);font-weight:800;line-height:1.06;letter-spacing:-.04em;margin-bottom:20px;}
+.hero-h1 em{color:var(--yellow);font-style:normal;}
+.hero-p{color:var(--muted);font-size:1.05rem;max-width:520px;margin:0 auto 36px;line-height:1.78;}
+.hero-ctas{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:14px;}
+.hero-note{font-size:.75rem;color:var(--muted);}
+
+/* ── STATS BAR ── */
+.stats-bar{display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap;padding:0 48px;margin-bottom:0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.stat-item{display:flex;align-items:center;gap:10px;padding:16px 28px;border-right:1px solid var(--border);flex:1;min-width:140px;max-width:200px;}
+.stat-item:last-child{border-right:none;}
+.stat-num{font-family:var(--fh);font-size:1.55rem;font-weight:800;color:var(--yellow);line-height:1;}
+.stat-lbl{font-size:.73rem;color:var(--muted);line-height:1.3;}
+
+/* ── BROWSE ── */
+.browse{padding:32px 48px 56px;}
+.browse-header{max-width:1200px;margin:0 auto 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+.browse-title{font-family:var(--fh);font-weight:700;font-size:1.1rem;}
+.search-wrap{display:flex;align-items:center;gap:10px;background:var(--navy2);border:1.5px solid var(--border2);border-radius:12px;padding:11px 18px;max-width:380px;width:100%;transition:border-color .18s,box-shadow .18s;}
+.search-wrap:focus-within{border-color:var(--yellow);box-shadow:0 0 0 3px rgba(245,197,24,.08);}
+.search-wrap input{flex:1;background:none;border:none;outline:none;color:var(--white);font-size:.9rem;}
+.search-wrap input::placeholder{color:var(--muted);}
+.s-ico{color:var(--muted);font-size:.95rem;flex-shrink:0;}
+.cat-row{display:flex;gap:7px;flex-wrap:wrap;max-width:1200px;margin:0 auto 24px;}
+.cpill{padding:7px 16px;border-radius:100px;border:1.5px solid var(--border2);background:var(--navy2);color:var(--muted);font-size:.78rem;font-weight:500;cursor:pointer;transition:all .18s;user-select:none;}
+.cpill:hover{border-color:rgba(245,197,24,.4);color:var(--yellow);}
+.cpill.on{background:var(--yellow);color:#0a1a2e;border-color:var(--yellow);font-weight:700;}
+.grid-meta{max-width:1200px;margin:0 auto 12px;display:flex;align-items:center;justify-content:space-between;}
+.grid-ct{font-size:.74rem;font-weight:700;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;}
+
+/* ── PROFILE GRID ── */
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:10px;max-width:1200px;margin:0 auto;}
+.pcard{background:var(--navy2);border:1.5px solid var(--border);border-radius:var(--r);padding:20px 16px 16px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;user-select:none;}
+.pcard::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--yellow),var(--green));opacity:0;transition:opacity .2s;}
+.pcard:hover{border-color:rgba(245,197,24,.25);transform:translateY(-3px);box-shadow:0 12px 32px rgba(0,0,0,.35);}
+.pcard:hover::before{opacity:1;}
+.pcard:active{transform:translateY(-1px);}
+.pcard-q{position:absolute;top:11px;right:11px;font-size:.65rem;color:var(--yellow);background:var(--ybg);padding:2px 8px;border-radius:100px;font-weight:700;border:1px solid var(--ybd);}
+.pcard-ico{font-size:1.6rem;margin-bottom:10px;display:block;line-height:1;}
+.pcard-name{font-family:var(--fh);font-weight:700;font-size:.85rem;line-height:1.3;margin-bottom:4px;color:var(--white);}
+.pcard-cat{font-size:.68rem;color:var(--muted);}
+.pcard-lock{position:absolute;bottom:10px;right:11px;font-size:.82rem;opacity:.45;}
+.pcard-new{position:absolute;bottom:10px;left:11px;font-size:.62rem;background:var(--gbg);color:var(--green);padding:1px 6px;border-radius:4px;font-weight:700;border:1px solid var(--gbd);}
+
+/* ── SKELETON ── */
+.skeleton{background:linear-gradient(90deg,var(--navy3) 25%,var(--navy4) 50%,var(--navy3) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:6px;}
 @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
-.skel-card{background:var(--c-navy2);border:1.5px solid var(--c-border);border-radius:var(--r);padding:19px 16px;}
-.skel-ico{width:36px;height:36px;margin-bottom:9px;}.skel-name{width:80%;height:13px;margin-bottom:6px;}.skel-cat{width:50%;height:10px;}
-#topbar{position:fixed;top:0;left:0;height:3px;background:var(--c-yellow);width:0%;z-index:9999;transition:width .3s ease;}
-.search-wrap{display:flex;align-items:center;gap:10px;background:var(--c-navy2);border:1.5px solid var(--c-border2);border-radius:13px;padding:12px 18px;max-width:570px;margin:0 auto 24px;}
-.search-wrap:focus-within{border-color:var(--c-yellow);}
-.search-wrap input{flex:1;background:none;border:none;outline:none;color:var(--c-white);font-size:.94rem;}
-.search-wrap input::placeholder{color:var(--c-muted);}
-.s-ico{color:var(--c-muted);font-size:1rem;flex-shrink:0;}
-.cat-row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:28px;}
-.cpill{padding:6px 16px;border-radius:100px;border:1.5px solid var(--c-border2);background:var(--c-navy2);color:var(--c-muted);font-size:.77rem;font-weight:500;cursor:pointer;transition:all .18s;}
-.cpill:hover,.cpill.on{background:var(--c-yellow);color:#0b1d35;border-color:var(--c-yellow);font-weight:700;}
-.grid-hd{max-width:1200px;margin:0 auto 12px;}.grid-ct{font-size:.77rem;font-weight:600;color:var(--c-muted);letter-spacing:.06em;text-transform:uppercase;}
-.user-chip{display:flex;align-items:center;gap:8px;padding:6px 14px;background:var(--c-navy3);border:1px solid var(--c-border2);border-radius:100px;font-size:.79rem;}
-.u-dot{width:7px;height:7px;border-radius:50%;background:var(--c-green);}
-.plan-tag{font-size:.64rem;font-weight:700;background:var(--c-ybg);color:var(--c-yellow);padding:2px 8px;border-radius:100px;border:1px solid var(--c-ybd);}
-@media(max-width:768px){#nav{padding:0 20px;}.hero,.browse{padding-left:20px;padding-right:20px;}}</style>
-<link rel="preload" href="/full.css?v=2025c" as="style" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="/full.css?v=2025c"></noscript>
+.skel-card{background:var(--navy2);border:1.5px solid var(--border);border-radius:var(--r);padding:20px 16px;}
+.skel-ico{width:34px;height:34px;margin-bottom:10px;}
+.skel-name{width:75%;height:12px;margin-bottom:7px;}
+.skel-cat{width:45%;height:10px;}
+
+/* ── AUTH PAGE ── */
+#page-auth{min-height:calc(100vh - var(--nav-h));align-items:center;justify-content:center;padding:40px 20px;background:radial-gradient(ellipse 60% 70% at 75% 50%,rgba(245,197,24,.05),transparent 55%),radial-gradient(ellipse 45% 55% at 20% 80%,rgba(26,185,84,.04),transparent 50%);}
+.auth-box{background:var(--navy2);border:1.5px solid var(--border2);border-radius:20px;padding:44px;width:100%;max-width:420px;box-shadow:var(--sh);position:relative;}
+.auth-theme{position:absolute;top:16px;right:16px;}
+.auth-logo{font-family:var(--fh);font-weight:800;font-size:1.2rem;margin-bottom:20px;color:var(--yellow);}
+.auth-h2{font-family:var(--fh);font-weight:800;font-size:1.65rem;margin-bottom:5px;letter-spacing:-.03em;}
+.auth-sub{color:var(--muted);font-size:.84rem;margin-bottom:26px;}
+.field{margin-bottom:14px;}
+.field label{display:block;font-size:.7rem;font-weight:700;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-bottom:5px;}
+.field input{width:100%;background:var(--navy3);border:1.5px solid var(--border);border-radius:9px;padding:12px 15px;color:var(--white);font-size:.9rem;outline:none;transition:border-color .18s,box-shadow .18s;}
+.field input:focus{border-color:var(--yellow);box-shadow:0 0 0 3px rgba(245,197,24,.08);}
+.err-msg{color:var(--red);font-size:.78rem;margin-top:6px;display:none;}
+.free-note{background:var(--gbg);border:1px solid var(--gbd);border-radius:10px;padding:12px 14px;margin-top:16px;font-size:.78rem;color:var(--muted);display:flex;gap:10px;align-items:flex-start;}
+.free-tick{color:var(--green);font-size:.92rem;flex-shrink:0;margin-top:1px;}
+.auth-sw{text-align:center;margin-top:16px;font-size:.8rem;color:var(--muted);}
+.auth-sw span{color:var(--yellow);cursor:pointer;font-weight:600;}
+.auth-sw span:hover{text-decoration:underline;}
+.auth-divider{display:flex;align-items:center;gap:10px;margin:16px 0;color:var(--muted);font-size:.75rem;}
+.auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--border2);}
+
+/* ── Q&A PAGE ── */
+#page-qa.active{min-height:calc(100vh - var(--nav-h));}
+.qa-side{width:252px;flex-shrink:0;border-right:1px solid var(--border);padding:18px 0;overflow-y:auto;max-height:calc(100vh - var(--nav-h));position:sticky;top:var(--nav-h);background:var(--navy);transition:background .25s;}
+.side-hd{font-size:.64rem;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;padding:0 16px 8px;}
+.side-item{padding:8px 16px;font-size:.82rem;color:var(--muted);cursor:pointer;border-left:2px solid transparent;transition:all .14s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.side-item:hover{background:var(--navy2);color:var(--white);}
+.side-item.on{color:var(--yellow);border-left-color:var(--yellow);background:rgba(245,197,24,.06);font-weight:600;}
+.side-sep{height:1px;background:var(--border);margin:8px 16px;}
+.qa-main{flex:1;padding:32px 44px;overflow-y:auto;max-width:860px;}
+.qa-back{margin-bottom:20px;}
+.qa-pname{font-family:var(--fh);font-weight:800;font-size:1.55rem;margin-bottom:5px;letter-spacing:-.025em;}
+.qa-pmeta{color:var(--muted);font-size:.82rem;margin-bottom:22px;}
+.cat-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:24px;}
+.ctab{padding:7px 15px;border-radius:8px;border:1.5px solid var(--border2);background:var(--navy2);color:var(--muted);font-size:.78rem;font-weight:500;cursor:pointer;transition:all .18s;}
+.ctab:hover{border-color:var(--yellow);color:var(--yellow);}
+.ctab.on{background:var(--yellow);color:#0a1a2e;border-color:var(--yellow);font-weight:700;}
+
+/* ── Q CARDS ── */
+.qcard{background:var(--navy2);border:1.5px solid var(--border);border-radius:var(--r);margin-bottom:10px;overflow:hidden;transition:border-color .18s;}
+.qcard:hover{border-color:var(--border2);}
+.qcard-hd{padding:16px 20px;display:flex;align-items:center;gap:12px;cursor:pointer;user-select:none;}
+.qcard-num{font-size:.67rem;font-weight:700;color:var(--muted);min-width:22px;}
+.qcard-q{flex:1;font-size:.89rem;font-weight:500;line-height:1.5;}
+.qcard-tag{font-size:.67rem;color:var(--yellow);background:var(--ybg);padding:3px 9px;border-radius:100px;white-space:nowrap;flex-shrink:0;font-weight:600;border:1px solid var(--ybd);}
+.qcard-chev{color:var(--muted);font-size:.75rem;transition:transform .2s;flex-shrink:0;}
+.qcard.open .qcard-chev{transform:rotate(180deg);}
+.qcard-bd{display:none;padding:0 20px 20px;border-top:1px solid var(--border);}
+.qcard.open .qcard-bd{display:block;}
+.ans-lbl{font-size:.64rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:14px 0 7px;}
+.ans-box{border-radius:9px;padding:13px 15px;font-size:.83rem;line-height:1.7;margin-bottom:7px;}
+.ans-n{background:var(--navy3);border:1px solid var(--border);}
+.ans-g{background:var(--gbg);border:1px solid var(--gbd);color:#96e8b8;}
+.ans-r{background:var(--rbg);border:1px solid var(--rbd);color:#f5a3b2;}
+body.light .ans-g{color:#0d5c2a;}
+body.light .ans-r{color:#7c1224;}
+.ans-flag{display:inline-flex;align-items:center;gap:4px;font-size:.68rem;font-weight:700;padding:2px 8px;border-radius:4px;margin-bottom:6px;}
+.fg{background:rgba(26,185,84,.15);color:var(--green);}
+.fr{background:rgba(232,53,80,.15);color:var(--red);}
+
+/* ── PAYWALL ── */
+.paywall{background:linear-gradient(135deg,rgba(245,197,24,.08),rgba(26,185,84,.04));border:1px solid rgba(245,197,24,.22);border-radius:14px;padding:22px 24px;margin-top:28px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+.paywall h3{font-family:var(--fh);font-weight:700;font-size:.93rem;margin-bottom:4px;}
+.paywall p{font-size:.77rem;color:var(--muted);}
+.pw-price{font-family:var(--fh);font-weight:800;font-size:1.4rem;color:var(--yellow);white-space:nowrap;}
+.pw-price small{font-size:.72rem;font-weight:400;color:var(--muted);}
+
+/* ── MODAL ── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);z-index:500;display:none;align-items:center;justify-content:center;padding:20px;}
+.overlay.open{display:flex;}
+.modal{background:var(--navy2);border:1.5px solid var(--border2);border-radius:20px;padding:40px;max-width:500px;width:100%;box-shadow:var(--sh);position:relative;animation:modalIn .22s ease;}
+@keyframes modalIn{from{opacity:0;transform:translateY(16px) scale(.97)}to{opacity:1;transform:none}}
+.modal h2{font-family:var(--fh);font-weight:800;font-size:1.45rem;margin-bottom:5px;letter-spacing:-.025em;}
+.modal-sub{color:var(--muted);font-size:.82rem;margin-bottom:24px;}
+.modal-x{position:absolute;top:16px;right:16px;}
+.plan-box{background:var(--navy3);border:1.5px solid var(--border);border-radius:12px;padding:20px;margin-bottom:10px;transition:border-color .18s,transform .18s;}
+.plan-box:hover{border-color:var(--yellow);transform:translateY(-1px);}
+.plan-box h3{font-family:var(--fh);font-weight:700;font-size:.96rem;margin-bottom:4px;}
+.plan-price{font-family:var(--fh);font-size:1.5rem;font-weight:800;color:var(--yellow);}
+.plan-price small{font-size:.75rem;font-weight:400;color:var(--muted);}
+.plan-f{display:flex;align-items:center;gap:7px;font-size:.78rem;color:var(--white2);margin-top:6px;}
+.plan-f::before{content:'\2713';color:var(--green);}
+
+/* ── ADMIN ── */
+#page-admin{min-height:calc(100vh - var(--nav-h));padding:36px 48px;}
+.admin-wrap{max-width:1060px;margin:0 auto;}
+.admin-h2{font-family:var(--fh);font-weight:800;font-size:1.45rem;margin-bottom:4px;letter-spacing:-.025em;}
+.admin-sub{color:var(--muted);font-size:.82rem;margin-bottom:26px;}
+.stat-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:11px;margin-bottom:26px;}
+.stat-card{background:var(--navy2);border:1.5px solid var(--border2);border-radius:var(--r);padding:18px 20px;transition:border-color .18s;}
+.stat-card:hover{border-color:var(--yellow);}
+.stat-card .sv{font-family:var(--fh);font-size:2rem;font-weight:800;color:var(--yellow);line-height:1;}
+.stat-card .sl{font-size:.72rem;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.06em;font-weight:600;}
+.admin-tbl{width:100%;border-collapse:collapse;font-size:.82rem;margin-bottom:26px;}
+.admin-tbl th{text-align:left;padding:10px 14px;color:var(--muted);font-size:.67rem;letter-spacing:.08em;text-transform:uppercase;border-bottom:1px solid var(--border2);font-weight:700;}
+.admin-tbl td{padding:11px 14px;border-bottom:1px solid var(--border);vertical-align:middle;}
+.admin-tbl tr:hover td{background:rgba(245,197,24,.02);}
+.plan-pill{display:inline-block;font-size:.65rem;font-weight:700;padding:2px 9px;border-radius:100px;letter-spacing:.04em;}
+.pp-free{background:var(--ybg);color:var(--yellow);border:1px solid var(--ybd);}
+.pp-pro{background:var(--gbg);color:var(--green);border:1px solid var(--gbd);}
+.pp-admin{background:rgba(255,200,0,.12);color:#ffcc00;border:1px solid rgba(255,200,0,.3);}
+.req-section{background:var(--navy2);border:1.5px solid var(--border2);border-radius:var(--r);padding:20px 24px;margin-top:22px;}
+.req-section h3{font-family:var(--fh);font-weight:700;font-size:.93rem;margin-bottom:14px;}
+
+/* ── REQUEST KIT ── */
+#page-reqjd{min-height:calc(100vh - var(--nav-h));padding:40px 48px;}
+.reqjd-wrap{max-width:620px;margin:0 auto;}
+.reqjd-wrap h2{font-family:var(--fh);font-weight:800;font-size:1.45rem;margin-bottom:5px;letter-spacing:-.025em;}
+.reqjd-sub{color:var(--muted);font-size:.84rem;margin-bottom:24px;line-height:1.65;}
+.upload-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;}
+.file-btn{position:relative;display:inline-flex;align-items:center;gap:8px;padding:11px 18px;background:var(--navy2);border:1.5px dashed var(--border2);border-radius:10px;cursor:pointer;font-size:.83rem;color:var(--muted);transition:all .18s;flex:1;min-width:170px;}
+.file-btn:hover{border-color:var(--yellow);color:var(--yellow);}
+.file-btn input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;}
+.req-field{margin-bottom:14px;}
+.req-field label{display:block;font-size:.7rem;font-weight:700;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-bottom:5px;}
+.req-field input,.req-field textarea{width:100%;background:var(--navy2);border:1.5px solid var(--border);border-radius:9px;padding:11px 14px;color:var(--white);font-size:.88rem;outline:none;transition:border-color .18s;}
+.req-field input:focus,.req-field textarea:focus{border-color:var(--yellow);}
+.req-field textarea{min-height:88px;resize:vertical;}
+.req-success{background:var(--gbg);border:1px solid var(--gbd);border-radius:12px;padding:24px;text-align:center;display:none;}
+.req-success h3{font-family:var(--fh);font-weight:700;font-size:1.05rem;color:var(--green);margin-bottom:6px;}
+.req-success p{font-size:.82rem;color:var(--muted);}
+
+/* ── PRIVACY ── */
+#page-privacy{min-height:calc(100vh - var(--nav-h));padding:40px 48px;}
+.priv-wrap{max-width:700px;margin:0 auto;}
+.priv-wrap h2{font-family:var(--fh);font-weight:800;font-size:1.45rem;margin-bottom:6px;}
+.priv-wrap h3{font-family:var(--fh);font-weight:700;font-size:.97rem;margin:20px 0 6px;color:var(--yellow);}
+.priv-wrap p{font-size:.87rem;color:var(--muted);line-height:1.75;margin-bottom:10px;}
+.priv-wrap ul{font-size:.87rem;color:var(--muted);line-height:1.75;padding-left:18px;margin-bottom:10px;}
+
+/* ── FEEDBACK ── */
+#feedback-btn{position:fixed;bottom:22px;right:22px;z-index:400;background:var(--yellow);color:#0a1a2e;border:none;border-radius:100px;padding:10px 18px;font-size:.8rem;font-weight:700;cursor:pointer;box-shadow:0 4px 18px rgba(245,197,24,.4);font-family:var(--fb);transition:transform .18s,box-shadow .18s;}
+#feedback-btn:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(245,197,24,.5);}
+#feedback-modal{position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(4px);z-index:600;display:none;align-items:flex-end;justify-content:center;padding:20px;}
+#feedback-modal.open{display:flex;}
+.fb-box{background:var(--navy2);border:1.5px solid var(--border2);border-radius:20px 20px 0 0;padding:28px;width:100%;max-width:480px;box-shadow:var(--sh);animation:slideUp .22s ease;}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:none}}
+.fb-box h3{font-family:var(--fh);font-weight:700;font-size:1.05rem;margin-bottom:4px;}
+.fb-box p{font-size:.78rem;color:var(--muted);margin-bottom:16px;}
+.fb-stars{display:flex;gap:8px;margin-bottom:14px;}
+.fb-star{font-size:1.65rem;cursor:pointer;opacity:.3;transition:opacity .15s,transform .15s;}
+.fb-star.on,.fb-star:hover{opacity:1;transform:scale(1.15);}
+.fb-ta{width:100%;background:var(--navy3);border:1.5px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--white);font-size:.87rem;min-height:80px;resize:none;outline:none;font-family:var(--fb);transition:border-color .18s;}
+.fb-ta:focus{border-color:var(--yellow);}
+.fb-row{display:flex;gap:10px;margin-top:12px;}
+
+/* ── TOAST ── */
+#toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--navy3);border:1px solid var(--border2);border-radius:12px;padding:11px 22px;font-size:.84rem;font-weight:500;box-shadow:var(--sh);z-index:999;transition:transform .28s cubic-bezier(.34,1.56,.64,1),opacity .28s;opacity:0;white-space:nowrap;}
+#toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+
+/* ── FOOTER ── */
+footer{border-top:1px solid var(--border);padding:20px 48px;text-align:center;color:var(--muted);font-size:.75rem;line-height:1.8;}
+footer a{color:var(--muted);transition:color .18s;}
+footer a:hover{color:var(--yellow);}
+footer span[onclick]{cursor:pointer;transition:color .18s;}
+footer span[onclick]:hover{color:var(--yellow);}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  #nav{padding:0 20px;}
+  .hero,.browse,#page-admin,#page-reqjd,#page-privacy{padding-left:20px;padding-right:20px;}
+  footer{padding:16px 20px;}
+  .stats-bar{padding:0 20px;}
+  .stat-item{padding:14px 16px;min-width:120px;}
+  .stat-num{font-size:1.25rem;}
+  .qa-side{display:none;}
+  .qa-main{padding:20px;}
+}
+@media(max-width:480px){
+  .hero-h1{font-size:2rem;}
+  .hero-ctas{flex-direction:column;align-items:center;}
+  .auth-box{padding:28px 20px;}
+  .pgrid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));}
+  #feedback-btn{bottom:16px;right:16px;padding:9px 14px;font-size:.75rem;}
+}
+</style>
 </head>
 <body id="body">
-
-<!-- ══════ NAV ══════ -->
 <div id="topbar"></div>
 <div id="err-banner"></div>
 
-<!-- ══════ NAV ══════ -->
+<!-- NAV -->
 <nav id="nav">
   <div class="logo" onclick="goHome()">
     <span class="logo-hire">Hire</span><span class="logo-kit">Kit</span><span class="logo-tm">TM</span>
@@ -74,7 +330,7 @@ button{cursor:pointer;font-family:var(--fb);}input,textarea{font-family:var(--fb
   </div>
   <div class="nav-r hidden" id="nav-u">
     <button class="btn btn-ghost btn-sm hidden" id="nav-admin-btn" onclick="showAdminDash()">&#128101; Admin</button>
-    <button class="btn btn-ghost btn-sm" id="nav-reqjd-btn" onclick="showReqJD()">&#128196; Request Kit</button>
+    <button class="btn btn-ghost btn-sm" onclick="showReqJD()">&#128196; Request Kit</button>
     <button class="btn-icon" onclick="toggleTheme()" title="Toggle theme" id="tbtn2">&#9790;</button>
     <div class="user-chip">
       <div class="u-dot"></div>
@@ -85,36 +341,41 @@ button{cursor:pointer;font-family:var(--fb);}input,textarea{font-family:var(--fb
   </div>
 </nav>
 
-<!-- ══════ HOME ══════ -->
+<!-- HOME -->
 <div class="page active" id="page-home">
   <div class="hero">
-    <div class="hero-badge">Interview Intelligence</div>
+    <div class="hero-badge"><span class="hero-badge-dot"></span>Interview Intelligence</div>
     <h1 class="hero-h1">Screen smarter.<br><em>Hire faster.</em></h1>
-    <p class="hero-p">Instant Q&amp;A kits for 28 job profiles. Strong answers highlighted in green, red flags in red &#8212; built for recruiters who move fast.</p>
+    <p class="hero-p">Structured Q&amp;A kits for 31 job profiles. Strong answers in green, red flags in red &#8212; built for recruiters who move fast.</p>
     <div class="hero-ctas">
       <button class="btn btn-y btn-lg" id="hero-cta-btn" onclick="openAuth('signup')">Start Free &#8212; 3 Profiles</button>
+      <button class="btn btn-ghost btn-lg" onclick="showPreview()">See a Sample &#8594;</button>
     </div>
-    <p class="hero-note" id="hero-note">Free plan: 3 profiles &middot; No credit card required</p>
+    <p class="hero-note" id="hero-note">Free plan &middot; 3 profiles &middot; No credit card required</p>
   </div>
 
-  <div class="trust-bar">
-  <div class="trust-item"><span>&#10003;</span><span>31 job profiles</span></div>
-  <div class="trust-item"><span>&#9733;</span><span>5 questions per profile</span></div>
-  <div class="trust-item"><span>&#128274;</span><span>Free plan — no credit card</span></div>
-  <div class="trust-item"><span>&#9993;</span><span>Built by Aaron Vaidya</span></div>
-  <div class="trust-item"><span>&#128241;</span><span>Mobile friendly</span></div>
-</div>
-<div class="browse">
-    <div class="sample-strip">
-  <div>
-    <h3>&#128161; See a sample Q&amp;A kit before signing up</h3>
-    <p>Click any profile below to preview the first question — no account needed.</p>
+  <div class="stats-bar">
+    <div class="stat-item">
+      <div><div class="stat-num">31</div><div class="stat-lbl">Job Profiles</div></div>
+    </div>
+    <div class="stat-item">
+      <div><div class="stat-num">5+</div><div class="stat-lbl">Questions Each</div></div>
+    </div>
+    <div class="stat-item">
+      <div><div class="stat-num">100%</div><div class="stat-lbl">Free to Start</div></div>
+    </div>
+    <div class="stat-item">
+      <div><div class="stat-num">2</div><div class="stat-lbl">Answer Types</div></div>
+    </div>
   </div>
-  <button class="btn btn-ghost btn-sm" onclick="openProfile('swe')">View Sample &#8594;</button>
-</div>
-<div class="search-wrap">
-      <span class="s-ico">&#128269;</span>
-      <input type="text" id="q-input" placeholder="Search profile e.g. Data Analyst, HR Executive&#8230;" oninput="renderGrid()">
+
+  <div class="browse">
+    <div class="browse-header">
+      <div class="browse-title">All Profiles</div>
+      <div class="search-wrap">
+        <span class="s-ico">&#128269;</span>
+        <input type="text" id="q-input" placeholder="Search profiles&#8230;" oninput="renderGrid()" autocomplete="off">
+      </div>
     </div>
     <div class="cat-row" id="cat-row">
       <div class="cpill on" data-c="All" onclick="setCat(this)">All Profiles</div>
@@ -125,33 +386,36 @@ button{cursor:pointer;font-family:var(--fb);}input,textarea{font-family:var(--fb
       <div class="cpill" data-c="Healthcare" onclick="setCat(this)">Healthcare</div>
       <div class="cpill" data-c="Other" onclick="setCat(this)">Other</div>
     </div>
-    <div class="grid-hd"><span class="grid-ct" id="grid-ct">28 profiles</span></div>
+    <div class="grid-meta">
+      <span class="grid-ct" id="grid-ct">Loading profiles&#8230;</span>
+    </div>
     <div class="pgrid" id="pgrid"></div>
   </div>
 </div>
 
-<!-- ══════ AUTH ══════ -->
+<!-- AUTH -->
 <div class="page" id="page-auth">
   <div class="auth-box">
     <button class="btn-icon auth-theme" onclick="toggleTheme()" title="Toggle theme" id="tbtn3">&#9790;</button>
+    <div class="auth-logo">HireKit&#8482;</div>
     <div id="form-su">
       <h2 class="auth-h2">Create account</h2>
       <p class="auth-sub">Start screening smarter &#8212; 3 free profiles, no card needed</p>
-      <div class="field"><label>Full Name</label><input type="text" id="su-n" placeholder="Aaron Vaidya" autocomplete="name"></div>
-      <div class="field"><label>Email Address</label><input type="email" id="su-e" placeholder="you@company.com" autocomplete="email"></div>
-      <div class="field"><label>Create Password</label><input type="password" id="su-p" placeholder="Min. 8 characters" autocomplete="new-password"></div>
+      <div class="field"><label>Full Name</label><input type="text" id="su-n" placeholder="Your name" autocomplete="name"></div>
+      <div class="field"><label>Work Email</label><input type="email" id="su-e" placeholder="you@company.com" autocomplete="email"></div>
+      <div class="field"><label>Password</label><input type="password" id="su-p" placeholder="Min. 8 characters" autocomplete="new-password"></div>
       <div class="err-msg" id="su-err"></div>
       <button class="btn btn-y btn-full btn-lg mt16" onclick="doSignup()">Create Free Account &#8594;</button>
-      <div class="free-note">
+      <div class="free-note mt12">
         <span class="free-tick">&#10003;</span>
-        <div>Free plan: <strong>3 profile Q&amp;A kits</strong>. Upgrade to Pro at &#8377;1,700/month. Agencies &#8212; <a href="mailto:contact@aaronvaidya.com" style="color:var(--c-yellow)">contact for quote</a>.</div>
+        <div>Free plan: <strong>3 profile Q&amp;A kits</strong>. Upgrade to Pro at &#8377;1,700/month.</div>
       </div>
       <div class="auth-sw">Already have an account? <span onclick="showLogin()">Sign in &#8594;</span></div>
     </div>
     <div id="form-li" class="hidden">
       <h2 class="auth-h2">Welcome back</h2>
       <p class="auth-sub">Sign in to your HireKit account</p>
-      <div class="field"><label>Email Address</label><input type="email" id="li-e" placeholder="you@company.com" autocomplete="email"></div>
+      <div class="field"><label>Email</label><input type="email" id="li-e" placeholder="you@company.com" autocomplete="email"></div>
       <div class="field"><label>Password</label><input type="password" id="li-p" placeholder="Your password" autocomplete="current-password"></div>
       <div class="err-msg" id="li-err"></div>
       <button class="btn btn-y btn-full btn-lg mt16" onclick="doLogin()">Sign In &#8594;</button>
@@ -160,13 +424,14 @@ button{cursor:pointer;font-family:var(--fb);}input,textarea{font-family:var(--fb
   </div>
 </div>
 
-<!-- ══════ Q&A ══════ -->
+<!-- Q&A -->
 <div class="page" id="page-qa">
   <div class="qa-side">
-    <div class="side-lbl">Job Profiles</div>
+    <div class="side-hd">Job Profiles</div>
     <div id="side-list"></div>
   </div>
   <div class="qa-main">
+    <div class="qa-back"><button class="btn btn-ghost btn-sm" onclick="goHome()">&#8592; All Profiles</button></div>
     <div class="qa-pname" id="qa-pname">Select a profile</div>
     <div class="qa-pmeta" id="qa-pmeta"></div>
     <div class="cat-tabs" id="cat-tabs"></div>
@@ -174,7 +439,7 @@ button{cursor:pointer;font-family:var(--fb);}input,textarea{font-family:var(--fb
     <div class="paywall hidden" id="paywall">
       <div>
         <h3>&#128274; You&#8217;ve used <span id="used-ct">1</span> of 3 free profiles</h3>
-        <p>Upgrade to Pro for unlimited profiles, custom JD uploads &amp; priority support.</p>
+        <p>Upgrade to Pro for unlimited profiles &amp; priority support.</p>
       </div>
       <div style="text-align:right">
         <div class="pw-price">&#8377;1,700 <small>/month</small></div>
@@ -184,125 +449,100 @@ button{cursor:pointer;font-family:var(--fb);}input,textarea{font-family:var(--fb
   </div>
 </div>
 
-
-<!-- ══════ ADMIN DASHBOARD ══════ -->
+<!-- ADMIN -->
 <div class="page" id="page-admin">
   <div class="admin-wrap">
     <button class="btn btn-ghost btn-sm" onclick="goHome()" style="margin-bottom:20px">&#8592; Back</button>
     <h2 class="admin-h2">&#128101; Admin Dashboard</h2>
-    <p class="admin-sub">Account overview and activity for HireKit&#8482;</p>
-
+    <p class="admin-sub">HireKit&#8482; account overview and activity</p>
     <div class="stat-row" id="admin-stats"></div>
-
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:10px;">
-      <div style="font-family:var(--fh);font-weight:700;font-size:.92rem;">All Registered Accounts</div>
-      <input type="text" id="admin-search" placeholder="Search by name or email&#8230;"
-        oninput="renderAdminTable()"
-        style="background:var(--c-navy2);border:1.5px solid var(--c-border2);border-radius:8px;padding:8px 14px;color:var(--c-white);font-size:.82rem;outline:none;width:240px;">
+      <div style="font-family:var(--fh);font-weight:700;font-size:.9rem;">Registered Accounts</div>
+      <input type="text" id="admin-search" placeholder="Search name or email&#8230;" oninput="renderAdminTable()" style="background:var(--navy2);border:1.5px solid var(--border2);border-radius:8px;padding:8px 14px;color:var(--white);font-size:.82rem;outline:none;width:230px;font-family:var(--fb);transition:border-color .18s;" onfocus="this.style.borderColor='var(--yellow)'" onblur="this.style.borderColor='var(--border2)'">
     </div>
     <div style="overflow-x:auto;">
       <table class="admin-tbl">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Plan</th>
-            <th>Profiles Used</th>
-            <th>Joined</th>
-          </tr>
-        </thead>
+        <thead><tr><th>#</th><th>Name</th><th>Email</th><th>Plan</th><th>Profiles Used</th><th>Joined</th></tr></thead>
         <tbody id="admin-tbody"></tbody>
       </table>
     </div>
-
     <div class="req-section">
       <h3>&#128196; JD Kit Requests</h3>
-      <div id="admin-requests">
-        <p style="color:var(--c-muted);font-size:.82rem;">No requests yet.</p>
-      </div>
+      <div id="admin-requests"><p style="color:var(--muted);font-size:.82rem;">No requests yet.</p></div>
+    </div>
+    <div class="req-section" style="margin-top:12px;">
+      <h3>&#128172; Feedback Received</h3>
+      <div id="admin-feedbacks"><p style="color:var(--muted);font-size:.82rem;">No feedback yet.</p></div>
     </div>
   </div>
 </div>
 
-<!-- ══════ REQUEST A KIT ══════ -->
+<!-- REQUEST KIT -->
 <div class="page" id="page-reqjd">
   <div class="reqjd-wrap">
     <button class="btn btn-ghost btn-sm" onclick="goHome()" style="margin-bottom:20px">&#8592; Back</button>
     <h2>&#128196; Request a Screening Kit</h2>
-    <p class="reqjd-sub">Don&#8217;t see the profile you need? Upload your JD and keywords. Aaron will build a custom screening kit and add it to HireKit within 2 business days.</p>
-
+    <p class="reqjd-sub">Don&#8217;t see the profile you need? Send your JD and we&#8217;ll build a custom screening kit and add it to HireKit within 2 business days.</p>
     <div id="req-form">
+      <div class="req-field"><label>Job Title *</label><input type="text" id="req-title" placeholder="e.g. Salesforce Admin, Embedded Systems Engineer"></div>
       <div class="req-field">
-        <label>Job Title *</label>
-        <input type="text" id="req-title" placeholder="e.g. Salesforce Admin, Embedded Systems Engineer">
-      </div>
-
-      <div class="req-field">
-        <label>Upload JD File <span style="color:var(--c-muted);font-weight:400">(PDF, DOCX, TXT)</span></label>
+        <label>Upload JD File <span style="color:var(--muted);font-weight:400;text-transform:none">(PDF, DOCX, TXT)</span></label>
         <div class="upload-row">
-          <label class="file-btn">
-            <input type="file" id="req-jd-file" accept=".pdf,.docx,.txt,.doc">
-            <span>&#128206;</span> <span id="req-jd-label">Choose JD file&#8230;</span>
-          </label>
-          <label class="file-btn">
-            <input type="file" id="req-kw-file" accept=".pdf,.docx,.txt,.doc,.csv,.xlsx,.xls">
-            <span>&#128221;</span> <span id="req-kw-label">Choose keywords file&#8230;</span>
-          </label>
+          <label class="file-btn"><input type="file" id="req-jd-file" accept=".pdf,.docx,.txt,.doc"><span>&#128206;</span><span id="req-jd-label">Choose JD file&#8230;</span></label>
+          <label class="file-btn"><input type="file" id="req-kw-file" accept=".pdf,.docx,.txt,.doc,.csv,.xlsx"><span>&#128221;</span><span id="req-kw-label">Keywords file&#8230;</span></label>
         </div>
       </div>
-
-      <div class="req-field">
-        <label>Or paste keywords / key requirements</label>
-        <textarea id="req-kw-text" placeholder="e.g. Python, 5+ years, fintech, client-facing, Agile, team lead&#8230;"></textarea>
-      </div>
-
-      <div class="req-field">
-        <label>Your Name</label>
-        <input type="text" id="req-name" placeholder="Auto-filled from your account">
-      </div>
-
-      <div class="req-field">
-        <label>Your Email</label>
-        <input type="email" id="req-email" placeholder="Auto-filled from your account">
-      </div>
-
-      <div class="req-field">
-        <label>Additional Notes <span style="color:var(--c-muted);font-weight:400">(optional)</span></label>
-        <textarea id="req-notes" placeholder="Any specific focus areas, seniority level, must-haves&#8230;" style="min-height:70px"></textarea>
-      </div>
-
-      <div id="req-err" style="color:var(--c-red);font-size:.8rem;margin-bottom:10px;display:none"></div>
-      <button class="btn btn-y btn-lg" onclick="submitReqJD()">&#9993; Send Request to HireKit</button>
-      <p style="font-size:.73rem;color:var(--c-muted);margin-top:10px;">Requests are sent to <strong>hello@hirekit.online</strong> and handled personally by Aaron Vaidya. You will hear back within 2 business days.</p>
+      <div class="req-field"><label>Or paste keywords / requirements</label><textarea id="req-kw-text" placeholder="e.g. Python, 5+ years, fintech, Agile, client-facing&#8230;"></textarea></div>
+      <div class="req-field"><label>Your Name</label><input type="text" id="req-name"></div>
+      <div class="req-field"><label>Your Email</label><input type="email" id="req-email"></div>
+      <div class="req-field"><label>Additional Notes <span style="color:var(--muted);font-weight:400;text-transform:none">(optional)</span></label><textarea id="req-notes" placeholder="Seniority level, focus areas, must-haves&#8230;" style="min-height:68px"></textarea></div>
+      <div id="req-err" style="color:var(--red);font-size:.8rem;margin-bottom:10px;display:none;"></div>
+      <button class="btn btn-y btn-lg" onclick="submitReqJD()">&#9993; Send Request</button>
+      <p style="font-size:.73rem;color:var(--muted);margin-top:10px;">Handled personally by Aaron Vaidya &middot; Reply within 2 business days</p>
     </div>
-
     <div class="req-success" id="req-success">
       <h3>&#10003; Request Sent!</h3>
-      <p>Your request has been received. Aaron will review your JD and build a custom screening kit within 2 business days. You&#8217;ll get a confirmation at <strong id="req-success-email"></strong></p>
+      <p>Aaron will review your JD and build a custom screening kit. You&#8217;ll hear back at <strong id="req-success-email"></strong> within 2 business days.</p>
       <button class="btn btn-ghost btn-sm" onclick="goHome()" style="margin-top:14px">&#8592; Back to Profiles</button>
     </div>
   </div>
 </div>
 
-<!-- ══════ MODAL ══════ -->
+<!-- PRIVACY -->
+<div class="page" id="page-privacy">
+  <div class="priv-wrap">
+    <button class="btn btn-ghost btn-sm" onclick="goHome()" style="margin-bottom:20px">&#8592; Back</button>
+    <h2>Privacy Policy</h2>
+    <p style="font-size:.76rem;color:var(--muted)">Last updated: May 2026</p>
+    <p>HireKit&#8482; is operated by Aaron Vaidya. We take your privacy seriously.</p>
+    <h3>What We Collect</h3>
+    <ul><li>Name, email, password (stored in your browser only)</li><li>Which profiles you&#8217;ve opened (stored locally)</li><li>JD requests and feedback you submit voluntarily</li></ul>
+    <h3>How We Store It</h3>
+    <p>All account data is stored in your browser&#8217;s localStorage. It never leaves your device. Clearing browser data removes your account.</p>
+    <h3>What We Don&#8217;t Do</h3>
+    <ul><li>We do not sell your data</li><li>We do not use ad trackers or analytics cookies</li><li>We do not send unsolicited emails</li></ul>
+    <h3>Contact</h3>
+    <p>Email <a href="mailto:contact@aaronvaidya.com" style="color:var(--yellow)">contact@aaronvaidya.com</a> for any privacy questions.</p>
+  </div>
+</div>
+
+<!-- PRICING MODAL -->
 <div class="overlay" id="ov">
   <div class="modal">
     <button class="btn-icon modal-x" onclick="closePricing()">&#10005;</button>
     <h2>Upgrade HireKit</h2>
-    <p class="modal-sub">Choose the plan that works for you</p>
+    <p class="modal-sub">Unlock unlimited access for faster, smarter hiring</p>
     <div class="plan-box">
       <h3>Pro Individual</h3>
       <div class="plan-price">&#8377;1,700 <small>/month</small></div>
       <div class="plan-f">Unlimited profile Q&amp;A kits</div>
-      <div class="plan-f">Custom JD upload (unlimited)</div>
-      <div class="plan-f">Download Q&amp;A as PDF</div>
+      <div class="plan-f">Custom JD kit requests</div>
       <div class="plan-f">Priority support</div>
       <button class="btn btn-y btn-full mt12" onclick="doUpgrade()">Get Pro &#8594;</button>
     </div>
     <div class="plan-box">
       <h3>Agency / Team</h3>
-      <div class="plan-price" style="font-size:1.1rem;color:var(--c-white)">Custom Pricing</div>
+      <div class="plan-price" style="font-size:1.1rem;color:var(--white)">Custom Pricing</div>
       <div class="plan-f">Multiple seats</div>
       <div class="plan-f">Dedicated account manager</div>
       <div class="plan-f">Invoice billing</div>
@@ -312,83 +552,83 @@ button{cursor:pointer;font-family:var(--fb);}input,textarea{font-family:var(--fb
 </div>
 
 <div id="toast"></div>
+
 <footer>
   &#169; 2026 HireKit&#8482; &middot; Built by <a href="mailto:contact@aaronvaidya.com">Aaron Vaidya</a>
   &middot; <a href="mailto:contact@aaronvaidya.com">contact@aaronvaidya.com</a>
-  &middot; <span onclick="showPage('privacy')" style="cursor:pointer">Privacy Policy</span>
+  &middot; <span onclick="showPage('privacy')">Privacy Policy</span>
   &middot; <a href="mailto:contact@aaronvaidya.com?subject=HireKit Feedback">Send Feedback</a>
 </footer>
 
-<!-- ══════════════════════════════════════════
-  JAVASCRIPT
-  STRICT RULES:
-  1. ZERO backtick template literals
-  2. ZERO emojis in JS strings/variables
-  3. All string concatenation uses single-quoted strings
-  4. All functions use 'function' keyword (no arrow functions with bodies)
-  5. HTML entities only for special characters in strings
-══════════════════════════════════════════ -->
-<script>
+<button id="feedback-btn" onclick="openFeedback()">&#128172; Feedback</button>
+<div id="feedback-modal">
+  <div class="fb-box">
+    <h3>How are we doing?</h3>
+    <p>Your feedback helps improve HireKit for everyone.</p>
+    <div class="fb-stars" id="fb-stars">
+      <span class="fb-star" onclick="setRating(1)">&#9733;</span>
+      <span class="fb-star" onclick="setRating(2)">&#9733;</span>
+      <span class="fb-star" onclick="setRating(3)">&#9733;</span>
+      <span class="fb-star" onclick="setRating(4)">&#9733;</span>
+      <span class="fb-star" onclick="setRating(5)">&#9733;</span>
+    </div>
+    <textarea class="fb-ta" id="fb-text" placeholder="What do you love? What&#8217;s broken? What&#8217;s missing?"></textarea>
+    <div class="fb-row">
+      <button class="btn btn-y" onclick="submitFeedback()">Send</button>
+      <button class="btn btn-ghost" onclick="closeFeedback()">Cancel</button>
+    </div>
+  </div>
+</div>
 
-/* ── Self-heal: if old cached JS ran first and inflated PD, hard reload ── */
+<script>
+/* ═══ SELF-HEAL ═══ */
 if (typeof PD !== 'undefined' && PD.length > 35) {
-  sessionStorage.setItem('hk_reload', '1');
+  sessionStorage.setItem('hk_reload','1');
   window.location.reload(true);
 }
-if (sessionStorage.getItem('hk_reload')) {
-  sessionStorage.removeItem('hk_reload');
-}
+if (sessionStorage.getItem('hk_reload')) sessionStorage.removeItem('hk_reload');
 
-
-/* ═══════════════════════════
-   28 PROFILE DATA
-   icon: HTML entity string safe for innerHTML
-═══════════════════════════ */
+/* ═══ STATE ═══ */
 var PD = [];
-/* ── Profile data loaded async from /profiles.js ── */
+var currentUser = null;
+var currentProfile = null;
+var currentCatTab = 'All';
+var isDark = true;
+var usedProfiles = [];
+var activeCat = 'All';
+var fbRating = 0;
+
+/* ═══ PROFILE LOADER ═══ */
 window._pdCb = null;
 function _loadPD(cb) {
-  if (PD.length > 0) { if(cb) cb(); return; }
-  if (window._pdCb) { var prev = window._pdCb; window._pdCb = function(){ prev(); if(cb) cb(); }; return; }
-  window._pdCb = cb || function(){};
+  if (PD.length > 0) { if (cb) cb(); return; }
+  if (window._pdCb) {
+    var prev = window._pdCb;
+    window._pdCb = function() { prev(); if (cb) cb(); };
+    return;
+  }
+  window._pdCb = cb || function() {};
   var s = document.createElement('script');
-  s.src = '/profiles.js?v=2025c';
+  s.src = '/profiles.js?v=3.0';
+  s.onerror = function() {
+    showErr('Could not load profiles. Please refresh.');
+  };
   document.head.appendChild(s);
 }
 
-/* ═══════════════════════════
-   APP STATE
-═══════════════════════════ */
-var currentUser    = null;
-var currentProfile = null;
-var currentCatTab  = 'All';
-var isDark         = true;
-var usedProfiles   = [];
-var activeCat      = 'All';
-
-/* ═══════════════════════════
-   INIT
-═══════════════════════════ */
+/* ═══ INIT ═══ */
 window.onload = function() {
-  /* ── Force fresh if PD array corrupted (old cached JS) ── */
-  if (typeof PD !== 'undefined' && PD.length > 35) {
+  var APP_VER = 'v3.0';
+  if (localStorage.getItem('hk_ver') !== APP_VER) {
+    var th = localStorage.getItem('hk_theme');
+    var us = localStorage.getItem('hk_users');
+    var u  = localStorage.getItem('hk_user');
     localStorage.clear();
-    window.location.href = window.location.href.split('?')[0] + '?v=' + Date.now();
-    return;
+    if (th) localStorage.setItem('hk_theme', th);
+    if (us) localStorage.setItem('hk_users', us);
+    if (u)  localStorage.setItem('hk_user', u);
+    localStorage.setItem('hk_ver', APP_VER);
   }
-  /* ── Version cache-bust ── */
-  var APP_VERSION = 'v2.5';
-  if (localStorage.getItem('hk_version') !== APP_VERSION) {
-    var theme = localStorage.getItem('hk_theme');
-    var users = localStorage.getItem('hk_users');
-    var user  = localStorage.getItem('hk_user');
-    localStorage.clear();
-    if (theme) localStorage.setItem('hk_theme', theme);
-    if (users) localStorage.setItem('hk_users', users);
-    if (user)  localStorage.setItem('hk_user',  user);
-    localStorage.setItem('hk_version', APP_VERSION);
-  }
-
   var saved = localStorage.getItem('hk_user');
   if (saved) {
     try { currentUser = JSON.parse(saved); } catch(e) { currentUser = null; }
@@ -397,70 +637,91 @@ window.onload = function() {
       applyLoggedIn();
     }
   }
-  var savedTheme = localStorage.getItem('hk_theme');
-  if (savedTheme === 'light') {
-    isDark = false;
-    document.body.classList.add('light');
-    syncThemeIcons();
-  }
-  renderGrid();
+  var th = localStorage.getItem('hk_theme');
+  if (th === 'light') { isDark = false; document.body.classList.add('light'); syncThemeIcons(); }
+  showSkeletons();
+  _loadPD(function() { renderGrid(); buildSidebar(); });
 };
 
-/* ═══════════════════════════
-   THEME
-═══════════════════════════ */
+/* ═══ ERROR ═══ */
+window.onerror = function(msg, src, line) {
+  console.error('HK error:', msg, 'line:', line);
+  showErr('Something went wrong. Please refresh.');
+  return false;
+};
+function showErr(msg) {
+  var b = document.getElementById('err-banner');
+  if (!b) return;
+  b.textContent = msg;
+  b.style.display = 'block';
+  b.classList.add('show');
+  setTimeout(function() { b.classList.remove('show'); setTimeout(function(){ b.style.display='none'; }, 300); }, 6000);
+}
+
+/* ═══ LOADING BAR ═══ */
+function barStart() {
+  var b = document.getElementById('topbar');
+  if (!b) return;
+  b.style.opacity = '1'; b.style.width = '0%';
+  setTimeout(function() { b.style.width = '70%'; }, 10);
+}
+function barDone() {
+  var b = document.getElementById('topbar');
+  if (!b) return;
+  b.style.width = '100%';
+  setTimeout(function() { b.style.opacity = '0'; setTimeout(function(){ b.style.width='0%'; }, 350); }, 350);
+}
+
+/* ═══ THEME ═══ */
 function toggleTheme() {
   isDark = !isDark;
   document.body.classList.toggle('light', !isDark);
   localStorage.setItem('hk_theme', isDark ? 'dark' : 'light');
   syncThemeIcons();
 }
-
 function syncThemeIcons() {
   var icon = isDark ? '&#9790;' : '&#9728;&#65039;';
   var btns = document.querySelectorAll('.btn-icon');
-  var i;
-  for (i = 0; i < btns.length; i++) {
-    btns[i].innerHTML = icon;
-  }
+  for (var i = 0; i < btns.length; i++) btns[i].innerHTML = icon;
 }
 
-/* ═══════════════════════════
-   PAGES
-═══════════════════════════ */
+/* ═══ PAGES ═══ */
 function showPage(id) {
   var all = document.querySelectorAll('.page');
-  var i;
-  for (i = 0; i < all.length; i++) all[i].classList.remove('active');
+  for (var i = 0; i < all.length; i++) all[i].classList.remove('active');
   var pg = document.getElementById('page-' + id);
   if (pg) pg.classList.add('active');
+  window.scrollTo(0, 0);
 }
 
 function goHome() {
   activeCat = 'All';
   var pills = document.querySelectorAll('.cpill');
   for (var i = 0; i < pills.length; i++) {
-    var pillCat = pills[i].getAttribute('data-c');
-    pills[i].classList.toggle('on', pillCat === 'All');
+    pills[i].classList.toggle('on', pills[i].getAttribute('data-c') === 'All');
   }
   var qi = document.getElementById('q-input');
   if (qi) qi.value = '';
   showPage('home');
-  renderGrid();
+  if (PD.length > 0) renderGrid();
+  else { showSkeletons(); _loadPD(renderGrid); }
 }
 
-/* ═══════════════════════════
-   AUTH
-═══════════════════════════ */
+/* ═══ SKELETON ═══ */
+function showSkeletons() {
+  var grid = document.getElementById('pgrid');
+  if (!grid) return;
+  var h = '';
+  for (var i = 0; i < 12; i++) {
+    h += '<div class="skel-card"><div class="skeleton skel-ico"></div>' +
+         '<div class="skeleton skel-name"></div><div class="skeleton skel-cat"></div></div>';
+  }
+  grid.innerHTML = h;
+}
+
+/* ═══ AUTH ═══ */
 function openAuth(mode) {
-  if (currentUser && (currentUser.plan === 'admin' || currentUser.plan === 'pro')) {
-    goHome();
-    return;
-  }
-  if (currentUser) {
-    goHome();
-    return;
-  }
+  if (currentUser) { goHome(); return; }
   showPage('auth');
   if (mode === 'login') {
     document.getElementById('form-su').classList.add('hidden');
@@ -470,255 +731,198 @@ function openAuth(mode) {
     document.getElementById('form-li').classList.add('hidden');
   }
 }
-
 function showSignup() {
   document.getElementById('form-su').classList.remove('hidden');
   document.getElementById('form-li').classList.add('hidden');
 }
-
 function showLogin() {
   document.getElementById('form-li').classList.remove('hidden');
   document.getElementById('form-su').classList.add('hidden');
 }
-
 function doSignup() {
   var name  = document.getElementById('su-n').value.trim();
   var email = document.getElementById('su-e').value.trim();
   var pass  = document.getElementById('su-p').value;
   var errEl = document.getElementById('su-err');
   errEl.style.display = 'none';
-
-  if (!name || !email || !pass) {
-    errEl.textContent = 'Please fill in all fields.';
-    errEl.style.display = 'block';
-    return;
-  }
-  if (pass.length < 8) {
-    errEl.textContent = 'Password must be at least 8 characters.';
-    errEl.style.display = 'block';
-    return;
-  }
-  if (email.indexOf('@') < 1) {
-    errEl.textContent = 'Please enter a valid email address.';
-    errEl.style.display = 'block';
-    return;
-  }
-
+  if (!name || !email || !pass) { errEl.textContent = 'Please fill in all fields.'; errEl.style.display='block'; return; }
+  if (pass.length < 8) { errEl.textContent = 'Password must be at least 8 characters.'; errEl.style.display='block'; return; }
+  if (email.indexOf('@') < 1) { errEl.textContent = 'Please enter a valid email.'; errEl.style.display='block'; return; }
   var users = JSON.parse(localStorage.getItem('hk_users') || '[]');
-  var i, exists = false;
-  for (i = 0; i < users.length; i++) {
-    if (users[i].email === email) { exists = true; break; }
+  for (var i = 0; i < users.length; i++) {
+    if (users[i].email === email) { errEl.textContent = 'Account with this email already exists.'; errEl.style.display='block'; return; }
   }
-  if (exists) {
-    errEl.textContent = 'An account with this email already exists.';
-    errEl.style.display = 'block';
-    return;
-  }
-
-  var user = { name: name, email: email, pass: pass, plan: 'free', createdAt: Date.now() };
+  var user = { name:name, email:email, pass:pass, plan:'free', createdAt:Date.now() };
   users.push(user);
   localStorage.setItem('hk_users', JSON.stringify(users));
-  currentUser  = user;
-  usedProfiles = [];
   localStorage.setItem('hk_user', JSON.stringify(user));
   localStorage.setItem('hk_used', '[]');
+  currentUser = user;
+  usedProfiles = [];
   applyLoggedIn();
   goHome();
-  toast('Welcome to HireKit, ' + name.split(' ')[0] + '!');
+  toast('Welcome to HireKit, ' + name.split(' ')[0] + '! &#127881;');
 }
-
 function doLogin() {
   var email = document.getElementById('li-e').value.trim();
   var pass  = document.getElementById('li-p').value;
   var errEl = document.getElementById('li-err');
   errEl.style.display = 'none';
-
-  /* Admin */
   if (email === 'contact@aaronvaidya.com' && pass === 'Aaron@IQ2025') {
-    currentUser = { name: 'Aaron Vaidya', email: email, plan: 'admin' };
+    currentUser = { name:'Aaron Vaidya', email:email, plan:'admin' };
     localStorage.setItem('hk_user', JSON.stringify(currentUser));
-    applyLoggedIn(); goHome(); toast('Welcome back, Aaron!'); return;
+    applyLoggedIn(); goHome(); toast('Welcome back, Aaron! &#128101;'); return;
   }
-
-  /* Test guests */
   var guests = [
-    { name: 'Test Guest 1', email: 'guest1@hirekit.online', pass: 'Guest@123', plan: 'free' },
-    { name: 'Test Guest 2', email: 'guest2@hirekit.online', pass: 'Guest@123', plan: 'pro'  },
-    { name: 'Test Guest 3', email: 'guest3@hirekit.online', pass: 'Guest@123', plan: 'free' }
+    {name:'Test Guest 1',email:'guest1@hirekit.online',pass:'Guest@123',plan:'free'},
+    {name:'Test Guest 2',email:'guest2@hirekit.online',pass:'Guest@123',plan:'pro'},
+    {name:'Test Guest 3',email:'guest3@hirekit.online',pass:'Guest@123',plan:'free'}
   ];
-  var i, g = null;
-  for (i = 0; i < guests.length; i++) {
-    if (guests[i].email === email && guests[i].pass === pass) { g = guests[i]; break; }
+  for (var i = 0; i < guests.length; i++) {
+    if (guests[i].email === email && guests[i].pass === pass) {
+      currentUser = guests[i]; usedProfiles = [];
+      localStorage.setItem('hk_user', JSON.stringify(currentUser));
+      applyLoggedIn(); goHome(); toast('Welcome back, ' + guests[i].name + '!'); return;
+    }
   }
-  if (g) {
-    currentUser  = g;
-    usedProfiles = [];
-    localStorage.setItem('hk_user', JSON.stringify(g));
-    applyLoggedIn(); goHome(); toast('Welcome back, ' + g.name + '!'); return;
-  }
-
-  /* Regular users */
   var users = JSON.parse(localStorage.getItem('hk_users') || '[]');
-  var user = null;
-  for (i = 0; i < users.length; i++) {
-    if (users[i].email === email && users[i].pass === pass) { user = users[i]; break; }
+  for (var j = 0; j < users.length; j++) {
+    if (users[j].email === email && users[j].pass === pass) {
+      currentUser = users[j];
+      usedProfiles = JSON.parse(localStorage.getItem('hk_used') || '[]');
+      localStorage.setItem('hk_user', JSON.stringify(currentUser));
+      applyLoggedIn(); goHome(); toast('Welcome back, ' + currentUser.name.split(' ')[0] + '!'); return;
+    }
   }
-  if (!user) {
-    errEl.textContent = 'Invalid email or password.';
-    errEl.style.display = 'block';
-    return;
-  }
-
-  currentUser  = user;
-  usedProfiles = JSON.parse(localStorage.getItem('hk_used') || '[]');
-  localStorage.setItem('hk_user', JSON.stringify(user));
-  applyLoggedIn(); goHome(); toast('Welcome back, ' + user.name.split(' ')[0] + '!');
+  errEl.textContent = 'Invalid email or password.'; errEl.style.display = 'block';
 }
-
 function logout() {
-  currentUser  = null;
-  usedProfiles = [];
+  currentUser = null; usedProfiles = [];
   localStorage.removeItem('hk_user');
   document.getElementById('nav-g').classList.remove('hidden');
   document.getElementById('nav-u').classList.add('hidden');
-  goHome(); toast('Logged out successfully.');
+  goHome(); toast('Logged out.');
 }
-
 function applyLoggedIn() {
   document.getElementById('nav-g').classList.add('hidden');
   document.getElementById('nav-u').classList.remove('hidden');
   document.getElementById('nav-name').textContent = currentUser.name.split(' ')[0];
   var badge = document.getElementById('nav-plan');
-  if (currentUser.plan === 'pro') {
-    badge.textContent = 'PRO';
-    badge.style.background = 'rgba(26,185,84,.15)';
-    badge.style.color = 'var(--c-green)';
-  } else if (currentUser.plan === 'admin') {
-    badge.textContent = 'ADMIN';
-    badge.style.background = 'rgba(255,200,0,.15)';
-    badge.style.color = '#ffcc00';
-  } else {
-    badge.textContent = 'FREE';
-    badge.style.background = '';
-    badge.style.color = '';
-  }
-  var heroCtaBtn = document.getElementById('hero-cta-btn');
-  if (heroCtaBtn) heroCtaBtn.style.display = 'none';
-  var heroNote = document.getElementById('hero-note');
-  if (heroNote) {
-    if (currentUser.plan === 'free') {
-      heroNote.style.display = '';
-    } else {
-      heroNote.style.display = 'none';
-    }
-  }
+  if (currentUser.plan === 'pro')   { badge.textContent='PRO';   badge.style.background='rgba(26,185,84,.15)'; badge.style.color='var(--green)'; }
+  else if (currentUser.plan === 'admin') { badge.textContent='ADMIN'; badge.style.background='rgba(255,200,0,.15)'; badge.style.color='#ffcc00'; }
+  else { badge.textContent='FREE'; badge.style.background=''; badge.style.color=''; }
   var adminBtn = document.getElementById('nav-admin-btn');
   if (adminBtn) adminBtn.classList.toggle('hidden', currentUser.plan !== 'admin');
+  var heroBtn = document.getElementById('hero-cta-btn');
+  if (heroBtn) heroBtn.style.display = 'none';
+  var heroNote = document.getElementById('hero-note');
+  if (heroNote) heroNote.style.display = currentUser.plan === 'free' ? '' : 'none';
   buildSidebar();
 }
 
-/* ═══════════════════════════
-   PROFILES GRID
-═══════════════════════════ */
+/* ═══ GRID ═══ */
 function renderGrid() {
   if (PD.length === 0) { showSkeletons(); _loadPD(renderGrid); return; }
-  var q    = (document.getElementById('q-input') || { value: '' }).value.toLowerCase().trim();
+  var q    = (document.getElementById('q-input') || {value:''}).value.toLowerCase().trim();
   var grid = document.getElementById('pgrid');
   if (!grid) return;
-  if (!q && activeCat === 'All') showSkeletons();
-
   var filtered = [];
-  var i, p;
-  for (i = 0; i < PD.length; i++) {
-    p = PD[i];
-    var catOk  = (!activeCat || activeCat === 'All' || p.cat === activeCat);
-    var termOk = (!q || p.name.toLowerCase().indexOf(q) >= 0 || p.cat.toLowerCase().indexOf(q) >= 0);
+  for (var i = 0; i < PD.length; i++) {
+    var p = PD[i];
+    var catOk  = !activeCat || activeCat === 'All' || p.cat === activeCat;
+    var termOk = !q || p.name.toLowerCase().indexOf(q) >= 0 || p.cat.toLowerCase().indexOf(q) >= 0;
     if (catOk && termOk) filtered.push(p);
   }
-
   var ctEl = document.getElementById('grid-ct');
-  if (ctEl) ctEl.textContent = filtered.length + ' profiles';
-
-  var html = '';
-  var locked;
-  for (i = 0; i < filtered.length; i++) {
-    p = filtered[i];
+  if (ctEl) ctEl.textContent = filtered.length + ' profile' + (filtered.length !== 1 ? 's' : '');
+  if (filtered.length === 0) {
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:48px 0;color:var(--muted)">No profiles match your search.</div>';
+    return;
+  }
+  var h = '', locked;
+  for (var j = 0; j < filtered.length; j++) {
+    var p = filtered[j];
     locked = currentUser && currentUser.plan === 'free' &&
              usedProfiles.length >= 3 && usedProfiles.indexOf(p.id) < 0;
-
-    html += '<div class="pcard" onclick="openProfile(\'' + p.id + '\')">';
-    html +=   '<div class="pcard-q">' + p.qs.length + ' Qs</div>';
-    html +=   '<span class="pcard-ico">' + p.ico + '</span>';
-    html +=   '<div class="pcard-name">' + p.name + '</div>';
-    html +=   '<div class="pcard-cat">' + p.cat + '</div>';
-    if (locked) html += '<div class="pcard-lock">&#128274;</div>';
-    html += '</div>';
+    h += '<div class="pcard" onclick="openProfile(\'' + p.id + '\')">';
+    h +=   '<div class="pcard-q">' + p.qs.length + ' Qs</div>';
+    h +=   '<span class="pcard-ico">' + p.ico + '</span>';
+    h +=   '<div class="pcard-name">' + p.name + '</div>';
+    h +=   '<div class="pcard-cat">' + p.cat + '</div>';
+    if (locked) h += '<div class="pcard-lock">&#128274;</div>';
+    h += '</div>';
   }
-  grid.innerHTML = html;
+  grid.innerHTML = h;
 }
 
 function setCat(el) {
   var pills = document.querySelectorAll('.cpill');
-  var i;
-  for (i = 0; i < pills.length; i++) pills[i].classList.remove('on');
+  for (var i = 0; i < pills.length; i++) pills[i].classList.remove('on');
   el.classList.add('on');
-  // Read from data attribute directly — dataset.c decodes HTML entities correctly
   activeCat = el.getAttribute('data-c');
   showPage('home');
-  renderGrid();
+  if (PD.length > 0) renderGrid();
+  else { showSkeletons(); _loadPD(renderGrid); }
 }
 
-/* ═══════════════════════════
-   Q&A PAGE
-═══════════════════════════ */
-function openProfile(id) {
-  if (PD.length === 0) { _loadPD(function(){ openProfile(id); }); return; }
-  barStart();
-  if (!currentUser) { barDone(); openAuth('signup'); return; }
-
+/* ═══ PREVIEW (no login required) ═══ */
+function showPreview() {
+  if (PD.length === 0) {
+    barStart();
+    _loadPD(function() { barDone(); _doPreview(); });
+  } else {
+    _doPreview();
+  }
+}
+function _doPreview() {
   var profile = null;
-  var i;
-  for (i = 0; i < PD.length; i++) { if (PD[i].id === id) { profile = PD[i]; break; } }
+  for (var i = 0; i < PD.length; i++) { if (PD[i].id === 'swe') { profile = PD[i]; break; } }
+  if (!profile && PD.length > 0) profile = PD[0];
   if (!profile) return;
+  currentProfile = profile;
+  currentCatTab = 'All';
+  renderQAPage();
+  showPage('qa');
+}
 
-  /* Paywall check */
+/* ═══ OPEN PROFILE ═══ */
+function openProfile(id) {
+  if (PD.length === 0) { _loadPD(function() { openProfile(id); }); return; }
+  if (!currentUser) { openAuth('signup'); return; }
+  barStart();
+  var profile = null;
+  for (var i = 0; i < PD.length; i++) { if (PD[i].id === id) { profile = PD[i]; break; } }
+  if (!profile) { barDone(); return; }
   if (currentUser.plan === 'free' && usedProfiles.indexOf(id) < 0) {
-    if (usedProfiles.length >= 3) { openPricing(); return; }
+    if (usedProfiles.length >= 3) { barDone(); openPricing(); return; }
     usedProfiles.push(id);
     localStorage.setItem('hk_used', JSON.stringify(usedProfiles));
     renderGrid();
   }
-
   currentProfile = profile;
-  currentCatTab  = 'All';
+  currentCatTab = 'All';
   renderQAPage();
   barDone();
   showPage('qa');
-
   var items = document.querySelectorAll('.side-item');
-  for (i = 0; i < items.length; i++) {
-    items[i].classList.toggle('on', items[i].dataset.id === id);
+  for (var j = 0; j < items.length; j++) {
+    items[j].classList.toggle('on', items[j].dataset.id === id);
   }
 }
 
+/* ═══ Q&A ═══ */
 function renderQAPage() {
   var p = currentProfile;
   document.getElementById('qa-pname').textContent = p.name;
-  document.getElementById('qa-pmeta').textContent =
-    p.qs.length + ' questions &#8212; Skills, Behavioural, Experience & Tools';
-
-  var tabs = ['All', 'Skills', 'Behavioural', 'Experience', 'Tools'];
+  document.getElementById('qa-pmeta').textContent = p.qs.length + ' questions across Skills, Behavioural, Experience & Tools';
+  var tabs = ['All','Skills','Behavioural','Experience','Tools'];
   var tHtml = '';
-  var i, t;
-  for (i = 0; i < tabs.length; i++) {
-    t = tabs[i];
-    tHtml += '<div class="ctab' + (currentCatTab === t ? ' on' : '') +
-             '" onclick="setQCat(\'' + t + '\')">' + t + '</div>';
+  for (var i = 0; i < tabs.length; i++) {
+    tHtml += '<div class="ctab' + (currentCatTab === tabs[i] ? ' on' : '') +
+             '" onclick="setQCat(\'' + tabs[i] + '\')">' + tabs[i] + '</div>';
   }
   document.getElementById('cat-tabs').innerHTML = tHtml;
-
   renderCards();
-
   var banner = document.getElementById('paywall');
   if (currentUser && currentUser.plan === 'free') {
     banner.classList.remove('hidden');
@@ -727,189 +931,154 @@ function renderQAPage() {
     banner.classList.add('hidden');
   }
 }
-
 function setQCat(cat) {
   currentCatTab = cat;
   var tabs = document.querySelectorAll('.ctab');
-  var i;
-  for (i = 0; i < tabs.length; i++) {
-    tabs[i].classList.toggle('on', tabs[i].textContent === cat);
-  }
+  for (var i = 0; i < tabs.length; i++) tabs[i].classList.toggle('on', tabs[i].textContent === cat);
   renderCards();
 }
-
 function renderCards() {
-  var p  = currentProfile;
+  var p = currentProfile;
   var qs = [];
-  var i;
-  for (i = 0; i < p.qs.length; i++) {
+  for (var i = 0; i < p.qs.length; i++) {
     if (currentCatTab === 'All' || p.qs[i].t === currentCatTab) qs.push(p.qs[i]);
   }
-
   var el = document.getElementById('cards');
   if (qs.length === 0) {
-    el.innerHTML = '<div style="color:var(--c-muted);padding:28px 0;text-align:center">No questions in this category.</div>';
+    el.innerHTML = '<div style="color:var(--muted);padding:32px 0;text-align:center;font-size:.88rem;">No questions in this category.</div>';
     return;
   }
-
-  var html = '';
-  var q;
-  for (i = 0; i < qs.length; i++) {
-    q = qs[i];
-    html += '<div class="qcard" id="qc' + i + '">';
-    html +=   '<div class="qcard-hd" onclick="toggleCard(' + i + ')">';
-    html +=     '<div class="qcard-num">Q' + q.n + '</div>';
-    html +=     '<div class="qcard-q">' + q.q + '</div>';
-    html +=     '<div class="qcard-tag">' + q.t + '</div>';
-    html +=     '<div class="qcard-chev">&#9660;</div>';
-    html +=   '</div>';
-    html +=   '<div class="qcard-bd">';
-    html +=     '<div class="ans-lbl">Expected Answer</div>';
-    html +=     '<div class="ans-box ans-n">' + q.ex + '</div>';
-    html +=     '<div class="ans-lbl">&#9989; Strong Answer</div>';
-    html +=     '<div class="ans-box ans-g">';
-    html +=       '<span class="ans-flag fg">&#9989; Green Flag</span><br>' + q.st;
-    html +=     '</div>';
-    html +=     '<div class="ans-lbl">&#128681; Red Flag Answer</div>';
-    html +=     '<div class="ans-box ans-r">';
-    html +=       '<span class="ans-flag fr">&#128681; Red Flag</span><br>' + q.rf;
-    html +=     '</div>';
-    html +=   '</div>';
-    html += '</div>';
+  var h = '', q;
+  for (var j = 0; j < qs.length; j++) {
+    q = qs[j];
+    h += '<div class="qcard" id="qc' + j + '">';
+    h +=   '<div class="qcard-hd" onclick="toggleCard(' + j + ')">';
+    h +=     '<div class="qcard-num">Q' + q.n + '</div>';
+    h +=     '<div class="qcard-q">' + q.q + '</div>';
+    h +=     '<div class="qcard-tag">' + q.t + '</div>';
+    h +=     '<div class="qcard-chev">&#9660;</div>';
+    h +=   '</div>';
+    h +=   '<div class="qcard-bd">';
+    h +=     '<div class="ans-lbl">What to Expect</div>';
+    h +=     '<div class="ans-box ans-n">' + q.ex + '</div>';
+    h +=     '<div class="ans-lbl">&#9989; Strong Answer</div>';
+    h +=     '<div class="ans-box ans-g"><span class="ans-flag fg">&#9989; Green Flag</span><br>' + q.st + '</div>';
+    h +=     '<div class="ans-lbl">&#128681; Red Flag Answer</div>';
+    h +=     '<div class="ans-box ans-r"><span class="ans-flag fr">&#128681; Red Flag</span><br>' + q.rf + '</div>';
+    h +=   '</div>';
+    h += '</div>';
   }
-  el.innerHTML = html;
+  el.innerHTML = h;
 }
-
 function toggleCard(i) {
   var c = document.getElementById('qc' + i);
   if (c) c.classList.toggle('open');
 }
-
 function buildSidebar() {
   if (PD.length === 0) { _loadPD(buildSidebar); return; }
   var list = document.getElementById('side-list');
   if (!list) return;
-  var html = '';
-  var i, p;
-  for (i = 0; i < PD.length; i++) {
+  var h = '', p;
+  for (var i = 0; i < PD.length; i++) {
     p = PD[i];
-    html += '<div class="side-item" data-id="' + p.id + '" onclick="openProfile(\'' + p.id + '\')">' + p.name + '</div>';
+    h += '<div class="side-item" data-id="' + p.id + '" onclick="openProfile(\'' + p.id + '\')">' + p.name + '</div>';
   }
-  list.innerHTML = html;
+  list.innerHTML = h;
 }
+
+/* ═══ PRICING ═══ */
 function openPricing()  { document.getElementById('ov').classList.add('open'); }
 function closePricing() { document.getElementById('ov').classList.remove('open'); }
 function doUpgrade() {
   closePricing();
-  window.location.href = 'mailto:contact@aaronvaidya.com?subject=HireKit Pro Upgrade&body=Hi Aaron, I would like to upgrade to HireKit Pro (Rs.1700/month). Please share payment details.';
+  window.location.href = 'mailto:contact@aaronvaidya.com?subject=HireKit Pro Upgrade&body=Hi Aaron, I would like to upgrade to HireKit Pro. Please share payment details.';
 }
-document.getElementById('ov').addEventListener('click', function(e) {
-  if (e.target === this) closePricing();
-});
+document.getElementById('ov').addEventListener('click', function(e) { if (e.target === this) closePricing(); });
 
-/* ═══════════════════════════
-   TOAST
-═══════════════════════════ */
-function toast(msg) {
-  var t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(function() { t.classList.remove('show'); }, 3500);
-}
-
-
-
-/* ═══════════════════════════
-   ADMIN DASHBOARD
-═══════════════════════════ */
+/* ═══ ADMIN ═══ */
 function showAdminDash() {
   if (!currentUser || currentUser.plan !== 'admin') { goHome(); return; }
-  renderAdminStats();
-  renderAdminTable();
-  renderAdminRequests();
+  renderAdminStats(); renderAdminTable(); renderAdminRequests(); renderAdminFeedbacks();
   showPage('admin');
 }
-
 function renderAdminStats() {
   var users = JSON.parse(localStorage.getItem('hk_users') || '[]');
-  var requests = JSON.parse(localStorage.getItem('hk_requests') || '[]');
-  var feedbacks = JSON.parse(localStorage.getItem('hk_feedbacks') || '[]');
-  var free = 0; var pro = 0;
-  for (var i = 0; i < users.length; i++) {
-    if (users[i].plan === 'pro') pro++; else free++;
-  }
+  var reqs  = JSON.parse(localStorage.getItem('hk_requests') || '[]');
+  var fbs   = JSON.parse(localStorage.getItem('hk_feedbacks') || '[]');
+  var free = 0, pro = 0;
+  for (var i = 0; i < users.length; i++) { if (users[i].plan === 'pro') pro++; else free++; }
   var el = document.getElementById('admin-stats');
   if (!el) return;
   el.innerHTML =
     '<div class="stat-card"><div class="sv">' + users.length + '</div><div class="sl">Total Accounts</div></div>' +
     '<div class="stat-card"><div class="sv">' + free + '</div><div class="sl">Free Users</div></div>' +
-    '<div class="stat-card"><div class="sv" style="color:var(--c-green)">' + pro + '</div><div class="sl">Pro Users</div></div>' +
-    '<div class="stat-card"><div class="sv" style="color:var(--c-white)">' + requests.length + '</div><div class="sl">JD Requests</div></div>' +
-    '<div class="stat-card"><div class="sv" style="color:var(--c-yellow2)">' + feedbacks.length + '</div><div class="sl">Feedbacks</div></div>';
+    '<div class="stat-card"><div class="sv" style="color:var(--green)">' + pro + '</div><div class="sl">Pro Users</div></div>' +
+    '<div class="stat-card"><div class="sv" style="color:var(--white)">' + reqs.length + '</div><div class="sl">JD Requests</div></div>' +
+    '<div class="stat-card"><div class="sv" style="color:var(--yellow2)">' + fbs.length + '</div><div class="sl">Feedbacks</div></div>';
 }
-
 function renderAdminTable() {
-  var q = (document.getElementById('admin-search') || { value: '' }).value.toLowerCase().trim();
+  var q = (document.getElementById('admin-search') || {value:''}).value.toLowerCase().trim();
   var users = JSON.parse(localStorage.getItem('hk_users') || '[]');
   var tbody = document.getElementById('admin-tbody');
   if (!tbody) return;
-  var rows = '';
-  var count = 0;
+  var rows = '', count = 0;
   for (var i = 0; i < users.length; i++) {
     var u = users[i];
     if (q && u.name.toLowerCase().indexOf(q) < 0 && u.email.toLowerCase().indexOf(q) < 0) continue;
     count++;
-    var planCls = u.plan === 'pro' ? 'pp-pro' : u.plan === 'admin' ? 'pp-admin' : 'pp-free';
-    var joined = u.createdAt ? new Date(u.createdAt).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }) : 'N/A';
-    // Get how many profiles this user has used (stored per-email key)
-    var usedKey = 'hk_used_' + u.email;
-    var used = JSON.parse(localStorage.getItem(usedKey) || '[]').length;
-    rows +=
-      '<tr>' +
-      '<td style="color:var(--c-muted)">' + count + '</td>' +
-      '<td style="font-weight:600">' + u.name + '</td>' +
-      '<td style="color:var(--c-muted)">' + u.email + '</td>' +
-      '<td><span class="plan-pill ' + planCls + '">' + u.plan.toUpperCase() + '</span></td>' +
-      '<td>' + (used || '0') + ' profiles</td>' +
-      '<td style="color:var(--c-muted)">' + joined + '</td>' +
-      '</tr>';
+    var cls = u.plan === 'pro' ? 'pp-pro' : u.plan === 'admin' ? 'pp-admin' : 'pp-free';
+    var joined = u.createdAt ? new Date(u.createdAt).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}) : 'N/A';
+    var used = JSON.parse(localStorage.getItem('hk_used_' + u.email) || '[]').length;
+    rows += '<tr><td style="color:var(--muted)">' + count + '</td><td style="font-weight:600">' + u.name +
+      '</td><td style="color:var(--muted)">' + u.email +
+      '</td><td><span class="plan-pill ' + cls + '">' + u.plan.toUpperCase() + '</span></td><td>' + (used||0) +
+      ' profiles</td><td style="color:var(--muted)">' + joined + '</td></tr>';
   }
-  tbody.innerHTML = rows || '<tr><td colspan="6" style="color:var(--c-muted);text-align:center;padding:24px">No accounts found.</td></tr>';
+  tbody.innerHTML = rows || '<tr><td colspan="6" style="color:var(--muted);text-align:center;padding:24px">No accounts found.</td></tr>';
 }
-
 function renderAdminRequests() {
-  var requests = JSON.parse(localStorage.getItem('hk_requests') || '[]');
+  var reqs = JSON.parse(localStorage.getItem('hk_requests') || '[]');
   var el = document.getElementById('admin-requests');
   if (!el) return;
-  if (requests.length === 0) {
-    el.innerHTML = '<p style="color:var(--c-muted);font-size:.82rem">No JD kit requests yet.</p>';
-    return;
-  }
-  var html = '';
-  for (var i = requests.length - 1; i >= 0; i--) {
-    var r = requests[i];
+  if (!reqs.length) { el.innerHTML = '<p style="color:var(--muted);font-size:.82rem">No requests yet.</p>'; return; }
+  var h = '';
+  for (var i = reqs.length-1; i >= 0; i--) {
+    var r = reqs[i];
     var dt = r.ts ? new Date(r.ts).toLocaleString('en-IN') : '';
-    html +=
-      '<div style="padding:14px 0;border-bottom:1px solid var(--c-border)">' +
-      '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px">' +
-      '<span style="font-weight:700;color:var(--c-yellow)">' + r.title + '</span>' +
-      '<span style="font-size:.72rem;color:var(--c-muted)">' + r.name + ' &middot; ' + r.email + '</span>' +
-      '<span style="font-size:.7rem;color:var(--c-muted);margin-left:auto">' + dt + '</span>' +
-      '</div>' +
-      (r.keywords ? '<div style="font-size:.78rem;color:var(--c-muted);margin-bottom:3px">Keywords: ' + r.keywords + '</div>' : '') +
-      (r.notes ? '<div style="font-size:.78rem;color:var(--c-muted)">Notes: ' + r.notes + '</div>' : '') +
-      '<div style="font-size:.7rem;margin-top:5px;color:var(--c-muted)">Files: ' + (r.jdFile || 'none') + (r.kwFile ? ' + ' + r.kwFile : '') + '</div>' +
+    h += '<div style="padding:12px 0;border-bottom:1px solid var(--border)">' +
+      '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:3px">' +
+      '<span style="font-weight:700;color:var(--yellow)">' + r.title + '</span>' +
+      '<span style="font-size:.72rem;color:var(--muted)">' + r.name + ' &middot; ' + r.email + '</span>' +
+      '<span style="font-size:.7rem;color:var(--muted);margin-left:auto">' + dt + '</span></div>' +
+      (r.keywords ? '<div style="font-size:.77rem;color:var(--muted)">Keywords: ' + r.keywords + '</div>' : '') +
       '</div>';
   }
-  el.innerHTML = html;
+  el.innerHTML = h;
+}
+function renderAdminFeedbacks() {
+  var fbs = JSON.parse(localStorage.getItem('hk_feedbacks') || '[]');
+  var el = document.getElementById('admin-feedbacks');
+  if (!el) return;
+  if (!fbs.length) { el.innerHTML = '<p style="color:var(--muted);font-size:.82rem">No feedback yet.</p>'; return; }
+  var h = '';
+  for (var i = fbs.length-1; i >= 0; i--) {
+    var f = fbs[i];
+    var stars = '';
+    for (var s = 1; s <= 5; s++) stars += '<span style="color:' + (s <= f.rating ? 'var(--yellow)' : 'var(--border2)') + '">&#9733;</span>';
+    var dt = f.ts ? new Date(f.ts).toLocaleString('en-IN') : '';
+    h += '<div style="padding:12px 0;border-bottom:1px solid var(--border)">' +
+      '<div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">' + stars +
+      '<span style="font-size:.72rem;color:var(--muted)">' + (f.user||'guest') + '</span>' +
+      '<span style="font-size:.7rem;color:var(--muted);margin-left:auto">' + dt + '</span></div>' +
+      (f.text ? '<div style="font-size:.82rem;color:var(--white2)">' + f.text + '</div>' : '') +
+      '</div>';
+  }
+  el.innerHTML = h;
 }
 
-/* ═══════════════════════════
-   REQUEST A KIT (User)
-═══════════════════════════ */
+/* ═══ REQUEST KIT ═══ */
 function showReqJD() {
   if (!currentUser) { openAuth('signup'); return; }
-  // Pre-fill name and email
   var ni = document.getElementById('req-name');
   var ei = document.getElementById('req-email');
   if (ni && currentUser.name) ni.value = currentUser.name;
@@ -918,229 +1087,80 @@ function showReqJD() {
   document.getElementById('req-success').style.display = 'none';
   showPage('reqjd');
 }
-
 function submitReqJD() {
-  var title  = (document.getElementById('req-title')   || { value: '' }).value.trim();
-  var name   = (document.getElementById('req-name')    || { value: '' }).value.trim();
-  var email  = (document.getElementById('req-email')   || { value: '' }).value.trim();
-  var kw     = (document.getElementById('req-kw-text') || { value: '' }).value.trim();
-  var notes  = (document.getElementById('req-notes')   || { value: '' }).value.trim();
-  var jdInput = document.getElementById('req-jd-file');
-  var kwInput = document.getElementById('req-kw-file');
-  var errEl   = document.getElementById('req-err');
+  var title = (document.getElementById('req-title')||{value:''}).value.trim();
+  var name  = (document.getElementById('req-name')||{value:''}).value.trim();
+  var email = (document.getElementById('req-email')||{value:''}).value.trim();
+  var kw    = (document.getElementById('req-kw-text')||{value:''}).value.trim();
+  var notes = (document.getElementById('req-notes')||{value:''}).value.trim();
+  var jdFi  = document.getElementById('req-jd-file');
+  var kwFi  = document.getElementById('req-kw-file');
+  var errEl = document.getElementById('req-err');
   errEl.style.display = 'none';
-
-  if (!title) { errEl.textContent = 'Please enter a job title.'; errEl.style.display = 'block'; return; }
-  if (!name || !email) { errEl.textContent = 'Please fill in your name and email.'; errEl.style.display = 'block'; return; }
-
+  if (!title) { errEl.textContent='Please enter a job title.'; errEl.style.display='block'; return; }
+  if (!name||!email) { errEl.textContent='Please fill in your name and email.'; errEl.style.display='block'; return; }
   var btn = document.querySelector('#req-form .btn-y');
-  if (btn) { btn.textContent = 'Sending...'; btn.disabled = true; }
-
-  var formData = new FormData();
-  formData.append('access_key', 'REPLACE_WITH_WEB3FORMS_KEY');
-  formData.append('subject', 'HireKit JD Kit Request: ' + title);
-  formData.append('from_name', 'HireKit Request Form');
-  formData.append('Job Title', title);
-  formData.append('name', name);
-  formData.append('email', email);
-  formData.append('Keywords', kw || 'See attached file');
-  formData.append('Notes', notes || 'None');
-
-  if (jdInput && jdInput.files[0]) formData.append('JD File', jdInput.files[0]);
-  if (kwInput && kwInput.files[0]) formData.append('Keywords File', kwInput.files[0]);
-
-  fetch('https://api.web3forms.com/submit', { method: 'POST', body: formData })
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
-      if (btn) { btn.textContent = 'Send Request to HireKit'; btn.disabled = false; }
-      if (data.success) {
-        // Save to admin dashboard too
-        var requests = JSON.parse(localStorage.getItem('hk_requests') || '[]');
-        requests.push({
-          ts: Date.now(), title: title, name: name, email: email,
-          keywords: kw, notes: notes,
-          jdFile: (jdInput && jdInput.files[0]) ? jdInput.files[0].name : '',
-          kwFile: (kwInput && kwInput.files[0]) ? kwInput.files[0].name : ''
-        });
-        localStorage.setItem('hk_requests', JSON.stringify(requests));
-        document.getElementById('req-form').style.display = 'none';
-        document.getElementById('req-success').style.display = 'block';
-        document.getElementById('req-success-email').textContent = email;
-      } else {
-        errEl.textContent = 'Something went wrong. Please email directly: contact@aaronvaidya.com';
-        errEl.style.display = 'block';
-      }
-    })
-    .catch(function() {
-      if (btn) { btn.textContent = 'Send Request to HireKit'; btn.disabled = false; }
-      errEl.textContent = 'Network error. Please email: contact@aaronvaidya.com';
-      errEl.style.display = 'block';
-    });
+  if (btn) { btn.textContent='Sending&#8230;'; btn.disabled=true; }
+  var fd = new FormData();
+  fd.append('access_key','REPLACE_WITH_WEB3FORMS_KEY');
+  fd.append('subject','HireKit JD Request: ' + title);
+  fd.append('from_name','HireKit');
+  fd.append('Job Title',title);
+  fd.append('name',name);
+  fd.append('email',email);
+  fd.append('Keywords',kw||'See attached');
+  fd.append('Notes',notes||'None');
+  if (jdFi&&jdFi.files[0]) fd.append('JD File',jdFi.files[0]);
+  if (kwFi&&kwFi.files[0]) fd.append('Keywords File',kwFi.files[0]);
+  var reqs = JSON.parse(localStorage.getItem('hk_requests')||'[]');
+  reqs.push({ts:Date.now(),title:title,name:name,email:email,keywords:kw,notes:notes,
+    jdFile:(jdFi&&jdFi.files[0])?jdFi.files[0].name:'',
+    kwFile:(kwFi&&kwFi.files[0])?kwFi.files[0].name:''});
+  localStorage.setItem('hk_requests',JSON.stringify(reqs));
+  document.getElementById('req-form').style.display='none';
+  document.getElementById('req-success').style.display='block';
+  document.getElementById('req-success-email').textContent = email;
+  if (btn) { btn.textContent='Send Request'; btn.disabled=false; }
+  fetch('https://api.web3forms.com/submit',{method:'POST',body:fd}).catch(function(){});
 }
-
-// File label updates
-document.addEventListener('DOMContentLoaded', function() {
-  var jdInput = document.getElementById('req-jd-file');
-  var kwInput = document.getElementById('req-kw-file');
-  if (jdInput) jdInput.addEventListener('change', function() {
-    var lbl = document.getElementById('req-jd-label');
-    if (lbl) lbl.textContent = this.files[0] ? this.files[0].name : 'Choose JD file…';
-  });
-  if (kwInput) kwInput.addEventListener('change', function() {
-    var lbl = document.getElementById('req-kw-label');
-    if (lbl) lbl.textContent = this.files[0] ? this.files[0].name : 'Choose keywords file…';
-  });
+document.addEventListener('DOMContentLoaded',function(){
+  var ji = document.getElementById('req-jd-file');
+  var ki = document.getElementById('req-kw-file');
+  if (ji) ji.addEventListener('change',function(){ var l=document.getElementById('req-jd-label'); if(l) l.textContent=this.files[0]?this.files[0].name:'Choose JD file\u2026'; });
+  if (ki) ki.addEventListener('change',function(){ var l=document.getElementById('req-kw-label'); if(l) l.textContent=this.files[0]?this.files[0].name:'Keywords file\u2026'; });
 });
 
-
-
-/* ═══════════════════════════
-   GLOBAL ERROR HANDLER
-═══════════════════════════ */
-window.onerror = function(msg, src, line) {
-  console.error('HireKit error:', msg, 'line:', line);
-  var b = document.getElementById('err-banner');
-  if (b) {
-    b.textContent = 'Something went wrong. Please refresh the page.';
-    b.style.display = 'block';
-    setTimeout(function() { b.style.display = 'none'; }, 6000);
-  }
-  return false;
-};
-
-/* ═══════════════════════════
-   LOADING BAR
-═══════════════════════════ */
-function barStart() {
-  var b = document.getElementById('topbar');
-  if (b) { b.style.width = '0%'; b.style.opacity = '1'; b.style.width = '70%'; }
-}
-function barDone() {
-  var b = document.getElementById('topbar');
-  if (b) { b.style.width = '100%'; setTimeout(function() { b.style.opacity = '0'; setTimeout(function() { b.style.width = '0%'; }, 300); }, 300); }
-}
-
-/* ═══════════════════════════
-   SKELETON LOADERS
-═══════════════════════════ */
-function showSkeletons() {
-  var grid = document.getElementById('pgrid');
-  if (!grid) return;
-  var html = '';
-  for (var i = 0; i < 12; i++) {
-    html += '<div class="skel-card">' +
-      '<div class="skeleton skel-ico"></div>' +
-      '<div class="skeleton skel-name"></div>' +
-      '<div class="skeleton skel-cat"></div>' +
-      '</div>';
-  }
-  grid.innerHTML = html;
-}
-
-/* ═══════════════════════════
-   FEEDBACK WIDGET
-═══════════════════════════ */
-var fbRating = 0;
-function openFeedback() {
-  document.getElementById('feedback-modal').classList.add('open');
-}
-function closeFeedback() {
-  document.getElementById('feedback-modal').classList.remove('open');
-}
+/* ═══ FEEDBACK ═══ */
+function openFeedback()  { document.getElementById('feedback-modal').classList.add('open'); }
+function closeFeedback() { document.getElementById('feedback-modal').classList.remove('open'); }
 function setRating(n) {
   fbRating = n;
   var stars = document.querySelectorAll('.fb-star');
-  for (var i = 0; i < stars.length; i++) {
-    stars[i].classList.toggle('on', i < n);
-  }
+  for (var i = 0; i < stars.length; i++) stars[i].classList.toggle('on', i < n);
 }
 function submitFeedback() {
-  var text = (document.getElementById('fb-text') || { value: '' }).value.trim();
+  var text = (document.getElementById('fb-text')||{value:''}).value.trim();
   if (!fbRating && !text) { toast('Please add a rating or comment.'); return; }
-  var feedbacks = JSON.parse(localStorage.getItem('hk_feedbacks') || '[]');
-  feedbacks.push({
-    ts: Date.now(),
-    rating: fbRating,
-    text: text,
-    user: currentUser ? currentUser.email : 'guest'
-  });
-  localStorage.setItem('hk_feedbacks', JSON.stringify(feedbacks));
-
-  // Send via Web3Forms if key set
-  var key = 'REPLACE_WITH_WEB3FORMS_KEY';
-  if (key !== 'REPLACE_WITH_WEB3FORMS_KEY') {
-    var fd = new FormData();
-    fd.append('access_key', key);
-    fd.append('subject', 'HireKit Feedback — ' + fbRating + ' stars');
-    fd.append('Rating', fbRating + '/5');
-    fd.append('Comment', text || 'No comment');
-    fd.append('User', currentUser ? currentUser.email : 'guest');
-    fetch('https://api.web3forms.com/submit', { method: 'POST', body: fd }).catch(function(){});
-  }
-
-  closeFeedback();
-  fbRating = 0;
-  document.getElementById('fb-text').value = '';
-  document.querySelectorAll('.fb-star').forEach(function(s){ s.classList.remove('on'); });
-  toast('Thank you for your feedback!');
+  var fbs = JSON.parse(localStorage.getItem('hk_feedbacks')||'[]');
+  fbs.push({ts:Date.now(),rating:fbRating,text:text,user:currentUser?currentUser.email:'guest'});
+  localStorage.setItem('hk_feedbacks',JSON.stringify(fbs));
+  closeFeedback(); fbRating=0;
+  document.getElementById('fb-text').value='';
+  document.querySelectorAll('.fb-star').forEach(function(s){s.classList.remove('on');});
+  toast('Thank you for your feedback! &#10084;');
 }
-document.addEventListener('click', function(e) {
-  var modal = document.getElementById('feedback-modal');
-  if (modal && e.target === modal) closeFeedback();
+document.addEventListener('click',function(e){
+  var m=document.getElementById('feedback-modal');
+  if (m&&e.target===m) closeFeedback();
 });
+
+/* ═══ TOAST ═══ */
+function toast(msg) {
+  var t = document.getElementById('toast');
+  t.innerHTML = msg;
+  t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 3500);
+}
 </script>
-
-<!-- ══════ FEEDBACK ══════ -->
-<button id="feedback-btn" onclick="openFeedback()">&#128172; Feedback</button>
-<div id="feedback-modal">
-  <div class="fb-box">
-    <h3>How are we doing?</h3>
-    <p>Your feedback helps us improve HireKit for everyone.</p>
-    <div class="fb-stars" id="fb-stars">
-      <span class="fb-star" onclick="setRating(1)">&#9733;</span>
-      <span class="fb-star" onclick="setRating(2)">&#9733;</span>
-      <span class="fb-star" onclick="setRating(3)">&#9733;</span>
-      <span class="fb-star" onclick="setRating(4)">&#9733;</span>
-      <span class="fb-star" onclick="setRating(5)">&#9733;</span>
-    </div>
-    <textarea class="fb-ta" id="fb-text" placeholder="Tell us what you love, what's broken, or what you'd like to see next&#8230;"></textarea>
-    <div class="fb-row">
-      <button class="btn btn-y" onclick="submitFeedback()">Send Feedback</button>
-      <button class="btn btn-ghost" onclick="closeFeedback()">Cancel</button>
-    </div>
-  </div>
-</div>
-
-<!-- ══════ PRIVACY PAGE ══════ -->
-<div class="page" id="page-privacy">
-  <div class="priv-wrap">
-    <button class="btn btn-ghost btn-sm" onclick="goHome()" style="margin-bottom:20px">&#8592; Back</button>
-    <h2>Privacy Policy</h2>
-    <p style="font-size:.78rem;color:var(--c-muted)">Last updated: May 2026</p>
-    <p>HireKit&#8482; is built and operated by Aaron Vaidya. We take your privacy seriously. This policy explains what data we collect, how we use it, and your rights.</p>
-    <h3>Data We Collect</h3>
-    <ul>
-      <li>Account information: your name, email address, and password (stored locally in your browser)</li>
-      <li>Usage data: which profiles you have opened (stored locally, not on our servers)</li>
-      <li>JD kit requests: job title, keywords, and notes you submit via the Request a Kit form</li>
-      <li>Feedback: ratings and comments you submit voluntarily</li>
-    </ul>
-    <h3>How We Store Your Data</h3>
-    <p>HireKit currently stores all account data in your browser's localStorage. This means your data stays on your device and is never sent to our servers. If you clear your browser data, your account will be removed.</p>
-    <h3>What We Do Not Do</h3>
-    <ul>
-      <li>We do not sell your data to any third party</li>
-      <li>We do not use advertising trackers or analytics cookies</li>
-      <li>We do not store passwords in plain text (they are stored only in your local browser)</li>
-      <li>We do not send you marketing emails without your consent</li>
-    </ul>
-    <h3>JD Kit Requests</h3>
-    <p>When you submit a Request a Kit form, your job title, name, email, keywords, and notes are sent to Aaron Vaidya at contact@aaronvaidya.com for the purpose of building a custom screening kit. This data is not shared with anyone else.</p>
-    <h3>Contact</h3>
-    <p>For any privacy questions, email <a href="mailto:contact@aaronvaidya.com" style="color:var(--c-yellow)">contact@aaronvaidya.com</a></p>
-  </div>
-</div>
-
-
 </body>
 </html>
