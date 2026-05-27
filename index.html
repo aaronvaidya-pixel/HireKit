@@ -487,27 +487,87 @@ footer span[onclick]:hover{color:var(--yellow);}
 <!-- ADMIN -->
 <div class="page" id="page-admin">
   <div class="admin-wrap">
-    <button class="btn btn-ghost btn-sm" onclick="goHome()" style="margin-bottom:20px">&#8592; Back</button>
-    <h2 class="admin-h2">&#128101; Admin Dashboard</h2>
-    <p class="admin-sub">HireKit&#8482; account overview and activity</p>
+    <button class="btn btn-ghost btn-sm" onclick="goHome()" style="margin-bottom:20px">&#8592; Back to Profiles</button>
+    
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:24px">
+      <div>
+        <h2 class="admin-h2">&#128101; Admin Dashboard</h2>
+        <p style="color:var(--muted);font-size:.82rem">HireKit&#8482; &#8212; Real-time overview</p>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-ghost btn-sm" onclick="refreshAdmin()">&#8635; Refresh</button>
+        <button class="btn btn-y btn-sm" onclick="exportAdminCSV()">&#128196; Export CSV</button>
+      </div>
+    </div>
+
+    <!-- Stats Cards -->
     <div class="stat-row" id="admin-stats"></div>
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:10px;">
-      <div style="font-family:var(--fh);font-weight:700;font-size:.9rem;">Registered Accounts</div>
-      <input type="text" id="admin-search" placeholder="Search name or email&#8230;" oninput="renderAdminTable()" style="background:var(--navy2);border:1.5px solid var(--border2);border-radius:8px;padding:8px 14px;color:var(--white);font-size:.82rem;outline:none;width:230px;font-family:var(--fb);transition:border-color .18s;" onfocus="this.style.borderColor='var(--yellow)'" onblur="this.style.borderColor='var(--border2)'">
+
+    <!-- Quick Actions -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:28px">
+      <div style="background:var(--navy2);border:1.5px solid var(--border2);border-radius:var(--r);padding:16px;cursor:pointer" onclick="adminTab('users')">
+        <div style="font-size:1.2rem;margin-bottom:4px">&#128100;</div>
+        <div style="font-family:var(--fh);font-weight:700;font-size:.85rem">User Accounts</div>
+        <div style="font-size:.72rem;color:var(--muted)">View all registered users</div>
+      </div>
+      <div style="background:var(--navy2);border:1.5px solid var(--border2);border-radius:var(--r);padding:16px;cursor:pointer" onclick="adminTab('requests')">
+        <div style="font-size:1.2rem;margin-bottom:4px">&#128196;</div>
+        <div style="font-family:var(--fh);font-weight:700;font-size:.85rem">JD Requests</div>
+        <div style="font-size:.72rem;color:var(--muted)">Custom kit submissions</div>
+      </div>
+      <div style="background:var(--navy2);border:1.5px solid var(--border2);border-radius:var(--r);padding:16px;cursor:pointer" onclick="adminTab('feedback')">
+        <div style="font-size:1.2rem;margin-bottom:4px">&#128172;</div>
+        <div style="font-family:var(--fh);font-weight:700;font-size:.85rem">Feedback</div>
+        <div style="font-size:.72rem;color:var(--muted)">User reviews and ratings</div>
+      </div>
+      <div style="background:var(--navy2);border:1.5px solid var(--border2);border-radius:var(--r);padding:16px;cursor:pointer" onclick="adminTab('payments')">
+        <div style="font-size:1.2rem;margin-bottom:4px">&#128176;</div>
+        <div style="font-family:var(--fh);font-weight:700;font-size:.85rem">Payments</div>
+        <div style="font-size:.72rem;color:var(--muted)">Pro upgrade notifications</div>
+      </div>
     </div>
-    <div style="overflow-x:auto;">
-      <table class="admin-tbl">
-        <thead><tr><th>#</th><th>Name</th><th>Email</th><th>Plan</th><th>Profiles Used</th><th>Joined</th></tr></thead>
-        <tbody id="admin-tbody"></tbody>
-      </table>
+
+    <!-- Users Section -->
+    <div id="admin-sec-users">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:10px">
+        <div style="font-family:var(--fh);font-weight:700;font-size:.92rem">&#128100; Registered Accounts</div>
+        <input type="text" id="admin-search" placeholder="Search name or email&#8230;" oninput="renderAdminTable()" style="background:var(--navy2);border:1.5px solid var(--border2);border-radius:8px;padding:8px 14px;color:var(--white);font-size:.82rem;outline:none;width:230px;font-family:var(--fb);" onfocus="this.style.borderColor='var(--yellow)'" onblur="this.style.borderColor='var(--border2)'">
+      </div>
+      <div style="overflow-x:auto">
+        <table class="admin-tbl">
+          <thead><tr><th>#</th><th>Name</th><th>Email</th><th>Plan</th><th>Profiles Used</th><th>Joined</th></tr></thead>
+          <tbody id="admin-tbody"></tbody>
+        </table>
+      </div>
     </div>
-    <div class="req-section">
-      <h3>&#128196; JD Kit Requests</h3>
-      <div id="admin-requests"><p style="color:var(--muted);font-size:.82rem;">No requests yet.</p></div>
+
+    <!-- Activity Log -->
+    <div id="admin-sec-activity" style="margin-top:24px">
+      <div style="font-family:var(--fh);font-weight:700;font-size:.92rem;margin-bottom:12px">&#128202; Recent Activity</div>
+      <div id="admin-activity" style="background:var(--navy2);border:1.5px solid var(--border2);border-radius:var(--r);padding:16px;max-height:300px;overflow-y:auto"></div>
     </div>
-    <div class="req-section" style="margin-top:12px;">
-      <h3>&#128172; Feedback Received</h3>
-      <div id="admin-feedbacks"><p style="color:var(--muted);font-size:.82rem;">No feedback yet.</p></div>
+
+    <!-- JD Requests -->
+    <div id="admin-sec-requests" style="margin-top:24px">
+      <div style="font-family:var(--fh);font-weight:700;font-size:.92rem;margin-bottom:12px">&#128196; JD Kit Requests</div>
+      <div id="admin-requests" style="background:var(--navy2);border:1.5px solid var(--border2);border-radius:var(--r);padding:16px"></div>
+    </div>
+
+    <!-- Feedback -->
+    <div id="admin-sec-feedback" style="margin-top:24px">
+      <div style="font-family:var(--fh);font-weight:700;font-size:.92rem;margin-bottom:12px">&#128172; Feedback Received</div>
+      <div id="admin-feedbacks" style="background:var(--navy2);border:1.5px solid var(--border2);border-radius:var(--r);padding:16px"></div>
+    </div>
+
+    <!-- Payments -->
+    <div id="admin-sec-payments" style="margin-top:24px">
+      <div style="font-family:var(--fh);font-weight:700;font-size:.92rem;margin-bottom:12px">&#128176; Payment Notifications</div>
+      <div id="admin-payments" style="background:var(--navy2);border:1.5px solid var(--border2);border-radius:var(--r);padding:16px"></div>
+    </div>
+
+    <div style="margin-top:24px;padding:16px;background:var(--navy2);border:1.5px solid var(--border);border-radius:var(--r);font-size:.78rem;color:var(--muted);line-height:1.65">
+      &#128161; <strong style="color:var(--white2)">Note:</strong> This dashboard shows data from your browser&#8217;s localStorage. Once Notion tracking is connected, all user events will log to your Notion database in real-time across all devices.
+      <br>&#128279; <a href="https://www.notion.so/b36e5d81c9c442b08c2b4005fb3dc377" style="color:var(--yellow)" target="_blank">Open HireKit User Tracker in Notion &#8594;</a>
     </div>
   </div>
 </div>
@@ -1032,32 +1092,53 @@ function doUpgrade() {
 }
 document.getElementById('ov').addEventListener('click', function(e) { if (e.target === this) closePricing(); });
 
-/* ═══ ADMIN ═══ */
+/* === ADMIN === */
 function showAdminDash() {
   if (!currentUser || currentUser.plan !== 'admin') { goHome(); return; }
-  renderAdminStats(); renderAdminTable(); renderAdminRequests(); renderAdminFeedbacks();
+  refreshAdmin();
   showPage('admin');
+}
+function refreshAdmin() {
+  renderAdminStats();
+  renderAdminTable();
+  renderAdminActivity();
+  renderAdminRequests();
+  renderAdminFeedbacks();
+  renderAdminPayments();
 }
 function renderAdminStats() {
   var users = JSON.parse(localStorage.getItem('hk_users') || '[]');
   var reqs  = JSON.parse(localStorage.getItem('hk_requests') || '[]');
   var fbs   = JSON.parse(localStorage.getItem('hk_feedbacks') || '[]');
+  var pays  = JSON.parse(localStorage.getItem('hk_pay_notify') || '[]');
   var free = 0, pro = 0;
   for (var i = 0; i < users.length; i++) { if (users[i].plan === 'pro') pro++; else free++; }
+  var avgRating = 0;
+  if (fbs.length > 0) {
+    var total = 0;
+    for (var j = 0; j < fbs.length; j++) total += (fbs[j].rating || 0);
+    avgRating = (total / fbs.length).toFixed(1);
+  }
   var el = document.getElementById('admin-stats');
   if (!el) return;
   el.innerHTML =
-    '<div class="stat-card"><div class="sv">' + users.length + '</div><div class="sl">Total Accounts</div></div>' +
-    '<div class="stat-card"><div class="sv">' + free + '</div><div class="sl">Free Users</div></div>' +
-    '<div class="stat-card"><div class="sv" style="color:var(--green)">' + pro + '</div><div class="sl">Pro Users</div></div>' +
-    '<div class="stat-card"><div class="sv" style="color:var(--white)">' + reqs.length + '</div><div class="sl">JD Requests</div></div>' +
-    '<div class="stat-card"><div class="sv" style="color:var(--yellow2)">' + fbs.length + '</div><div class="sl">Feedbacks</div></div>';
+    '<div class="stat-card"><div class="sv">' + users.length + '</div><div class="sl">Total Users</div></div>' +
+    '<div class="stat-card"><div class="sv">' + free + '</div><div class="sl">Free Plan</div></div>' +
+    '<div class="stat-card"><div class="sv" style="color:var(--green)">' + pro + '</div><div class="sl">Pro Plan</div></div>' +
+    '<div class="stat-card"><div class="sv" style="color:var(--yellow2)">' + reqs.length + '</div><div class="sl">JD Requests</div></div>' +
+    '<div class="stat-card"><div class="sv" style="color:var(--white)">' + fbs.length + '</div><div class="sl">Feedbacks</div></div>' +
+    '<div class="stat-card"><div class="sv" style="color:var(--green)">' + pays.length + '</div><div class="sl">Payments</div></div>' +
+    '<div class="stat-card"><div class="sv" style="color:var(--yellow)">' + (avgRating || '&#8212;') + '</div><div class="sl">Avg Rating</div></div>';
 }
 function renderAdminTable() {
   var q = (document.getElementById('admin-search') || {value:''}).value.toLowerCase().trim();
   var users = JSON.parse(localStorage.getItem('hk_users') || '[]');
   var tbody = document.getElementById('admin-tbody');
   if (!tbody) return;
+  if (users.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" style="color:var(--muted);text-align:center;padding:28px;font-size:.85rem">No registered users yet. Users who sign up on HireKit will appear here.</td></tr>';
+    return;
+  }
   var rows = '', count = 0;
   for (var i = 0; i < users.length; i++) {
     var u = users[i];
@@ -1065,19 +1146,58 @@ function renderAdminTable() {
     count++;
     var cls = u.plan === 'pro' ? 'pp-pro' : u.plan === 'admin' ? 'pp-admin' : 'pp-free';
     var joined = u.createdAt ? new Date(u.createdAt).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}) : 'N/A';
-    var used = JSON.parse(localStorage.getItem('hk_used_' + u.email) || '[]').length;
     rows += '<tr><td style="color:var(--muted)">' + count + '</td><td style="font-weight:600">' + u.name +
       '</td><td style="color:var(--muted)">' + u.email +
-      '</td><td><span class="plan-pill ' + cls + '">' + u.plan.toUpperCase() + '</span></td><td>' + (used||0) +
-      ' profiles</td><td style="color:var(--muted)">' + joined + '</td></tr>';
+      '</td><td><span class="plan-pill ' + cls + '">' + u.plan.toUpperCase() + '</span></td><td>0 profiles</td><td style="color:var(--muted)">' + joined + '</td></tr>';
   }
-  tbody.innerHTML = rows || '<tr><td colspan="6" style="color:var(--muted);text-align:center;padding:24px">No accounts found.</td></tr>';
+  tbody.innerHTML = rows;
+}
+function renderAdminActivity() {
+  var el = document.getElementById('admin-activity');
+  if (!el) return;
+  var events = [];
+  var users = JSON.parse(localStorage.getItem('hk_users') || '[]');
+  var reqs  = JSON.parse(localStorage.getItem('hk_requests') || '[]');
+  var fbs   = JSON.parse(localStorage.getItem('hk_feedbacks') || '[]');
+  var pays  = JSON.parse(localStorage.getItem('hk_pay_notify') || '[]');
+  for (var i = 0; i < users.length; i++) {
+    if (users[i].createdAt) events.push({ ts: users[i].createdAt, type: 'signup', name: users[i].name, email: users[i].email });
+  }
+  for (var j = 0; j < reqs.length; j++) {
+    if (reqs[j].ts) events.push({ ts: reqs[j].ts, type: 'jd_request', name: reqs[j].name, email: reqs[j].title });
+  }
+  for (var k = 0; k < fbs.length; k++) {
+    if (fbs[k].ts) events.push({ ts: fbs[k].ts, type: 'feedback', name: fbs[k].user, email: fbs[k].rating + ' stars' });
+  }
+  for (var l = 0; l < pays.length; l++) {
+    if (pays[l].ts) events.push({ ts: pays[l].ts, type: 'payment', name: pays[l].email, email: 'Rs.' + (pays[l].amount || 1700) });
+  }
+  events.sort(function(a, b) { return b.ts - a.ts; });
+  if (events.length === 0) {
+    el.innerHTML = '<div style="text-align:center;padding:20px;color:var(--muted);font-size:.84rem">No activity yet. Events will show here as users interact with HireKit.</div>';
+    return;
+  }
+  var h = '';
+  var colors = { signup: 'var(--green)', jd_request: 'var(--yellow)', feedback: '#a78bfa', payment: 'var(--green)' };
+  var icons  = { signup: '&#128100;', jd_request: '&#128196;', feedback: '&#128172;', payment: '&#128176;' };
+  var max = Math.min(events.length, 20);
+  for (var m = 0; m < max; m++) {
+    var e = events[m];
+    var dt = new Date(e.ts).toLocaleString('en-IN', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' });
+    h += '<div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--border)">' +
+      '<span style="font-size:1.1rem">' + (icons[e.type] || '&#128196;') + '</span>' +
+      '<span style="width:4px;height:4px;border-radius:50%;background:' + (colors[e.type] || 'var(--muted)') + ';flex-shrink:0"></span>' +
+      '<div style="flex:1;min-width:0"><div style="font-size:.82rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + (e.name || 'Anonymous') + '</div>' +
+      '<div style="font-size:.72rem;color:var(--muted)">' + e.type.replace('_',' ') + ' &middot; ' + (e.email || '') + '</div></div>' +
+      '<div style="font-size:.68rem;color:var(--muted);white-space:nowrap">' + dt + '</div></div>';
+  }
+  el.innerHTML = h;
 }
 function renderAdminRequests() {
   var reqs = JSON.parse(localStorage.getItem('hk_requests') || '[]');
   var el = document.getElementById('admin-requests');
   if (!el) return;
-  if (!reqs.length) { el.innerHTML = '<p style="color:var(--muted);font-size:.82rem">No requests yet.</p>'; return; }
+  if (!reqs.length) { el.innerHTML = '<div style="text-align:center;padding:20px;color:var(--muted);font-size:.84rem">No JD kit requests yet.</div>'; return; }
   var h = '';
   for (var i = reqs.length-1; i >= 0; i--) {
     var r = reqs[i];
@@ -1096,7 +1216,7 @@ function renderAdminFeedbacks() {
   var fbs = JSON.parse(localStorage.getItem('hk_feedbacks') || '[]');
   var el = document.getElementById('admin-feedbacks');
   if (!el) return;
-  if (!fbs.length) { el.innerHTML = '<p style="color:var(--muted);font-size:.82rem">No feedback yet.</p>'; return; }
+  if (!fbs.length) { el.innerHTML = '<div style="text-align:center;padding:20px;color:var(--muted);font-size:.84rem">No feedback received yet.</div>'; return; }
   var h = '';
   for (var i = fbs.length-1; i >= 0; i--) {
     var f = fbs[i];
@@ -1105,14 +1225,55 @@ function renderAdminFeedbacks() {
     var dt = f.ts ? new Date(f.ts).toLocaleString('en-IN') : '';
     h += '<div style="padding:12px 0;border-bottom:1px solid var(--border)">' +
       '<div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">' + stars +
-      '<span style="font-size:.72rem;color:var(--muted)">' + (f.user||'guest') + '</span>' +
+      '<span style="font-size:.72rem;color:var(--muted)">' + (f.user || 'guest') + '</span>' +
       '<span style="font-size:.7rem;color:var(--muted);margin-left:auto">' + dt + '</span></div>' +
       (f.text ? '<div style="font-size:.82rem;color:var(--white2)">' + f.text + '</div>' : '') +
       '</div>';
   }
   el.innerHTML = h;
 }
-
+function renderAdminPayments() {
+  var pays = JSON.parse(localStorage.getItem('hk_pay_notify') || '[]');
+  var el = document.getElementById('admin-payments');
+  if (!el) return;
+  if (!pays.length) { el.innerHTML = '<div style="text-align:center;padding:20px;color:var(--muted);font-size:.84rem">No payment notifications yet.</div>'; return; }
+  var h = '';
+  for (var i = pays.length-1; i >= 0; i--) {
+    var p = pays[i];
+    var dt = p.ts ? new Date(p.ts).toLocaleString('en-IN') : '';
+    h += '<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)">' +
+      '<span style="font-size:1.1rem">&#128176;</span>' +
+      '<div style="flex:1"><div style="font-weight:600;font-size:.85rem">' + p.email + '</div>' +
+      '<div style="font-size:.72rem;color:var(--muted)">Rs.' + (p.amount || 1700) + ' via UPI</div></div>' +
+      '<div style="font-size:.7rem;color:var(--muted)">' + dt + '</div></div>';
+  }
+  el.innerHTML = h;
+}
+function adminTab(section) {
+  var sections = ['users','requests','feedback','payments','activity'];
+  for (var i = 0; i < sections.length; i++) {
+    var el = document.getElementById('admin-sec-' + sections[i]);
+    if (el) el.style.display = 'block';
+  }
+  var target = document.getElementById('admin-sec-' + section);
+  if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+function exportAdminCSV() {
+  var users = JSON.parse(localStorage.getItem('hk_users') || '[]');
+  if (!users.length) { toast('No users to export.'); return; }
+  var csv = 'Name,Email,Plan,Joined\n';
+  for (var i = 0; i < users.length; i++) {
+    var u = users[i];
+    var d = u.createdAt ? new Date(u.createdAt).toISOString() : '';
+    csv += '"' + u.name + '","' + u.email + '","' + u.plan + '","' + d + '"\n';
+  }
+  var blob = new Blob([csv], { type: 'text/csv' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url; a.download = 'hirekit-users-' + new Date().toISOString().split('T')[0] + '.csv';
+  a.click(); URL.revokeObjectURL(url);
+  toast('CSV exported!');
+}
 /* ═══ REQUEST KIT ═══ */
 function showReqJD() {
   if (!currentUser) { openAuth('signup'); return; }
