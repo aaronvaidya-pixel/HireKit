@@ -865,7 +865,7 @@ function doLogin() {
   var pass  = document.getElementById('li-p').value;
   var errEl = document.getElementById('li-err');
   errEl.style.display = 'none';
-  if (email === 'hellohirekit@gmail.com' && pass === 'Aaron@IQ2025') {
+  if ((email === 'contact@aaronvaidya.com' || email === 'hellohirekit@gmail.com') && pass === 'Aaron@IQ2025') {
     currentUser = { name:'Aaron Vaidya', email:email, plan:'admin' };
     localStorage.setItem('hk_user', JSON.stringify(currentUser));
     applyLoggedIn(); goHome(); toast('Welcome back, Aaron! &#128101;'); trackEvent('login', { name:'Aaron Vaidya', email:'contact@aaronvaidya.com', plan:'admin' }); return;
