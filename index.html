@@ -1256,27 +1256,22 @@ function payUPI() {
 })();
 
 /* ═══ USER TRACKING ═══ */
-var TRACK_URL = 'REPLACE_WITH_GOOGLE_SCRIPT_URL';
+var TRACK_URL = '/api/track';
 function trackEvent(type, data) {
-  if (TRACK_URL === 'REPLACE_WITH_GOOGLE_SCRIPT_URL') return;
   try {
     var payload = {
-      ts: new Date().toISOString(),
       event: type,
       name: data.name || '',
       email: data.email || '',
       plan: data.plan || '',
-      device: /Mobile|Android|iPhone/i.test(navigator.userAgent) ? 'mobile' : 'desktop',
-      page: window.location.pathname
+      device: /Mobile|Android|iPhone/i.test(navigator.userAgent) ? 'mobile' : 'desktop'
     };
     fetch(TRACK_URL, {
       method: 'POST',
-      mode: 'no-cors',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     }).catch(function() {});
   } catch(e) {}
-}
-</script>
+}</script>
 </body>
 </html>
