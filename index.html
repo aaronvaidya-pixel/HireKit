@@ -1095,7 +1095,6 @@ document.getElementById('ov').addEventListener('click', function(e) { if (e.targ
 /* === ADMIN === */
 function showAdminDash() {
   if (!currentUser || currentUser.plan !== 'admin') { goHome(); return; }
-  seedDemoData();
   refreshAdmin();
   showPage('admin');
 }
@@ -1435,62 +1434,7 @@ function trackEvent(type, data) {
     }).catch(function() {});
   } catch(e) {}
 }
-/* === ADMIN SEED DATA === */
-function seedDemoData() {
-  if (localStorage.getItem('hk_seeded') === 'v3') return;
-  var users = JSON.parse(localStorage.getItem('hk_users') || '[]');
-  var demoUsers = [
-    { name:'Priya Sharma', email:'priya.sharma@gmail.com', plan:'free', createdAt:Date.now()-86400000*12 },
-    { name:'Rahul Mehta', email:'rahul.mehta@outlook.com', plan:'free', createdAt:Date.now()-86400000*10 },
-    { name:'Sneha Patil', email:'sneha.p@company.co.in', plan:'pro', createdAt:Date.now()-86400000*8 },
-    { name:'Arjun Nair', email:'arjun.nair@techcorp.in', plan:'free', createdAt:Date.now()-86400000*6 },
-    { name:'Kavita Reddy', email:'kavita.r@hrindia.com', plan:'free', createdAt:Date.now()-86400000*5 },
-    { name:'Mohammed Zain', email:'zain.m@startupxyz.io', plan:'pro', createdAt:Date.now()-86400000*3 },
-    { name:'Ananya Iyer', email:'ananya.iyer@gmail.com', plan:'free', createdAt:Date.now()-86400000*2 },
-    { name:'Vikram Singh', email:'vikram.s@recrutify.com', plan:'free', createdAt:Date.now()-86400000*1 },
-    { name:'Deepa Joshi', email:'deepa.j@talentco.in', plan:'free', createdAt:Date.now()-3600000*12 },
-    { name:'Karan Gupta', email:'karan.g@hiringfast.in', plan:'free', createdAt:Date.now()-3600000*3 }
-  ];
-  for (var i = 0; i < demoUsers.length; i++) {
-    var exists = false;
-    for (var j = 0; j < users.length; j++) {
-      if (users[j].email === demoUsers[i].email) { exists = true; break; }
-    }
-    if (!exists) users.push(demoUsers[i]);
-  }
-  localStorage.setItem('hk_users', JSON.stringify(users));
 
-  var fbs = JSON.parse(localStorage.getItem('hk_feedbacks') || '[]');
-  if (fbs.length === 0) {
-    fbs = [
-      { ts:Date.now()-86400000*7, rating:5, text:'Love the green/red flag format. Saves me so much time in screening.', user:'sneha.p@company.co.in' },
-      { ts:Date.now()-86400000*4, rating:4, text:'Great profiles. Would love to see more niche roles like Blockchain or IoT.', user:'arjun.nair@techcorp.in' },
-      { ts:Date.now()-86400000*2, rating:5, text:'Used it for 3 hiring rounds already. The Q&A structure is perfect.', user:'zain.m@startupxyz.io' },
-      { ts:Date.now()-3600000*6, rating:3, text:'Good content but takes a moment to load on slow connections.', user:'ananya.iyer@gmail.com' }
-    ];
-    localStorage.setItem('hk_feedbacks', JSON.stringify(fbs));
-  }
-
-  var reqs = JSON.parse(localStorage.getItem('hk_requests') || '[]');
-  if (reqs.length === 0) {
-    reqs = [
-      { ts:Date.now()-86400000*5, title:'Blockchain Developer', name:'Arjun Nair', email:'arjun.nair@techcorp.in', keywords:'Solidity, Web3, DeFi, Smart Contracts', notes:'Mid-senior level', jdFile:'', kwFile:'' },
-      { ts:Date.now()-86400000*1, title:'AI/ML Research Scientist', name:'Sneha Patil', email:'sneha.p@company.co.in', keywords:'PyTorch, NLP, LLMs, research papers', notes:'PhD preferred', jdFile:'jd_ai_researcher.pdf', kwFile:'' }
-    ];
-    localStorage.setItem('hk_requests', JSON.stringify(reqs));
-  }
-
-  var pays = JSON.parse(localStorage.getItem('hk_pay_notify') || '[]');
-  if (pays.length === 0) {
-    pays = [
-      { ts:Date.now()-86400000*8, email:'sneha.p@company.co.in', amount:1700 },
-      { ts:Date.now()-86400000*3, email:'zain.m@startupxyz.io', amount:1700 }
-    ];
-    localStorage.setItem('hk_pay_notify', JSON.stringify(pays));
-  }
-
-  localStorage.setItem('hk_seeded', 'v3');
-}
 </script>
 </body>
 </html>
