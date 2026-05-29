@@ -347,6 +347,26 @@ footer span[onclick]:hover{color:var(--yellow);}
 .upi-app:hover { border-color:var(--yellow); color:var(--yellow); }
 .pay-note { font-size:.74rem; color:var(--muted); line-height:1.65; }
 @media(max-width:860px){ #page-pay{padding:24px 20px;} .pay-grid{grid-template-columns:1fr;} .qr-card{position:static;} }
+.pricing-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.price-card{background:var(--navy3);border:1.5px solid var(--border2);border-radius:18px;padding:26px 22px;position:relative;transition:border-color .2s,box-shadow .2s;}
+.price-card:hover{border-color:var(--border2);}
+.price-card.featured{border:2px solid var(--yellow);box-shadow:0 0 40px rgba(245,197,24,.1),0 0 80px rgba(245,197,24,.04);}
+.price-card.featured:hover{box-shadow:0 0 50px rgba(245,197,24,.15),0 0 100px rgba(245,197,24,.06);}
+.pop-ribbon{position:absolute;top:-12px;right:18px;background:var(--yellow);color:#0a1a2e;font-size:.62rem;font-weight:800;padding:4px 14px;border-radius:100px;letter-spacing:.05em;box-shadow:0 2px 10px rgba(245,197,24,.3);}
+.price-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 13px;border-radius:100px;font-size:.72rem;font-weight:700;margin-bottom:16px;}
+.price-badge-y{background:var(--ybg);border:1px solid var(--ybd);color:var(--yellow);}
+.price-badge-g{background:var(--gbg);border:1px solid var(--gbd);color:var(--green);}
+.price-row{display:flex;align-items:baseline;gap:8px;margin-bottom:4px;}
+.price-big{font-family:var(--fh);font-size:2.3rem;font-weight:800;line-height:1;}
+.price-old{font-size:.82rem;color:var(--muted);text-decoration:line-through;}
+.price-per{font-size:.82rem;color:var(--muted);}
+.price-save{font-size:.76rem;color:var(--green);font-weight:600;margin-bottom:14px;}
+.price-desc{font-size:.82rem;color:var(--white2);line-height:1.65;margin-bottom:16px;}
+.price-expire{text-align:center;margin-top:8px;font-size:.72rem;font-weight:600;}
+.price-cd{text-align:center;margin-top:4px;font-size:.72rem;color:var(--muted);}
+.btn-green{background:var(--green);color:#fff;border:2px solid var(--green);}
+.btn-green:hover{background:#15a34a;border-color:#15a34a;transform:translateY(-1px);box-shadow:0 4px 18px rgba(26,185,84,.35);}
+@media(max-width:640px){.pricing-grid{grid-template-columns:1fr;}}
 </style>
 </head>
 <body id="body">
@@ -370,7 +390,7 @@ footer span[onclick]:hover{color:var(--yellow);}
     <div class="user-chip">
       <div class="u-dot"></div>
       <span id="nav-name">Aaron</span>
-      <span class="plan-tag" id="nav-plan" onclick="showPayPage()" style="cursor:pointer;" title="Upgrade to Pro">FREE</span>
+      <span class="plan-tag" id="nav-plan" onclick="openPricing()" style="cursor:pointer;" title="Upgrade to Pro">FREE</span>
     </div>
     <button class="btn btn-ghost btn-sm" onclick="logout()">Sign Out</button>
   </div>
@@ -474,10 +494,10 @@ footer span[onclick]:hover{color:var(--yellow);}
     <div class="paywall hidden" id="paywall">
       <div>
         <h3>&#128274; You&#8217;ve used <span id="used-ct">1</span> of 3 free profiles</h3>
-        <p>Upgrade to Pro for unlimited profiles &amp; priority support.</p>
+        <p>Launch pricing from &#8377;799/month &#8212; limited founding member slots.</p>
       </div>
       <div style="text-align:right">
-        <div class="pw-price">&#8377;1,700 <small>/month</small></div>
+        <div class="pw-price"><span class="pay-amount">&#8377;799</span> <small>/month</small></div><div style="font-size:.68rem;color:var(--muted);text-decoration:line-through">&#8377;1,700</div>
         <button class="btn btn-y mt8" onclick="openPricing()">Upgrade to Pro &#8594;</button>
       </div>
     </div>
@@ -622,27 +642,53 @@ footer span[onclick]:hover{color:var(--yellow);}
 </div>
 
 <!-- PRICING MODAL -->
-<div class="page" id="page-pay"><div class="pay-wrap"><button class="btn btn-ghost btn-sm" onclick="goHome()" style="margin-bottom:24px">&#8592; Back</button><div class="pay-grid"><div class="pay-left"><h2>Upgrade to HireKit Pro</h2><p>Unlock all 31 job profiles, custom JD kit requests, and priority support. Pay instantly via UPI &#8212; no card, no signup hassle.</p><div class="plan-highlight"><h3>&#9889; Pro Individual Plan</h3><div class="price">&#8377;1,700 <span>/ month</span></div><div class="pay-feature">Unlimited Q&amp;A kits &#8212; all 31 profiles</div><div class="pay-feature">Custom JD kit requests (2-day turnaround)</div><div class="pay-feature">All future profiles included</div><div class="pay-feature">Priority support via email</div><div class="pay-feature">Cancel anytime &#8212; no lock-in</div></div><div class="pay-steps"><h4>How It Works</h4><div class="pay-step"><div class="step-n">1</div><div class="step-txt"><strong>Pay &#8377;1,700 via UPI</strong><span>Scan the QR or use the UPI ID. Works on GPay, PhonePe, Paytm, BHIM.</span></div></div><div class="pay-step"><div class="step-n">2</div><div class="step-txt"><strong>Click "I have Paid" below</strong><span>Enter your HireKit account email so we know which account to upgrade.</span></div></div><div class="pay-step"><div class="step-n">3</div><div class="step-txt"><strong>Get upgraded within 2 hours</strong><span>9am&#8212;9pm IST. Confirmation sent to your email.</span></div></div></div><div style="background:var(--navy2);border:1.5px solid var(--border2);border-radius:var(--r);padding:22px;margin-top:8px;"><div style="font-family:var(--fh);font-weight:700;font-size:.9rem;margin-bottom:12px;color:var(--yellow)">&#9989; I have Paid &#8212; Upgrade My Account</div><p style="font-size:.79rem;color:var(--muted);margin-bottom:12px;">Enter the email you used to sign up on HireKit. We will upgrade your account after confirming the payment.</p><div style="display:flex;gap:8px;flex-wrap:wrap;"><input type="email" id="pay-email" placeholder="Your HireKit email address&#8230;" style="flex:1;min-width:200px;background:var(--navy3);border:1.5px solid var(--border);border-radius:9px;padding:11px 14px;color:var(--white);font-size:.87rem;outline:none;font-family:var(--fb);" onfocus="this.style.borderColor='var(--yellow)'" onblur="this.style.borderColor='var(--border)'"><button class="btn btn-y" onclick="notifyPayment()">Notify Us &#8594;</button></div><div id="pay-confirm" style="display:none;background:var(--gbg);border:1px solid var(--gbd);border-radius:9px;padding:11px 14px;margin-top:10px;font-size:.82rem;color:var(--green);">&#10003; Received! We will upgrade your account within 2 hours and confirm at your email.</div></div><div style="margin-top:14px;padding:13px 15px;background:var(--navy2);border:1px solid var(--border);border-radius:10px;font-size:.77rem;color:var(--muted);line-height:1.65;">&#128272; <strong style="color:var(--white2)">Safe &amp; direct.</strong> UPI bank transfer. No card stored. Questions? <a href="mailto:hellohirekit@gmail.com" style="color:var(--yellow)">hellohirekit@gmail.com</a></div></div><div><div class="qr-card"><div class="qr-card-top"><h3>&#128242; Pay via UPI</h3><p>One tap &middot; Pre-filled &#8377;1,700</p></div><div style="margin-bottom:18px"><button class="btn btn-y btn-lg btn-full" onclick="payUPI()" style="font-size:1.05rem;padding:16px" id="pay-main-btn">&#128242; Pay &#8377;1,700 Now</button><p style="font-size:.72rem;color:rgba(10,26,46,.6);margin-top:8px" id="pay-hint">Opens your UPI app on mobile</p></div><div class="upi-id-box" onclick="copyUPI()"><div class="upi-id-lbl">UPI ID &#8212; Tap to copy</div><div class="upi-id-val">aaronvaidya@gmail.com</div><div class="copy-hint">Paste directly in GPay / PhonePe / Paytm</div></div><div class="upi-apps"><button class="upi-app" onclick="payUPI()">&#128242; GPay</button><button class="upi-app" onclick="payUPI()">&#128199; PhonePe</button><button class="upi-app" onclick="payUPI()">&#128178; Paytm</button><button class="upi-app" onclick="payUPI()">&#128188; BHIM</button></div><div class="pay-note">Amount pre-filled: <strong style="color:var(--white2)">&#8377;1,700</strong><br>Payee: <strong style="color:var(--white2)">Aaron Vaidya</strong><br>Note: <strong style="color:var(--white2)">HireKit Pro</strong></div></div><div style="background:var(--navy2);border:1.5px solid var(--border2);border-radius:12px;padding:15px;margin-top:12px;font-size:.77rem;color:var(--muted);text-align:center;line-height:1.75;">&#127469;&#127475; India only &middot; Instant UPI transfer<br>Need help? <a href="mailto:hellohirekit@gmail.com" style="color:var(--yellow)">hellohirekit@gmail.com</a></div></div></div></div></div>
+<div class="page" id="page-pay"><div class="pay-wrap"><button class="btn btn-ghost btn-sm" onclick="goHome()" style="margin-bottom:24px">&#8592; Back</button><div class="pay-grid"><div class="pay-left"><h2>Upgrade to HireKit Pro</h2><p>Unlock all 31 job profiles, custom JD kit requests, and priority support. Pay instantly via UPI &#8212; no card, no signup hassle.</p><div class="plan-highlight"><h3>&#9889; <span class="pay-plan-name">Founding Member</span> Plan</h3><div class="price"><span class="pay-amount">&#8377;799</span> <span>/ month</span> <span style="text-decoration:line-through;font-size:.82rem;font-weight:400;color:var(--muted)">&#8377;1,700</span></div><div class="pay-feature">Unlimited Q&amp;A kits &#8212; all 31 profiles</div><div class="pay-feature">Custom JD kit requests (2-day turnaround)</div><div class="pay-feature">All future profiles included</div><div class="pay-feature">Priority support via email</div><div class="pay-feature">Cancel anytime &#8212; no lock-in</div></div><div class="pay-steps"><h4>How It Works</h4><div class="pay-step"><div class="step-n">1</div><div class="step-txt"><strong>Pay &#8377;1,700 via UPI</strong><span>Scan the QR or use the UPI ID. Works on GPay, PhonePe, Paytm, BHIM.</span></div></div><div class="pay-step"><div class="step-n">2</div><div class="step-txt"><strong>Click "I have Paid" below</strong><span>Enter your HireKit account email so we know which account to upgrade.</span></div></div><div class="pay-step"><div class="step-n">3</div><div class="step-txt"><strong>Get upgraded within 2 hours</strong><span>9am&#8212;9pm IST. Confirmation sent to your email.</span></div></div></div><div style="background:var(--navy2);border:1.5px solid var(--border2);border-radius:var(--r);padding:22px;margin-top:8px;"><div style="font-family:var(--fh);font-weight:700;font-size:.9rem;margin-bottom:12px;color:var(--yellow)">&#9989; I have Paid &#8212; Activate <span class="pay-plan-name">Founding Member</span></div><p style="font-size:.79rem;color:var(--muted);margin-bottom:12px;">Enter the email you used to sign up on HireKit. We will upgrade your account after confirming the payment.</p><div style="display:flex;gap:8px;flex-wrap:wrap;"><input type="email" id="pay-email" placeholder="Your HireKit email address&#8230;" style="flex:1;min-width:200px;background:var(--navy3);border:1.5px solid var(--border);border-radius:9px;padding:11px 14px;color:var(--white);font-size:.87rem;outline:none;font-family:var(--fb);" onfocus="this.style.borderColor='var(--yellow)'" onblur="this.style.borderColor='var(--border)'"><button class="btn btn-y" onclick="notifyPayment()">Notify Us &#8594;</button></div><div id="pay-confirm" style="display:none;background:var(--gbg);border:1px solid var(--gbd);border-radius:9px;padding:11px 14px;margin-top:10px;font-size:.82rem;color:var(--green);">&#10003; Received! We will upgrade your account within 2 hours and confirm at your email.</div></div><div style="margin-top:14px;padding:13px 15px;background:var(--navy2);border:1px solid var(--border);border-radius:10px;font-size:.77rem;color:var(--muted);line-height:1.65;">&#128272; <strong style="color:var(--white2)">Safe &amp; direct.</strong> UPI bank transfer. No card stored. Questions? <a href="mailto:hellohirekit@gmail.com" style="color:var(--yellow)">hellohirekit@gmail.com</a></div></div><div><div class="qr-card"><div class="qr-card-top"><h3>&#128242; Pay via UPI</h3><p>One tap &middot; Pre-filled &#8377;1,700</p></div><div style="margin-bottom:18px"><button class="btn btn-y btn-lg btn-full" onclick="payUPI()" style="font-size:1.05rem;padding:16px" id="pay-main-btn">&#128242; Pay <span class="pay-amount">&#8377;799</span> Now</button><p style="font-size:.72rem;color:rgba(10,26,46,.6);margin-top:8px" id="pay-hint">Opens your UPI app on mobile</p></div><div class="upi-id-box" onclick="copyUPI()"><div class="upi-id-lbl">UPI ID &#8212; Tap to copy</div><div class="upi-id-val">aaronvaidya@gmail.com</div><div class="copy-hint">Paste directly in GPay / PhonePe / Paytm</div></div><div class="upi-apps"><button class="upi-app" onclick="payUPI()">&#128242; GPay</button><button class="upi-app" onclick="payUPI()">&#128199; PhonePe</button><button class="upi-app" onclick="payUPI()">&#128178; Paytm</button><button class="upi-app" onclick="payUPI()">&#128188; BHIM</button></div><div class="pay-note">Amount: <strong style="color:var(--white2)" class="pay-amount">&#8377;799</strong><br>Payee: <strong style="color:var(--white2)">Aaron Vaidya</strong><br>Note: <strong style="color:var(--white2)">HireKit Pro</strong></div></div><div style="background:var(--navy2);border:1.5px solid var(--border2);border-radius:12px;padding:15px;margin-top:12px;font-size:.77rem;color:var(--muted);text-align:center;line-height:1.75;">&#127469;&#127475; India only &middot; Instant UPI transfer<br>Need help? <a href="mailto:hellohirekit@gmail.com" style="color:var(--yellow)">hellohirekit@gmail.com</a></div></div></div></div></div>
 <div class="overlay" id="ov">
-  <div class="modal">
+  <div class="modal" style="max-width:740px;padding:36px 30px;">
     <button class="btn-icon modal-x" onclick="closePricing()">&#10005;</button>
-    <h2>Upgrade HireKit</h2>
-    <p class="modal-sub">Unlock unlimited access for faster, smarter hiring</p>
-    <div class="plan-box">
-      <h3>Pro Individual</h3>
-      <div class="plan-price">&#8377;1,700 <small>/month</small></div>
-      <div class="plan-f">Unlimited profile Q&amp;A kits</div>
-      <div class="plan-f">Custom JD kit requests</div>
-      <div class="plan-f">Priority support</div>
-      <button class="btn btn-y btn-full mt12" onclick="doUpgrade()">Get Pro &#8594;</button>
+    <h2 style="text-align:center">Launch Pricing</h2>
+    <p class="modal-sub" style="text-align:center">Limited-time rates for early supporters</p>
+    <div class="pricing-grid">
+      <div class="price-card featured">
+        <div class="pop-ribbon">MOST POPULAR</div>
+        <div class="price-badge price-badge-y">&#128293; Founding Member &#8212; Only 20 Slots</div>
+        <div class="price-row">
+          <span class="price-big" style="color:var(--yellow)">&#8377;799</span>
+          <span class="price-per">/month</span>
+          <span class="price-old">&#8377;1,700</span>
+        </div>
+        <div class="price-save">Save &#8377;901/month &#8212; 53% OFF</div>
+        <div class="price-desc">Lock in this rate <strong style="color:var(--white)">forever</strong> as long as you stay subscribed. Full Pro access included.</div>
+        <div class="plan-f">Unlimited Q&amp;A kits &#8212; all 31 profiles</div>
+        <div class="plan-f">Custom JD kit requests</div>
+        <div class="plan-f">All future profiles included</div>
+        <div class="plan-f">Priority support via email</div>
+        <div class="plan-f">Locked-in pricing for life</div>
+        <button class="btn btn-y btn-full mt16" style="font-size:.95rem;padding:14px" onclick="payPlan('founding',799)">Claim Your Slot &#8594;</button>
+        <div class="price-expire" style="color:var(--red)">Offer closes June 30, 2026</div>
+        <div class="price-cd" id="cd-founding"></div>
+      </div>
+      <div class="price-card">
+        <div class="price-badge price-badge-g">&#9889; Early Adopter Pricing</div>
+        <div class="price-row">
+          <span class="price-big" style="color:var(--white)">&#8377;1,099</span>
+          <span class="price-per">/month</span>
+          <span class="price-old">&#8377;1,700</span>
+        </div>
+        <div class="price-save">Save &#8377;601/month &#8212; 35% OFF</div>
+        <div class="price-desc">Save &#8377;601 vs full price. All Pro features included.</div>
+        <div class="plan-f">Unlimited Q&amp;A kits &#8212; all 31 profiles</div>
+        <div class="plan-f">Custom JD kit requests</div>
+        <div class="plan-f">All future profiles included</div>
+        <div class="plan-f">Priority support via email</div>
+        <button class="btn btn-green btn-full mt16" style="font-size:.95rem;padding:14px" onclick="payPlan('early',1099)">Get Early Access &#8594;</button>
+        <div class="price-expire" style="color:var(--muted)">Price increases August 1, 2026</div>
+        <div class="price-cd" id="cd-early"></div>
+      </div>
     </div>
-    <div class="plan-box">
-      <h3>Agency / Team</h3>
-      <div class="plan-price" style="font-size:1.1rem;color:var(--white)">Custom Pricing</div>
-      <div class="plan-f">Multiple seats</div>
-      <div class="plan-f">Dedicated account manager</div>
-      <div class="plan-f">Invoice billing</div>
-      <button class="btn btn-ghost btn-full mt12" onclick="window.location='mailto:hellohirekit@gmail.com?subject=HireKit Agency Enquiry'">Contact for Quote &#8594;</button>
+    <div style="margin-top:18px;text-align:center">
+      <div style="font-size:.8rem;color:var(--muted);margin-bottom:6px">Need multiple seats?</div>
+      <button class="btn btn-ghost btn-sm" onclick="window.location='mailto:hellohirekit@gmail.com?subject=HireKit Team Plan'">Agency / Team &#8212; Contact for Quote &#8594;</button>
     </div>
   </div>
 </div>
@@ -1084,11 +1130,11 @@ function buildSidebar() {
 }
 
 /* ═══ PRICING ═══ */
-function openPricing()  { document.getElementById('ov').classList.add('open'); }
+function openPricing()  { document.getElementById('ov').classList.add('open'); updateCountdowns(); }
 function closePricing() { document.getElementById('ov').classList.remove('open'); }
 function doUpgrade() {
   closePricing();
-  showPayPage();
+  payPlan('founding', 799);
 }
 document.getElementById('ov').addEventListener('click', function(e) { if (e.target === this) closePricing(); });
 
@@ -1384,18 +1430,18 @@ function notifyPayment() {
   var email = (document.getElementById('pay-email') || {value:''}).value.trim();
   if (!email || email.indexOf('@') < 1) { toast('Please enter your HireKit email.'); return; }
   var reqs = JSON.parse(localStorage.getItem('hk_pay_notify') || '[]');
-  reqs.push({ ts: Date.now(), email: email, amount: 1700 });
+  reqs.push({ ts: Date.now(), email: email, amount: selectedAmount, plan: selectedPlan });
   localStorage.setItem('hk_pay_notify', JSON.stringify(reqs));
   trackEvent('payment_notify', { email:email, plan:'pro' });
   var conf = document.getElementById('pay-confirm');
   if (conf) conf.style.display = 'block';
-  window.location.href = 'mailto:hellohirekit@gmail.com?subject=HireKit Pro Payment Done&body=Hi, I have paid Rs.1700 via UPI for HireKit Pro. Please upgrade: ' + encodeURIComponent(email);
+  window.location.href = 'mailto:hellohirekit@gmail.com?subject=HireKit ' + selectedPlan + ' Payment&body=Hi, I paid Rs.' + selectedAmount + ' for HireKit ' + selectedPlan + '. Please upgrade: ' + encodeURIComponent(email);
 }
 
 /* ═══ UPI PAYMENT ═══ */
 var _isMobile = /Android|iPhone|iPad|iPod|webOS/i.test(navigator.userAgent);
 function payUPI() {
-  var upiUrl = 'upi://pay?pa=aaronvaidya@gmail.com&pn=Aaron%20Vaidya&am=1700&cu=INR&tn=HireKit%20Pro';
+  var upiUrl = 'upi://pay?pa=aaronvaidya@gmail.com&pn=Aaron%20Vaidya&am=' + selectedAmount + '&cu=INR&tn=HireKit%20' + selectedPlan;
   if (_isMobile) {
     window.location.href = upiUrl;
     setTimeout(function() {
@@ -1435,6 +1481,40 @@ function trackEvent(type, data) {
   } catch(e) {}
 }
 
+
+/* === LAUNCH PRICING === */
+var selectedPlan = "founding";
+var selectedAmount = 799;
+function payPlan(plan, amount) {
+  selectedPlan = plan;
+  selectedAmount = amount;
+  closePricing();
+  var em = document.getElementById("pay-email");
+  if (em && currentUser && currentUser.email) em.value = currentUser.email;
+  var conf = document.getElementById("pay-confirm");
+  if (conf) conf.style.display = "none";
+  var planLabel = plan === "founding" ? "Founding Member" : "Early Adopter";
+  var amts = document.querySelectorAll(".pay-amount");
+  for (var i = 0; i < amts.length; i++) amts[i].innerHTML = "&#8377;" + amount.toLocaleString("en-IN");
+  var names = document.querySelectorAll(".pay-plan-name");
+  for (var j = 0; j < names.length; j++) names[j].textContent = planLabel;
+  showPage("pay");
+}
+function updateCountdowns() {
+  var now = Date.now();
+  var dates = { founding: new Date("2026-06-30T23:59:59+05:30").getTime(), early: new Date("2026-08-01T00:00:00+05:30").getTime() };
+  var ids = ["cd-founding","cd-early"];
+  var keys = ["founding","early"];
+  for (var i = 0; i < ids.length; i++) {
+    var el = document.getElementById(ids[i]);
+    if (!el) continue;
+    var diff = Math.max(0, dates[keys[i]] - now);
+    var d = Math.floor(diff / 86400000);
+    var h = Math.floor((diff % 86400000) / 3600000);
+    el.textContent = d + "d " + h + "h remaining";
+  }
+}
+setInterval(updateCountdowns, 60000);
 </script>
 </body>
 </html>
