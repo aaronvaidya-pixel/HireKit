@@ -9,18 +9,35 @@ export default async function handler(req, res) {
   var DB_ID = 'b36e5d81c9c442b08c2b4005fb3dc377';
 
   if (!NOTION_KEY) {
-    return res.status(500).json({ error: 'NOTION_API_KEY not set' });
+    console.error('NOTION_API_KEY not set in environment');
+    return res.status(500).json({ error: 'Tracking not configured' });
   }
 
   try {
     var body = req.body || {};
+    var eventName = body.event || 'login';
+    var validEvents = ['signup', 'login', 'payment_notify', 'feedback', 'jd_request'];
+    if (validEvents.indexOf(eventName) < 0) eventName = 'login';
+
+    var planName = body.plan || 'free';
+    var validPlans = ['free', 'pro', 'admin'];
+    if (validPlans.indexOf(planName) < 0) planName = 'free';
+
+    var deviceName = body.device || 'desktop';
+    if (deviceName !== 'mobile' && deviceName !== 'desktop') deviceName = 'desktop';
+
     var props = {
-      "Name": { "title": [{ "text": { "content": body.name || "Anonymous" } }] },
-      "Event": { "select": { "name": body.event || "login" } },
-      "Email": { "email": body.email || null },
-      "Plan": { "select": { "name": body.plan || "free" } },
-      "Device": { "select": { "name": body.device || "desktop" } }
+      "Name": { "title": [{ "text": { "content": (body.name || 'Anonymous').substring(0, 200) } }] },
+      "Event": { "select": { "name": eventName } },
+      "Plan": { "select": { "name": planName } },
+      "Device": { "select": { "name": deviceName } }
     };
+
+    if (body.email && body.email.indexOf('@') > 0) {
+      props["Email"] = { "email": body.email };
+    }
+
+    console.log('Tracking:', eventName, body.name, body.email);
 
     var resp = await fetch('https://api.notion.com/v1/pages', {
       method: 'POST',
@@ -35,13 +52,17 @@ export default async function handler(req, res) {
       })
     });
 
+    var respData = await resp.json();
+
     if (!resp.ok) {
-      var errData = await resp.json();
-      return res.status(resp.status).json({ error: errData.message || 'Notion error' });
+      console.error('Notion error:', resp.status, JSON.stringify(respData));
+      return res.status(200).json({ ok: false, note: 'logged locally' });
     }
 
+    console.log('Tracked OK:', eventName, body.email);
     return res.status(200).json({ ok: true });
   } catch (err) {
-    return res.status(500).json({ error: err.message || 'Server error' });
+    console.error('Track error:', err.message);
+    return res.status(200).json({ ok: false, note: 'error caught' });
   }
 }
